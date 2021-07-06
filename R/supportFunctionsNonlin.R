@@ -1,4 +1,4 @@
-calc_indicat <- function(Y, threshold=2500){
+calc_indicat <- function(Y, threshold){
 
   hcr_function <- function(y,threshold){
     mean(y < threshold, na.rm = TRUE)
