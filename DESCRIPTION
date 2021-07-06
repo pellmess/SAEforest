@@ -13,6 +13,7 @@ Imports:
     dplyr,
     ineq,
     lme4,
+    magrittr,
     parallel,
     ranger,
     stats,

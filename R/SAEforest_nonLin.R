@@ -23,21 +23,23 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
 
   # SMEARING STEP HERE------------
   smearing_grid <- tidyr::expand_grid("e_ij" = unit_model$OOBresiduals, unit_preds_ID)
-  smearing_grid <- smearing_grid %>% mutate(., y_star = predictions + e_ij, .keep="unused")
+  smearing_grid <- dplyr::mutate(smearing_grid, y_star = predictions + e_ij, .keep="unused")
 
-  smear_list <- smearing_grid %>% dplyr::group_split(idD)
+  smear_list <-  dplyr::group_split(smearing_grid, idD)
 
-  cl <- parallel::makeCluster(parallel::detectCores()-1 )
+  cl <- parallel::makeCluster(parallel::detectCores())
 
-  parallel::clusterExport(cl, c("calc_indicat"))
+  calc_indicat2 <- calc_indicat
+  helpfun <- function(x){calc_indicat2(x$y_star, threshold = threshold)}
 
-  indicators <- parallel::parLapply(cl,smear_list, fun =
-                             function(x){calc_indicat(x$y_star)})
+  parallel::clusterEvalQ(cl, c("threshold"))
+
+  indicators <- parallel::parLapply(cl,smear_list, fun = helpfun)
 
   parallel::stopCluster(cl)
 
-  indicators <- do.call(rbind.data.frame, indicators)
 
+  indicators <- do.call(rbind.data.frame, indicators)
   indicators_out <- cbind("Domain" = unique(census_data[dName])[,1],indicators)
 
   return( list(Indicator_predictions = indicators_out,
