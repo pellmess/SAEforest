@@ -10,6 +10,7 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    nlme,
+    lme4,
     ranger,
     stats
+RoxygenNote: 7.1.1
