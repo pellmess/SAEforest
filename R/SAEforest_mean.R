@@ -25,9 +25,12 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                           FUN=mean)
   colnames(mean_preds) <- c(dName,"Mean")
 
-  return(list(
+
+  result <- list(
     Mean_predictions = mean_preds,
-    MERFmodel = unit_model))
+    MERFmodel = unit_model)
+
+  return(result)
 
 }
 

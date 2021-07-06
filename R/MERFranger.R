@@ -45,9 +45,7 @@ MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolera
   }
 
 
-  residuals <- rep(NA, length = length(Target))
-  residuals <- Target - predict(lmefit) - rf$predicted
-  attr(residuals, "label") <- NULL
+  residuals <- Target - predict(lmefit,data)
 
   result <- list(Forest = rf,
                  EffectModel = lmefit,
@@ -60,7 +58,7 @@ MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolera
                  IterationsUsed = iterations,
                  Random = random,
                  ErrorTolerance = ErrorTolerance,
-                 residuals = residuals )
+                 OOBresiduals = residuals )
 
   class(result) <- "SAEforest"
 

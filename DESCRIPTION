@@ -10,7 +10,10 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: 
+    dplyr,
+    ineq,
     lme4,
     ranger,
-    stats
+    stats,
+    tidyr
 RoxygenNote: 7.1.1
