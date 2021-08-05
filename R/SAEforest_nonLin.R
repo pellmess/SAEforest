@@ -25,23 +25,24 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
   smearing_grid <- tidyr::expand_grid("e_ij" = unit_model$OOBresiduals, unit_preds_ID)
   smearing_grid <- dplyr::mutate(smearing_grid, y_star = predictions + e_ij, .keep="unused")
 
-  smear_list <-  smearing_grid %>% dplyr::group_split(idD, .keep = FALSE) %>% map(~.x$y_star)
-
-  cl <- parallel::makeCluster(parallel::detectCores()-1)
-
-  calc_indicat2 <- calc_indicat
-  helpfun <- function(x){calc_indicat2(x, threshold = threshold)}
-
-  parallel::clusterExport(cl, c("calc_indicat2","threshold"))
-  parallel::clusterEvalQ(cl, c("threshold"))
-
-  indicators <- parallel::parLapply(cl,smear_list, fun = helpfun)
-
-  parallel::stopCluster(cl)
+  smear_list <-  smearing_grid %>% dplyr::group_split(idD, .keep = FALSE) %>% map(~calc_indicat(.x$y_star,threshold = threshold))
 
 
-  indicators <- do.call(rbind.data.frame, indicators)
+  indicators <- do.call(rbind.data.frame, smear_list)
   indicators_out <- cbind("Domain" = unique(census_data[dName])[,1],indicators)
+
+  # THIS PARA WORKS AS SCRIPT BUT NOT IN THE PACKAGE..THINK ABOUT!
+  #cl <- parallel::makeCluster(parallel::detectCores()-1)
+
+  #calc_indicat2 <- SAEforest::calc_indicat
+  #helpfun <- function(x){calc_indicat2(x, threshold = threshold)}
+
+  #parallel::clusterExport(cl, c("calc_indicat2","threshold"))
+  #parallel::clusterEvalQ(cl, c("threshold"))
+
+  #indicators <- parallel::parLapply(cl,smear_list, fun = helpfun)
+
+  #parallel::stopCluster(cl)
 
   return( list(Indicator_predictions = indicators_out,
                 MERFmodel = unit_model))

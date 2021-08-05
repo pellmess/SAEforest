@@ -19,3 +19,5 @@ Imports:
     stats,
     tidyr
 RoxygenNote: 7.1.1
+Depends: 
+    tidyverse

@@ -3,7 +3,7 @@
 #
 
 # my PC:
- load("C:/Users/Patrick/Documents/Studium/FU Berlin/Diss/Data/Simulation_Data_MERFPaper/AggForest_Data/s1_normal_250_aggForest.RData")
+# load("C:/Users/Patrick/Documents/Studium/FU Berlin/Diss/Data/Simulation_Data_MERFPaper/AggForest_Data/s1_normal_250_aggForest.RData")
 
 #cens <- Pop[[1]][,c(1,4,5,8)]
 #surv <- samp[[1]][,c(1,4,5,8)]
@@ -23,6 +23,6 @@
 
 
 # APPLICATION OF FUNCTION
-tic()
-test1 <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens)
-toc()
+#tic()
+#test1 <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens)
+#toc()
