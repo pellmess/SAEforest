@@ -7,6 +7,7 @@ shitfun <- function(Y, X){
   calc_indicat2 <- calc_indicat
   helpfun <- function(x){calc_indicat2(x, threshold =threshold)}
 
+  parallel::clusterExport(cl, c("calc_indicat2","threshold"))
   parallel::clusterEvalQ(cl, c("threshold"))
 
   smear_list <- list(a=1,b=2,c=3)

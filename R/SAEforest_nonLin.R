@@ -25,13 +25,14 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
   smearing_grid <- tidyr::expand_grid("e_ij" = unit_model$OOBresiduals, unit_preds_ID)
   smearing_grid <- dplyr::mutate(smearing_grid, y_star = predictions + e_ij, .keep="unused")
 
-  smear_list <-  dplyr::group_split(smearing_grid, idD)
+  smear_list <-  smearing_grid %>% dplyr::group_split(idD, .keep = FALSE) %>% map(~.x$y_star)
 
-  cl <- parallel::makeCluster(parallel::detectCores())
+  cl <- parallel::makeCluster(parallel::detectCores()-1)
 
   calc_indicat2 <- calc_indicat
-  helpfun <- function(x){calc_indicat2(x$y_star, threshold = threshold)}
+  helpfun <- function(x){calc_indicat2(x, threshold = threshold)}
 
+  parallel::clusterExport(cl, c("calc_indicat2","threshold"))
   parallel::clusterEvalQ(cl, c("threshold"))
 
   indicators <- parallel::parLapply(cl,smear_list, fun = helpfun)
@@ -44,8 +45,6 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
 
   return( list(Indicator_predictions = indicators_out,
                 MERFmodel = unit_model))
-
-
 }
 
 
