@@ -21,6 +21,12 @@
 #m_try = 1
 #survey_weigths = NULL
 
+#AGG
+#x_bar1 <- as.numeric(tapply(cens$x1, INDEX = cens$idD, FUN = mean))
+#x_bar2 <- as.numeric(tapply(cens$x2, INDEX = cens$idD, FUN = mean))
+
+#Aggcens <- cbind(unique(surv[dName]), x_bar1, x_bar2)
+
 
 # APPLICATION OF FUNCTION
 #tic()
