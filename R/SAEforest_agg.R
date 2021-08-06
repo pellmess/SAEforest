@@ -90,24 +90,9 @@ SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg,
     # Prepare return object
 
     return(list(Mean_Predictions = Mean_preds,
-                 MERFmodel = unit_model), ModifiedSet = final_survey_data)
+                 MERFmodel = unit_model, ModifiedSet = final_survey_data))
 
   }
-
-
-
-
-
-
-
-
-
-
-
-
-  return( list(Indicator_predictions = indicators_out,
-               MERFmodel = unit_model))
-}
 
 
 
