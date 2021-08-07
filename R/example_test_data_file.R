@@ -25,20 +25,22 @@
 #x_bar1 <- as.numeric(tapply(cens$x1, INDEX = cens$idD, FUN = mean))
 #x_bar2 <- as.numeric(tapply(cens$x2, INDEX = cens$idD, FUN = mean))
 
-#Aggcens <- cbind(unique(surv[dName]), x_bar1, x_bar2)
+#Xcensus_agg <- cbind(unique(surv[dName]), x_bar1, x_bar2)
+#popnsize <- data.frame(idD= 1:50, PopnSegments=1000)
 
 
 # APPLICATION OF FUNCTION
 #tic()
-#test1 <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens)
+#mod <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens)
 #toc()
 
 
 #tic()
-#test2 <- SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Aggcens)
+#mod <- SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Aggcens)
 #toc()
 
-
-
-
+#tic()
+#aggMSE <- MSE_SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data=surv, mod=mod, ADJsd=ADJ_sd,
+#                  Xcensus_agg = Xcensus_agg, B=25, popnsize = popnsize)
+#toc()
 
