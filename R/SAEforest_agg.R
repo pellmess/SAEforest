@@ -1,3 +1,21 @@
+#' Main function for means of MERF with aggregated data
+#'
+#' @param Y metric target variable
+#' @param X data.frame of covariates
+#' @param dName name of group-identifier
+#' @param survey_data survey data set
+#' @param Xcensus_agg aggregated census level covariates. Note that the
+#' first column should include the group identifier
+#' @param initialRandomEffects default set to 0
+#' @param ErrorTolerance default set to 1e-04
+#' @param MaxIterations default to 25
+#' @param m_try default set to 1
+#' @param survey_weigths default set to NULL
+#'
+#' @return returns object with Mean Predictions, model details and the modified dataset including weights
+#' @export
+#'
+#' @examples
 SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg,
                              initialRandomEffects = 0, ErrorTolerance = 0.0001,
                              MaxIterations = 25, m_try = 1, survey_weigths = NULL){

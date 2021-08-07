@@ -1,3 +1,21 @@
+#' Main function for ALL Indicators of MERF with unit-level data
+#'
+#' @param Y metric target variable
+#' @param X data.frame of covariates
+#' @param dName name of group-identifier
+#' @param survey_data survey data set
+#' @param census_data aggregated census level covariates
+#' @param initialRandomEffects default set to 0
+#' @param ErrorTolerance default set to 1e-04
+#' @param MaxIterations default set to 0
+#' @param m_try default set to 1
+#' @param survey_weigths default set to NULL
+#'
+#' @return returns object including area level indicators such as quantiles, hcr, gini etc.
+#' as well as model details
+#' @export
+#'
+#' @examples
 SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
                            MaxIterations = 25, m_try = 1, survey_weigths = NULL){
