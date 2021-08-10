@@ -1,7 +1,8 @@
 #' Main function for unit-level MERF
 #'
 #' This function uses forests from the ranger package combined with lmer from lme4.
-#' The function is the base-function for following extensions.
+#' The function is the base-function for following extensions. Offest is equivalent to
+#' previous verisons of subtraction. Advantage of offset is the use of the Likelihood as a whole!
 #'
 #'
 #' @param Y metric input value of target variable
@@ -29,7 +30,7 @@ MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolera
   oldLogLik <- 0
   while (ContinueCondition) {
     iterations <- iterations + 1
-    rf <- ranger::ranger(x = X, y = AdjustedTarget, mtry = m_try, case.weights = survey_weigths)
+    rf <- ranger::ranger(x = X, y = AdjustedTarget, mtry = m_try, case.weights = survey_weigths, seed= 1234)
     forest_preds  <- rf$predictions
     f0 <- as.formula(paste0("Target ~ -1+", random))
     lmefit <- lme4::lmer(f0, data = data, REML = FALSE, offset = forest_preds)
