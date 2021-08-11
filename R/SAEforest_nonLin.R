@@ -34,8 +34,8 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                            m_try = m_try,
                            survey_weigths = survey_weigths)
 
-  unit_preds <- predict(unit_model$Forest, census_data)$predictions
-  + predict(unit_model$EffectModel, allow.new.levels=TRUE)
+  unit_preds <- predict(unit_model$Forest, census_data)$predictions+
+    predict(unit_model$EffectModel,census_data, allow.new.levels=TRUE)
 
   unit_preds_ID <- data.frame(census_data[dName],"predictions" = unit_preds)
 
