@@ -16,13 +16,36 @@
 #' @export
 #'
 #' @examples
-SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg,
-                             initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                             MaxIterations = 25, m_try = 1, survey_weigths = NULL){
+SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects = 0,
+                          ErrorTolerance = 0.0001, MaxIterations = 25, m_try = 1,
+                          survey_weigths = NULL, too_tiny = 4, OOsample_obs = 10){
 
   random <- paste0(paste0("(1|",dName),")")
   groupNames <- as.vector(t(unique(survey_data[dName])))
+  groupNamesCens <- as.vector(t(unique(Xcensus_agg[dName])))
+  OOsamp <- groupNamesCens[!groupNamesCens %in% groupNames]
   n_smp <- as.numeric(table(survey_data[dName]))
+
+  # Similarity Out-of-Sample
+  similarXcens <- Xcensus_agg[,-1]
+  rownames(similarXcens) <- Xcensus_agg[,1]
+  simXcensMatrix <- as.matrix(dist(similarXcens))
+  diag(simXcensMatrix) <- NA
+
+  sim_groups <- apply(simXcensMatrix[-OOsamp, OOsamp], 2, FUN = which.min)
+
+  # sample and use OOsample data
+  smp_oos <- vector(mode="list", length = length(OOsamp))
+
+  for (i in seq(length(OOsamp))) {
+    samp_from <- survey_data[survey_data[dName]==sim_groups[i],]
+    return_oos <- dplyr::sample_n(samp_from, OOsample_obs,replace = TRUE)
+    return_oos[dName] <- OOsamp[i]
+    smp_oos[[i]] <- return_oos
+  }
+
+  # WORK FROM HERE
+  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   # Pseudo-Beobachtung einfügen, für Gewichtung (insbesondere kleine Areas notwendig)
   smp_add <- survey_data[1:length(n_smp),]
