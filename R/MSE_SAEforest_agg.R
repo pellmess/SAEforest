@@ -31,7 +31,8 @@ MSE_SAEforest_agg <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg
                                MaxIterations = 25, m_try = 1, survey_weigths = NULL, seed=1234){
 
   dom <- survey_data[dName]
-  selectdom <- t(unique(dom))
+  in_dom <- t(unique(survey_data[dName]))
+  total_dom <- t(unique(Xcensus_agg[dName]))
   p <- dim(X)[2]
 
   sigmae2est <- mod$MERFmodel$ErrorSD^2
@@ -66,32 +67,35 @@ MSE_SAEforest_agg <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg
 
   #________________________________________________________________
 
-  I <- length(t(unique(dom)))
+  I <- length(total_dom)
   n <- length(Y)
   popnsize <- as.matrix(popnsize)
 
-  udom <- t(unique(dom))
-  D <- length(t(udom))
+  D <- length(in_dom)
   nd <- rep(0, D)
   SampSizeselectdom <- rep(0, I)
   musd.B <- mud.B <- list()
 
   for (d in 1:D) {
-    rowsd <- (dom == udom[d])
+    rowsd <- (dom == in_dom[d])
     musd.B[[d]] <- predict(mod$MERFmodel$Forest,X[rowsd,])$predictions
     nd[d] <- sum(rowsd)
   }
 
   for (i in 1:I) {
     mud.B[[i]] <- mod$Mean_Predictions$Mean[i] - unlist(ranef(mod$MERFmodel$EffectModel))[i]
-    d <- selectdom[i]
-    posd <- which(udom == d)
+    if (is.na(mud.B[[i]])){
+      mud.B[[i]] <- mod$Mean_Predictions$Mean[i]
+    }
+    d <- total_dom[i]
+    posd <- which(in_dom == d)
     if (length(posd) > 0)
       SampSizeselectdom[i] <- nd[posd]
   }
 
   Ni <- popnsize[,2]
   rd <- Ni - SampSizeselectdom
+
   MSE.B <- BLOCK1MSE.B<-BLOCK2MSE.B <- truemean.B_w0 <- truemean.B <-BLOCK1truemean.B<- rep(0, I)
   MSE.B_oob <- BLOCK1MSE.B_oob <-BLOCK2MSE.B_oob <-BLOCK2truemean.B<- rep(0, I)
 
@@ -110,32 +114,21 @@ MSE_SAEforest_agg <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg
       esd.B <- sample(forest_res,
                       size = nd[d], replace=TRUE)
 
-      BLOCKesd.B <- sample(forest_res[survey_data$idD == sample(udom,replace = TRUE,size=1)],
-                           size = nd[d], replace=TRUE)
-
       ud.B[d] <- sample(ran_effs, size=1, replace = TRUE )
 
-      rowsd <- (dom == udom[d])
+      rowsd <- (dom == in_dom[d])
       ys.B[rowsd] <- musd.B[[d]] + ud.B[d] + esd.B
       esdmean.B[d] <- mean(esd.B)
-
-      BLOCKys.B[rowsd] <- musd.B[[d]] + ud.B[d] + BLOCKesd.B
-      BLOCKesdmean.B[d] <- mean(BLOCKesd.B)
     }
     for (i in 1:I) {
       erdmean.B <- sample((forest_res/ADJsd)*sqrt(ADJsd^2/rd[i]), size=1, replace = TRUE )
-      BLOCKerdmean.B <- sample((forest_res[survey_data$idD == sample(udom,replace = TRUE,size=1)]/ADJsd)*sqrt(ADJsd^2/rd[i]), size=1, replace = TRUE )
+      posd <- which(in_dom == total_dom[i])
 
-      posd <- which(udom == selectdom[i])
       if (length(posd) != 0) {
         edmean.B <- esdmean.B[posd] * nd[posd]/Ni[i] +
           erdmean.B * rd[i]/Ni[i]
 
-        BLOCK1edmean.B <- BLOCKesdmean.B[posd] * nd[posd]/Ni[i] +
-          erdmean.B * rd[i]/Ni[i]
-
         truemean.B[i] <- mud.B[[i]] + edmean.B + ud.B[posd]
-        BLOCK1truemean.B[i] <- mud.B[[i]] + BLOCK1edmean.B + ud.B[posd]
       }
       else truemean.B[i] <- mud.B[[i]] + sample(ran_effs, size=1, replace = TRUE ) +
         erdmean.B
@@ -147,6 +140,11 @@ MSE_SAEforest_agg <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg
                            Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
                            m_try = m_try, survey_weigths = survey_weigths)
+
+    if(round(sum(mod_2$ModifiedSet$weights)) != length(total_dom)){
+      print("Consider choosing a higher Level of OOsample_obs")
+    }
+
 
     mse_estims <- mod_2$Mean_Predictions$Mean
 
