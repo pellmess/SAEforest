@@ -18,7 +18,7 @@
 #' @examples
 SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects = 0,
                           ErrorTolerance = 0.0001, MaxIterations = 25, m_try = 1,
-                          survey_weigths = NULL, too_tiny = 5, OOsample_obs = 10){
+                          survey_weigths = NULL, too_tiny = 5, OOsample_obs = 20){
 
   random <- paste0(paste0("(1|",dName),")")
   groupNames <- as.vector(t(unique(survey_data[dName])))
@@ -132,6 +132,15 @@ SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
         mod_survey_data$weights <- ELMweight$prob
         mod_survey_data$exper_weights <- ELMweight$experWeight
         smp_weightsIncluded[[i]] <- mod_survey_data
+
+        sum_w <- round(sum(ELMweight$prob), digits = 7)
+
+        if (sum_w != 1){
+          print(paste("Calculation of weights failed for area:", i,". Consider increasing the size of OOsample_obs"))
+          mod_survey_data$weights <- 1/length(mod_survey_data$weights)
+          mod_survey_data$exper_weights <- NA
+          smp_weightsIncluded[[i]] <- mod_survey_data
+        }
       }
     }
 
