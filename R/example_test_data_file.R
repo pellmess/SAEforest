@@ -36,11 +36,11 @@
 
 
 #tic()
-#mod <- SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Aggcens)
+#mod <- SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, OOsample_obs = 5)
 #toc()
 
 #tic()
-#aggMSE <- MSE_SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data=surv, mod=mod, ADJsd=ADJ_sd,
+#aggMSE <- MSE_SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data=surv, mod=mod, ADJsd=1000,
 #                  Xcensus_agg = Xcensus_agg, B=25, popnsize = popnsize)
 #toc()
 
