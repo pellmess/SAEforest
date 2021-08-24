@@ -13,7 +13,9 @@ MERFranger(
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
   m_try = 1,
-  survey_weigths = NULL
+  survey_weigths = NULL,
+  seed = NULL,
+  keep.inbag = FALSE
 )
 }
 \arguments{
@@ -40,5 +42,6 @@ object of class SAEforest
 }
 \description{
 This function uses forests from the ranger package combined with lmer from lme4.
-The function is the base-function for following extensions.
+The function is the base-function for following extensions. Offest is equivalent to
+previous verisons of subtraction. Advantage of offset is the use of the Likelihood as a whole!
 }
