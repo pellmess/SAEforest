@@ -4,9 +4,10 @@
 
 # my PC:
 #load("C:/Users/Patrick/Documents/Studium/FU Berlin/Diss/Data/Simulation_Data_MERFPaper/AggForest_Data/s1_normal_250_aggForest.RData")
+#load("C:/Users/pkrennmair/Documents/MERF_aggSim_2408/s7_interaction_500_aggForestV2.RData")
 
-#cens <- Pop[[1]][,c(1,4,5,8)]
-#surv <- samp[[1]][,c(1,4,5,8)]
+#cens <- Pop[[17]][,c(1,4,5,8)]
+#surv <- samp[[17]][,c(1,4,5,8)]
 
 #Y <- surv$y
 #X <- surv[,c(2:3)]
@@ -36,11 +37,19 @@
 
 
 #tic()
-#mod <- SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, OOsample_obs = 5)
+#set.seed(1234)
+#mod <- SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, OOsample_obs = 20)
+#mod2 <- SAEforest_agg_SIMPLE(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg)
 #toc()
 
 #tic()
-#aggMSE <- MSE_SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data=surv, mod=mod, ADJsd=1000,
-#                  Xcensus_agg = Xcensus_agg, B=25, popnsize = popnsize)
+#aggMSE <- MSE_SAEforest_agg_SIMPLE(Y=Y, X=X, dName = "idD", survey_data=surv, mod=mod2, ADJsd=1500,
+#                Xcensus_agg = Xcensus_agg, B=25, popnsize = popnsize)
 #toc()
 
+#true <- aggregate(y~idD, data= surv, FUN=mean)
+
+#boxplot(sqrt(cbind((true$y-mod2$Mean_Predictions$Mean)^2, aggMSE$MSE,(true$y-mod$Mean_Predictions$Mean)^2)))
+#summary(sqrt(cbind((true$y-mod2$Mean_Predictions$Mean)^2, aggMSE$MSE, (true$y-mod$Mean_Predictions$Mean)^2)))
+
+#summary(sqrt(cbind(aggMSE$MSE,aggMSE2$MSE, (true$y-mod$Mean_Predictions$Mean)^2)))
