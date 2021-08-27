@@ -2,6 +2,7 @@
 
 export(MERFranger)
 export(MSE_SAEforest_agg)
+export(MSE_SAEforest_aggOOB)
 export(MSE_SAEforest_agg_SIMPLE)
 export(SAEforest_agg)
 export(SAEforest_agg_SIMPLE)

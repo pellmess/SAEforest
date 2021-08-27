@@ -18,7 +18,7 @@
 #' @examples
 SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects = 0,
                           ErrorTolerance = 0.0001, MaxIterations = 25, m_try = 1,
-                          survey_weigths = NULL, too_tiny = 5, OOsample_obs = 20){
+                          survey_weigths = NULL, too_tiny = 5, OOsample_obs = 5){
 
   random <- paste0(paste0("(1|",dName),")")
   groupNames <- as.vector(t(unique(survey_data[dName])))
