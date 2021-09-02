@@ -50,12 +50,13 @@ SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
 
   if (length(OOsamp) != 0){
     sim_groups <- apply(simXcensMatrix[-OOsamp, OOsamp], 2, FUN = which.min)
+    sim_groups <- groupNamesCens[-OOsamp][sim_groups]
 
     # sample and use OOsample data
     smp_oos <- vector(mode="list", length = length(OOsamp))
 
   for (i in seq(length(OOsamp))) {
-    samp_from <- survey_data[survey_data[dName]==sim_groups[i],]
+    samp_from <- survey_data[as.vector(survey_data[dName] == sim_groups[i]),]
     return_oos <- dplyr::sample_n(samp_from, OOsample_obs,replace = TRUE)
     return_oos[dName] <- OOsamp[i]
     smp_oos[[i]] <- return_oos
