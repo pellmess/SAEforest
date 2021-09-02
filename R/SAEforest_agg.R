@@ -18,7 +18,7 @@
 #' @examples
 SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects = 0,
                           ErrorTolerance = 0.0001, MaxIterations = 25, m_try = 1,
-                          survey_weigths = NULL, too_tiny = 5, OOsample_obs = 5){
+                          survey_weigths = NULL, too_tiny = 5, OOsample_obs = 25){
 
   random <- paste0(paste0("(1|",dName),")")
   groupNames <- as.vector(t(unique(survey_data[dName])))
@@ -95,6 +95,7 @@ SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
     smp_weightsIncluded <- vector(mode="list", length = length(groupNamesCens))
 
     for(i in groupNamesCens){
+      pos <- which(i == groupNamesCens)
       X_input_elm  <- as.matrix(joint_survey_data[colnames(X)])[joint_survey_data[dName]==i,]
       mu_input_elm <- as.matrix(Xcensus_agg[Xcensus_agg[dName] == i, -1])
 
@@ -106,7 +107,7 @@ SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
 
         w_survey_data$weights <- ELMweight$prob
         w_survey_data$exper_weights <- ELMweight$experWeight
-        smp_weightsIncluded[[i]] <- w_survey_data
+        smp_weightsIncluded[[pos]] <- w_survey_data
       }
 
       else{
@@ -115,8 +116,8 @@ SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
         simXcensMatrix <- as.matrix(dist(similarXcens))
         diag(simXcensMatrix) <- NA
 
-        sim_group <- which.min(simXcensMatrix[, i])
-        samp_add <- joint_survey_data[joint_survey_data[dName]==sim_group,]
+        sim_group <- which.min(simXcensMatrix[, pos])
+        samp_add <- joint_survey_data[joint_survey_data[dName]==groupNamesCens[sim_group],]
         return_add <- dplyr::sample_n(samp_add, OOsample_obs,replace = TRUE)
         return_add[dName] <- i
 
@@ -131,7 +132,7 @@ SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
 
         mod_survey_data$weights <- ELMweight$prob
         mod_survey_data$exper_weights <- ELMweight$experWeight
-        smp_weightsIncluded[[i]] <- mod_survey_data
+        smp_weightsIncluded[[pos]] <- mod_survey_data
 
         sum_w <- round(sum(ELMweight$prob), digits = 7)
 
@@ -139,7 +140,7 @@ SAEforest_agg <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
           print(paste("Calculation of weights failed for area:", i,". Consider increasing the size of OOsample_obs"))
           mod_survey_data$weights <- 1/length(mod_survey_data$weights)
           mod_survey_data$exper_weights <- NA
-          smp_weightsIncluded[[i]] <- mod_survey_data
+          smp_weightsIncluded[[pos]] <- mod_survey_data
         }
       }
     }
