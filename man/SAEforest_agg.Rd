@@ -16,6 +16,7 @@ SAEforest_agg(
   m_try = 1,
   survey_weigths = NULL,
   too_tiny = 5,
+  OOsample_obs = 25
 )
 }
 \arguments{
