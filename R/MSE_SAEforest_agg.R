@@ -45,7 +45,8 @@ MSE_SAEforest_agg <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg
   survey_data$forest_res <- forest_res1
 
   # Random Effects
-  ran_effs1 <- aggregate(data=survey_data, forest_res ~ idD, FUN=mean)
+  formRF <- formula(paste("forest_res ~", paste0(dName)))
+  ran_effs1 <- aggregate(data=survey_data, formRF, FUN=mean)
   colnames(ran_effs1) <- c("idD","r_bar")
 
   survey_data <- merge(survey_data,ran_effs1,by="idD")
