@@ -26,7 +26,7 @@
 #'
 #' @examples
 
-MSE_SAEforest_aggOOB <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg, B=100,
+MSE_SAEforest_aggOOB_SIMPLE <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg, B=100,
                                popnsize, initialRandomEffects = 0, ErrorTolerance = 0.0001,
                                MaxIterations = 25, m_try = 1, survey_weigths = NULL, seed=1234){
 

@@ -15,7 +15,8 @@ MERFranger(
   m_try = 1,
   survey_weigths = NULL,
   seed = NULL,
-  keep.inbag = FALSE
+  keep.inbag = FALSE,
+  imp = "none"
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ MERFranger(
 \item{m_try}{change the number of trees for split decision. default to 1}
 
 \item{survey_weigths}{specify survey weights. default to NULL}
+
+\item{imp}{variable importance passed to ranger}
 }
 \value{
 object of class SAEforest

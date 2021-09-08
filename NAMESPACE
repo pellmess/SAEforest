@@ -3,6 +3,7 @@
 export(MERFranger)
 export(MSE_SAEforest_agg)
 export(MSE_SAEforest_aggOOB)
+export(MSE_SAEforest_aggOOB_SIMPLE)
 export(MSE_SAEforest_aggOOB_wSet)
 export(MSE_SAEforest_agg_SIMPLE)
 export(SAEforest_agg)
