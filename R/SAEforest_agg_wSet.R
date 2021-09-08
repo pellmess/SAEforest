@@ -87,29 +87,22 @@ SAEforest_agg_wSet <- function(Y, X, dName, survey_data, Xcensus_agg, initialRan
     X_input_elm  <- as.matrix(joint_survey_data[wSet])[joint_survey_data[dName]==i,]
     mu_input_elm <- as.matrix(Xcensus_agg[wSet])[Xcensus_agg[dName] == i, ]
 
-    mu_input_elm <- t(matrix(mu_input_elm, nrow = dim(X_input_elm)[2], ncol= dim(X_input_elm)[1]))
+    X_input_elm <- X_input_elm[, colSums(X_input_elm != 0) > 0]
+    mu_input_elm <- mu_input_elm[colnames(X_input_elm)]
 
-    zz <- X_input_elm - mu_input_elm
-
-    rank_obj <- zz-t(matrix(colMeans(zz), nrow = dim(X_input_elm)[2], ncol= dim(X_input_elm)[1]))
-    zz <- zz[, colSums(rank_obj != 0) > 0]
-
-    p <- CVXR::Variable(dim(X_input_elm)[1])
-    obj <- CVXR::Maximize(sum(log(p)))
-    constr <- list(t(zz) %*% p == 0, sum(p) == 1, p >=0)
-    prob <- CVXR::Problem(obj, constr)
-    result <- CVXR::solve(prob)
-    ELMweight <- result$getValue(p)
+    ELMweight <- elm_wrapper(X_input_elm, mu_input_elm)
+    sum_w <- round(sum(ELMweight$prob), digits = 7)
 
     w_survey_data <- joint_survey_data[joint_survey_data[dName] == i,]
 
-    if (!is.na(ELMweight[1])){
-      w_survey_data$weights <- ELMweight
+    if (sum_w==1){
+      w_survey_data$weights <- ELMweight$prob
       smp_weightsIncluded[[pos]] <- w_survey_data
-      smp_weightsNames[[pos]] <- colnames(zz)
+      smp_weightsNames[[pos]] <- colnames(X_input_elm)
     }
 
     else{
+      if(OOsample_obs != 0){
       similarXcens <- Xcensus_agg[,-1]
       rownames(similarXcens) <- Xcensus_agg[,1]
       simXcensMatrix <- as.matrix(dist(similarXcens))
@@ -122,47 +115,45 @@ SAEforest_agg_wSet <- function(Y, X, dName, survey_data, Xcensus_agg, initialRan
 
       mod_survey_data <- rbind(joint_survey_data[joint_survey_data[dName] == i,],
                                return_add)
+
+      rownames(mod_survey_data)<- NULL
+      }
+
+      mod_survey_data <- joint_survey_data[joint_survey_data[dName] == i,]
       rownames(mod_survey_data)<- NULL
 
       # RECALCULATE
       X_input_elm  <- as.matrix(mod_survey_data[wSet])
       mu_input_elm <- as.matrix(Xcensus_agg[wSet])[Xcensus_agg[dName] == i, ]
 
-      mu_input_elm <- t(matrix(mu_input_elm, nrow = dim(X_input_elm)[2], ncol= dim(X_input_elm)[1]))
+      X_input_elm <- X_input_elm[, colSums(X_input_elm != 0) > 0]
+      mu_input_elm <- mu_input_elm[colnames(X_input_elm)]
 
-      zz <- X_input_elm - mu_input_elm
-      rank_obj <- zz-t(matrix(colMeans(zz), nrow = dim(X_input_elm)[2], ncol= dim(X_input_elm)[1]))
-      zz <- zz[, colSums(rank_obj != 0) > 0]
+      ELMweight <- elm_wrapper(X_input_elm, mu_input_elm)
+      sum_w <- round(sum(ELMweight$prob), digits = 7)
 
-      p <- CVXR::Variable(dim(X_input_elm)[1])
-      obj <- CVXR::Maximize(sum(log(p)))
-      constr <- list(t(zz) %*% p == 0, sum(p) == 1, p >=0)
-      prob <- CVXR::Problem(obj, constr)
-      result <- CVXR::solve(prob)
-      ELMweight <- result$getValue(p)
-
-      if (!is.na(ELMweight[1])){
-      mod_survey_data$weights <- ELMweight
+      if (sum_w==1){
+      mod_survey_data$weights <- ELMweight$prob
       smp_weightsIncluded[[pos]] <- mod_survey_data
-      smp_weightsNames[[pos]] <- colnames(zz)
+      smp_weightsNames[[pos]] <- colnames(X_input_elm)
       }
 
       else{
-        while(is.na(ELMweight[1]) & (dim(zz)[2] > w_min)){
-          zz <- zz[,-dim(zz)[2]]
-          p <- CVXR::Variable(dim(X_input_elm)[1])
-          obj <- CVXR::Maximize(sum(log(p)))
-          constr <- list(t(zz) %*% p == 0, sum(p) == 1, p >=0)
-          prob <- CVXR::Problem(obj, constr)
-          result <- CVXR::solve(prob)
-          ELMweight <- result$getValue(p)
+        sum_w <- 0
+
+        while((sum_w!=1) & (dim(X_input_elm)[2] > w_min)){
+          X_input_elm <- X_input_elm[,-dim(X_input_elm)[2]]
+          mu_input_elm <- mu_input_elm[-dim(X_input_elm)[2]]
+
+          ELMweight <- elm_wrapper(X_input_elm, mu_input_elm)
+          sum_w <- round(sum(ELMweight$prob), digits = 7)
         }
       }
 
-      if (!is.na(ELMweight[1])){
-        mod_survey_data$weights <- ELMweight
+      if (sum_w == 1){
+        mod_survey_data$weights <- ELMweight$prob
         smp_weightsIncluded[[pos]] <- mod_survey_data
-        smp_weightsNames[[pos]] <- colnames(zz)
+        smp_weightsNames[[pos]] <- colnames(X_input_elm)
       }
 
       else{

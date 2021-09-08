@@ -26,7 +26,7 @@
 #'
 #' @examples
 
-MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg, B=100,
+MSE_SAEforest_aggOOB <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg, B=100,
                                popnsize, initialRandomEffects = 0, ErrorTolerance = 0.0001,
                                MaxIterations = 25, m_try = 1, survey_weigths = NULL, seed=1234){
 
@@ -47,9 +47,9 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
   # Random Effects
   formRF <- formula(paste("forest_res ~", paste0(dName)))
   ran_effs1 <- aggregate(data=survey_data, formRF, FUN=mean)
-  colnames(ran_effs1) <- c(dName,"r_bar")
+  colnames(ran_effs1) <- c("idD","r_bar")
 
-  survey_data <- merge(survey_data,ran_effs1,by = dName)
+  survey_data <- merge(survey_data,ran_effs1,by="idD")
   survey_data$forest_eij <- survey_data$forest_res-survey_data$r_bar
 
   # prepare for sampling
@@ -137,11 +137,10 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
 
     mse_dat <- data.frame(survey_data[dName], X , y=ys.B)
 
-    mod_2 <- SAEforest_agg_wSet(Y = mse_dat$y, X=X, dName = dName, survey_data = mse_dat,
-                           Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
-                           ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
-                           m_try = m_try, survey_weigths = survey_weigths,
-                           OOsample_obs = mod$OOsample_obs, wSet = mod$wSet, w_min = mod$w_min)
+    mod_2 <- SAEforest_agg_SIMPLE(Y = mse_dat$y, X=X, dName = dName, survey_data = mse_dat,
+                                  Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
+                                  ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
+                                  m_try = m_try, survey_weigths = survey_weigths)
 
     if(round(sum(mod_2$ModifiedSet$weights)) != length(total_dom)){
       print("Consider choosing a higher Level of OOsample_obs")

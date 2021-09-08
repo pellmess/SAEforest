@@ -14,13 +14,15 @@
 #' @param MaxIterations default to 25
 #' @param m_try change the number of trees for split decision. default to 1
 #' @param survey_weigths specify survey weights. default to NULL
+#' @param imp variable importance passed to ranger
 #'
 #' @return object of class SAEforest
 #' @export
 #'
 #' @examples
 MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                        MaxIterations = 25, m_try = 1, survey_weigths = NULL, seed=NULL, keep.inbag = FALSE) {
+                        MaxIterations = 25, m_try = 1, survey_weigths = NULL, seed=NULL, keep.inbag = FALSE,
+                       imp ="none") {
 
   Target <- Y
   ContinueCondition <- TRUE
@@ -30,7 +32,8 @@ MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolera
   oldLogLik <- 0
   while (ContinueCondition) {
     iterations <- iterations + 1
-    rf <- ranger::ranger(x = X, y = AdjustedTarget, mtry = m_try, case.weights = survey_weigths, seed= seed, keep.inbag=keep.inbag)
+    rf <- ranger::ranger(x = X, y = AdjustedTarget, mtry = m_try, case.weights = survey_weigths,
+                         seed= seed, keep.inbag=keep.inbag, importance = imp)
     forest_preds  <- rf$predictions
     f0 <- as.formula(paste0("Target ~ -1+", random))
     lmefit <- lme4::lmer(f0, data = data, REML = FALSE, offset = forest_preds)
