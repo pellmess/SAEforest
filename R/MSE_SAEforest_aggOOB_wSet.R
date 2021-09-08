@@ -141,7 +141,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
                            Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
                            m_try = m_try, survey_weigths = survey_weigths,
-                           OOsample_obs = mod$OOsample_obs, wSet = mod$wSet)
+                           OOsample_obs = mod$OOsample_obs, wSet = mod$wSet, w_min = mod$w_min)
 
     if(round(sum(mod_2$ModifiedSet$weights)) != length(total_dom)){
       print("Consider choosing a higher Level of OOsample_obs")

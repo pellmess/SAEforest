@@ -11,14 +11,16 @@
 #' @param MaxIterations default to 25
 #' @param m_try default set to 1
 #' @param survey_weigths default set to NULL
-#'
+#' @param wSet insert columnNames depending on importance from RF
+#' @param w_min minimal amount of influence variables to still attempt to calculate a weight
+
 #' @return returns object with Mean Predictions, model details and the modified dataset including weights
 #' @export
 #'
 #' @examples
 SAEforest_agg_wSet <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects = 0,
                           ErrorTolerance = 0.0001, MaxIterations = 25, m_try = 1,
-                          survey_weigths = NULL, too_tiny = 5, OOsample_obs = 25, wSet){
+                          survey_weigths = NULL, OOsample_obs = 25, wSet, w_min=3){
 
   random <- paste0(paste0("(1|",dName),")")
   groupNames <- as.vector(t(unique(survey_data[dName])))
@@ -64,24 +66,6 @@ SAEforest_agg_wSet <- function(Y, X, dName, survey_data, Xcensus_agg, initialRan
 
     OOs_survey_data <- do.call(rbind.data.frame, smp_oos)
 
-    # WORK FROM HERE
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    # Pseudo-Beobachtung einfügen, für Gewichtung (insbesondere kleine Areas notwendig)
-    #  smp_add <- survey_data[1:length(n_smp),]
-    #  X_add <- matrix(ncol = dim(X)[2], nrow = dim(Xcensus_agg)[1])
-
-    #  for (i in groupNames) {
-    #    X_input_elm  <- as.matrix(X[survey_data[dName]==i,])
-    #    mu_input_elm <- as.matrix(Xcensus_agg[Xcensus_agg[dName] == i, -1])
-
-    #    n = nrow(X_input_elm)
-
-    #    add   = -(apply(X_input_elm, 2, mean) - mu_input_elm)/(2*n) + mu_input_elm
-    #    smp_add[i,] <- c(i, add, NA)
-    #    X_add[i,] <- add
-    #  }
-
     # Out-of-sample observations
     unit_preds_add <- predict(unit_model$Forest,OOs_survey_data)$predictions+
       predict(unit_model$EffectModel,OOs_survey_data, allow.new.levels=TRUE)
@@ -92,8 +76,10 @@ SAEforest_agg_wSet <- function(Y, X, dName, survey_data, Xcensus_agg, initialRan
   }
 
   # find weights and adjust for failure
+  # USED CVXR as solver due to the observation that results are equivalent to the Lagrange Multiplier!
 
   smp_weightsIncluded <- vector(mode="list", length = length(groupNamesCens))
+  smp_weightsNames <- vector(mode="list", length = length(groupNamesCens))
 
   for(i in groupNamesCens){
     pos <- which(i == groupNamesCens)
@@ -101,16 +87,26 @@ SAEforest_agg_wSet <- function(Y, X, dName, survey_data, Xcensus_agg, initialRan
     X_input_elm  <- as.matrix(joint_survey_data[wSet])[joint_survey_data[dName]==i,]
     mu_input_elm <- as.matrix(Xcensus_agg[wSet])[Xcensus_agg[dName] == i, ]
 
+    mu_input_elm <- t(matrix(mu_input_elm, nrow = dim(X_input_elm)[2], ncol= dim(X_input_elm)[1]))
 
-    ELMweight <- elm_wrapper(X_input_elm, mu_input_elm)
-    sum_w <- round(sum(ELMweight$prob), digits = 7)
+    zz <- X_input_elm - mu_input_elm
 
-    if (sum_w == 1){
-      w_survey_data <- joint_survey_data[joint_survey_data[dName] == i,]
+    rank_obj <- zz-t(matrix(colMeans(zz), nrow = dim(X_input_elm)[2], ncol= dim(X_input_elm)[1]))
+    zz <- zz[, colSums(rank_obj != 0) > 0]
 
-      w_survey_data$weights <- ELMweight$prob
-      w_survey_data$exper_weights <- ELMweight$experWeight
+    p <- CVXR::Variable(dim(X_input_elm)[1])
+    obj <- CVXR::Maximize(sum(log(p)))
+    constr <- list(t(zz) %*% p == 0, sum(p) == 1, p >=0)
+    prob <- CVXR::Problem(obj, constr)
+    result <- CVXR::solve(prob)
+    ELMweight <- result$getValue(p)
+
+    w_survey_data <- joint_survey_data[joint_survey_data[dName] == i,]
+
+    if (!is.na(ELMweight[1])){
+      w_survey_data$weights <- ELMweight
       smp_weightsIncluded[[pos]] <- w_survey_data
+      smp_weightsNames[[pos]] <- colnames(zz)
     }
 
     else{
@@ -128,22 +124,52 @@ SAEforest_agg_wSet <- function(Y, X, dName, survey_data, Xcensus_agg, initialRan
                                return_add)
       rownames(mod_survey_data)<- NULL
 
+      # RECALCULATE
       X_input_elm  <- as.matrix(mod_survey_data[wSet])
       mu_input_elm <- as.matrix(Xcensus_agg[wSet])[Xcensus_agg[dName] == i, ]
 
-      ELMweight <- elm_wrapper(X_input_elm, mu_input_elm)
+      mu_input_elm <- t(matrix(mu_input_elm, nrow = dim(X_input_elm)[2], ncol= dim(X_input_elm)[1]))
 
-      mod_survey_data$weights <- ELMweight$prob
-      mod_survey_data$exper_weights <- ELMweight$experWeight
+      zz <- X_input_elm - mu_input_elm
+      rank_obj <- zz-t(matrix(colMeans(zz), nrow = dim(X_input_elm)[2], ncol= dim(X_input_elm)[1]))
+      zz <- zz[, colSums(rank_obj != 0) > 0]
+
+      p <- CVXR::Variable(dim(X_input_elm)[1])
+      obj <- CVXR::Maximize(sum(log(p)))
+      constr <- list(t(zz) %*% p == 0, sum(p) == 1, p >=0)
+      prob <- CVXR::Problem(obj, constr)
+      result <- CVXR::solve(prob)
+      ELMweight <- result$getValue(p)
+
+      if (!is.na(ELMweight[1])){
+      mod_survey_data$weights <- ELMweight
       smp_weightsIncluded[[pos]] <- mod_survey_data
+      smp_weightsNames[[pos]] <- colnames(zz)
+      }
 
-      sum_w <- round(sum(ELMweight$prob), digits = 7)
+      else{
+        while(is.na(ELMweight[1]) & (dim(zz)[2] > w_min)){
+          zz <- zz[,-dim(zz)[2]]
+          p <- CVXR::Variable(dim(X_input_elm)[1])
+          obj <- CVXR::Maximize(sum(log(p)))
+          constr <- list(t(zz) %*% p == 0, sum(p) == 1, p >=0)
+          prob <- CVXR::Problem(obj, constr)
+          result <- CVXR::solve(prob)
+          ELMweight <- result$getValue(p)
+        }
+      }
 
-      if (sum_w != 1){
-        print(paste("Calculation of weights failed for area:", i,". Consider increasing the size of OOsample_obs"))
-        mod_survey_data$weights <- 1/length(mod_survey_data$weights)
-        mod_survey_data$exper_weights <- NA
+      if (!is.na(ELMweight[1])){
+        mod_survey_data$weights <- ELMweight
         smp_weightsIncluded[[pos]] <- mod_survey_data
+        smp_weightsNames[[pos]] <- colnames(zz)
+      }
+
+      else{
+        print(paste("Calculation of weights failed for area:", i))
+        w_survey_data$weights <- 1/dim(w_survey_data)[1]
+        smp_weightsIncluded[[pos]] <- w_survey_data
+        smp_weightsNames[[pos]] <- NA
       }
     }
   }
@@ -161,7 +187,8 @@ SAEforest_agg_wSet <- function(Y, X, dName, survey_data, Xcensus_agg, initialRan
   # Prepare return object
 
   return(list(Mean_Predictions = Mean_preds,
-              MERFmodel = unit_model, ModifiedSet = final_survey_data, OOsample_obs = OOsample_obs, wSet=wSet))
+              MERFmodel = unit_model, ModifiedSet = final_survey_data, OOsample_obs = OOsample_obs,
+              wSet=wSet, w_min=w_min, wAreaInfo=smp_weightsNames))
 
 }
 
