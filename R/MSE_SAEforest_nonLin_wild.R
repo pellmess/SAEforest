@@ -1,0 +1,168 @@
+MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens_data, B=100,
+                                     initialRandomEffects = 0, ErrorTolerance = 0.0001, MaxIterations = 25,
+                                     m_try = 1, survey_weigths = NULL, seed=1234){
+
+  getTrueVal <- function(pop, target, domain){
+    threshold <- 0.6*median(pop[[target]], na.rm=TRUE)
+
+    hcr_function <- function(y,threshold){
+      mean(y < threshold, na.rm=TRUE)
+    }
+    qsr_function <- function(y){
+      sum(y[(y > quantile(y,0.8, na.rm=TRUE))]) / sum(y[(y < quantile(y,0.2, na.rm=TRUE))])
+    }
+    qsr2_function <- function(y){
+      sum(y[(y > quantile(y,0.6, na.rm=TRUE))]) / sum(y[(y < quantile(y,0.4, na.rm=TRUE))])
+    }
+    pgap_function <- function(y,threshold) {
+      mean((y < threshold)*(threshold - y) / threshold, na.rm=TRUE)
+    }
+
+    est_hcr <- tapply(pop[[target]],pop[[domain]],hcr_function,threshold = threshold)
+    est_pgap <- tapply(pop[[target]],pop[[domain]],pgap_function,threshold = threshold)
+    est_median <- tapply(pop[[target]],pop[[domain]],median)
+    est_mean <- tapply(pop[[target]],pop[[domain]],mean)
+    est_gini <- tapply(pop[[target]],pop[[domain]],ineq)
+    est_qsr <- tapply(pop[[target]],pop[[domain]],qsr_function)
+    est_qsr2 <- tapply(pop[[target]],pop[[domain]],qsr2_function)
+    est_quant01 <- tapply(pop[[target]],pop[[domain]],quantile,probs = 0.1, na.rm=TRUE)
+    est_quant025 <- tapply(pop[[target]],pop[[domain]],quantile,probs = 0.25, na.rm=TRUE)
+    est_quant075 <- tapply(pop[[target]],pop[[domain]],quantile,probs = 0.75, na.rm=TRUE)
+    est_quant09 <- tapply(pop[[target]],pop[[domain]],quantile,probs = 0.9, na.rm=TRUE)
+
+    return( data.frame(
+      quant10 = est_quant01,
+      quant25 = est_quant025,
+      quant75 = est_quant075,
+      quant90 =  est_quant09,
+      gini = est_gini,
+      mean = est_mean,
+      hcr = est_hcr,
+      qsr = est_qsr,
+      qsr64 = est_qsr2,
+      pgap = est_pgap,
+      median = est_median
+    )
+    )
+  }
+
+  forest_m1 <- mod$MERFmodel
+  rand_struc = paste0(paste0("(1|",dName),")")
+  boots_pop <- vector(mode="list",length = B)
+  boots_pop <- sapply(boots_pop,function(x){cens_data},simplify =FALSE)
+
+  # DEFINE AND USE SAMPLE SELECT WRAPPER FUNCTION
+  sample_select <- function(pop, smp, times=100, set_seed = 1234){
+    # pop.............. the population or census data
+    # smp.............. the survey data
+    # n................ the number of samples drawn
+    # set_seed......... set seed for reproduceability
+
+    smpSizes <- table(smp[dName])
+    smpSizes <- data.frame(smpidD = as.numeric(names(smpSizes)), n_smp = as.numeric(smpSizes),
+                           stringsAsFactors = FALSE)
+
+    smpSizes <- left_join(data.frame(idD = unique(pop[dName])),
+                          smpSizes, by = c("idD" = "smpidD"))
+
+    smpSizes$n_smp[is.na(smpSizes$n_smp)] <- 0
+
+    splitPop <- split(pop, pop$idD)
+
+    stratSamp <- function(dfList, ns) {
+      do.call(rbind, mapply(dfList, ns, FUN = function(df, n) {
+        popInd <- seq_len(nrow(df))
+        sel <- base::sample(popInd, n, replace = FALSE)
+        df[sel, ]
+      }, SIMPLIFY = F))
+    }
+
+    set.seed(set_seed)
+    samples <- replicate(times, stratSamp(splitPop, smpSizes$n_smp), simplify = FALSE)
+
+    rm(splitPop)
+    return(samples)
+  }
+
+  # DATA PREP ________________________________________________
+  fitted_s <- predict(forest_m1$Forest, survey_data)$predictions + predict(forest_m1$EffectModel, survey_data)
+
+  boots_pop <- vector(mode="list",length = B)
+  boots_pop <- sapply(boots_pop,function(x){cens_data},simplify =FALSE)
+
+  # OOB marginal residuals
+  forest_res <- Y - forest_m1$Forest$predictions-predict(forest_m1$EffectModel, surv_data)
+  forest_res <- forest_res-mean(forest_res)
+
+  ran_effs <- unique(predict(mod$EffectModel, surv_data))
+  ran_effs <- (ran_effs/sd(ran_effs))* forest_m1$RanEffSD
+  ran_effs <- ran_effs-mean(ran_effs)
+
+  my_pred_f <- function(x){predict(forest_m1$Forest, x)$predictions}
+
+  pred_t <-sapply(boots_pop,my_pred_f,simplify = FALSE)
+
+  boots_pop<-Map(cbind,boots_pop, "predz"=pred_t)
+
+  # DATA PREP ________________________________________________
+
+
+  u_i <- replicate(length(boots_pop),data.frame(u_i_star=sample(ran_effs, size = length(t(unique(cens_data[dName]))),
+                                                                replace=TRUE), unique(cens_data[dName])), simplify = FALSE)
+
+  boots_pop <- map2(boots_pop, u_i, left_join, by = dName ,simplify=FALSE)
+
+  boots_pop <- boots_pop %>%  map(~mutate(., y_hat_MSE = predz+u_i_star))
+  boots_pop <- boots_pop %>%  map(~dplyr::select(., -one_of(c("u_i_star","predz"))))
+
+  wild_errors <- function(z){
+    indexer <- vapply(z$y_hat_MSE, function(x) {which.min(abs(x - fitted_s))},
+                      FUN.VALUE = integer(1))
+
+    # superpopulation individual errors
+    eps <- forest_res[indexer]
+    wu <- sample(c(-1,1),size = length(eps), replace = TRUE)
+    eps <- abs(eps) * wu
+
+    return(eps)}
+
+  e_ij <- sapply(boots_pop,wild_errors,simplify = FALSE)
+
+  boots_pop<-Map(cbind,boots_pop, "e_ij"=e_ij)
+
+  boots_pop <- boots_pop %>%  map(~mutate(., y_star_MSE = y_hat_MSE+e_ij))
+  boots_pop <- boots_pop %>%  map(~dplyr::select(., -one_of(c("y_hat_MSE","e_ij"))))
+
+
+  my_agg <- function(x){getTrueVal(x, target = "y_hat_MSE", domain = "idD")[,c("mean","quant10","quant25","median","quant75",
+                                                                                   "quant90","gini","hcr","pgap","qsr")]}
+  tau_star <- sapply(boots_pop,my_agg,simplify = FALSE)
+
+  # THINK ABOUT SEED
+  sample_b <- function(x){sample_select(x,smp=survey_data,times=1)}
+  boots_sample <- sapply(boots_pop, sample_b)
+
+
+  # USE BOOTSTRAP SAMPLE TO ESITMATE
+
+  my_estim_f <- function(x){SAEforest_nonLin(Y=x$y_hat_MSE, X = x[,colnames(X)], dName = dName, survey_data =x, census_data = cens_data,
+                                             m_try = mod$Forest$mtry)$Indicator_predictions[,-1]}
+
+  tau_b <- sapply(boots_sample, my_estim_f,simplify = FALSE)
+
+  mean_square <- function(x,y){(x-y)^2}
+
+  Mean_square_B <- mapply(mean_square, tau_b,tau_star, SIMPLIFY = FALSE)
+
+  MSE_estimates <- Reduce('+',Mean_square_B)/length(Mean_square_B)
+  MSE_estimates <- data.frame(unique(cens_data[dName]), MSE=MSE_estimates)
+  rownames(MSE_estimates) <- NULL
+
+  #___________________________
+  out_list <- vector(length = 1, mode = "list")
+
+  out_list[[1]] <- MSE_estimates
+
+  return(out_list)
+
+}

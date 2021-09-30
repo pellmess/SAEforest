@@ -1,6 +1,6 @@
-MSE_SAEforest_mean_REB <- function(Y, X, dName, survey_data, mod, ADJsd, cens_data, B=100, popnsize,
-                                   initialRandomEffects = 0, ErrorTolerance = 0.0001, MaxIterations = 25,
-                                   m_try = 1, survey_weigths = NULL, seed=1234){
+MSE_SAEforest_mean_REB <- function(Y, X, dName, survey_data, mod, ADJsd, cens_data, B=100,
+                                   initialRandomEffects = 0, ErrorTolerance = 0.0001,
+                                   MaxIterations = 25, m_try = 1, survey_weigths = NULL, seed=1234){
 
 
   forest_m1 <- mod$MERFmodel
