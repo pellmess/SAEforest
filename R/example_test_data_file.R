@@ -35,7 +35,9 @@
 #mod <- SAEforest_mean(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens)
 #toc()
 
-#test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=100, B=5)
+#test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)
+#test2 <-MSE_SAEforest_mean_REB(Y=Y, X=X, dName = "idD", survey_data =surv, cens_data=cens, B=10,
+#                               ADJsd = 1000, mod=mod)
 
 #tic()
 #set.seed(1234)

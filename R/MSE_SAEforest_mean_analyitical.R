@@ -1,5 +1,7 @@
 MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25){
 
+  # JUST FOR IN-sample observations
+
   mod <- mod$MERFmodel
   in_dom <- survey_data[dName]
 
