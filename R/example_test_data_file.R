@@ -32,9 +32,10 @@
 
 # APPLICATION OF FUNCTION
 #tic()
-#mod <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens)
+#mod <- SAEforest_mean(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens)
 #toc()
 
+#test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=100, B=5)
 
 #tic()
 #set.seed(1234)
