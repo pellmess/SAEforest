@@ -29,10 +29,20 @@
 #Xcensus_agg <- cbind(unique(surv[dName]), x_bar1, x_bar2)
 #popnsize <- data.frame(idD= 1:50, PopnSegments=1000)
 
+#unit_model <- MERFranger(Y = Y,
+#                         X = X,
+#                         random = random,
+#                         data = survey_data,
+#                         initialRandomEffects = initialRandomEffects,
+#                         ErrorTolerance = ErrorTolerance,
+#                         MaxIterations = MaxIterations,
+#                         m_try = m_try,
+#                         survey_weigths = survey_weigths, min.node.size=15)
+
 
 # APPLICATION OF FUNCTION
 #tic()
-#mod <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens)
+ mod <- SAEforest_mean(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens,mtry=1, mse ="nonparametric", B=20)
 #toc()
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)

@@ -17,7 +17,7 @@
 #' @examples
 SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, m_try = 1, survey_weigths = NULL){
+                           MaxIterations = 25, mse = "none", B=100, ...){
 
   random = paste0(paste0("(1|",dName),")")
 
@@ -27,9 +27,7 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                           data = survey_data,
                           initialRandomEffects = initialRandomEffects,
                           ErrorTolerance = ErrorTolerance,
-                          MaxIterations = MaxIterations,
-                          m_try = m_try,
-                          survey_weigths = survey_weigths)
+                          MaxIterations = MaxIterations,...)
 
   unit_preds <- predict(unit_model$Forest, census_data)$predictions+
                 predict(unit_model$EffectModel,census_data, allow.new.levels=TRUE)
@@ -42,15 +40,43 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                           FUN=mean)
   colnames(mean_preds) <- c(dName,"Mean")
 
-
+if(mse == "none"){
   result <- list(
     Mean_predictions = mean_preds,
     MERFmodel = unit_model)
 
   return(result)
-
 }
 
+if(mse != "none"){
+  adj_SD <- adjust_ErrorSD(Y=Y, X=X, surv_data = survey_data, mod = unit_model, B=100, ...)
+}
+
+if(mse == "analytic"){
+  mse_estims <- MSE_MERFanalytical(mod=unit_model, survey_data = survey_data, X = X,
+                                   dName = dName, err_sd = adj_SD , B=B,
+                                   initialRandomEffects = initialRandomEffects,
+                                   ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
+
+  result <- list(
+    MERFmodel = unit_model,
+    Mean_predictions = mean_preds,
+    MSE_estimates = mse_estims)
+  return(result)
+}
+
+if(mse == "nonparametric"){
+    mse_estims <- MSE_SAEforest_mean_REB(Y=Y, X = X, dName = dName, survey_data = survey_data,
+                                         mod=unit_model, ADJsd = adj_SD, cens_data = census_data, B = B,
+                                         initialRandomEffects = initialRandomEffects,
+                                         ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
+
+    result <- list(
+      MERFmodel = unit_model,
+      Mean_predictions = mean_preds,
+      MSE_estimates = mse_estims)
+    return(result)
+  }
 
 
-
+}

@@ -21,8 +21,7 @@
 #'
 #' @examples
 MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                        MaxIterations = 25, m_try = 1, survey_weigths = NULL, seed=NULL, keep.inbag = FALSE,
-                       imp ="none") {
+                        MaxIterations = 25,...) {
 
   Target <- Y
   ContinueCondition <- TRUE
@@ -32,8 +31,7 @@ MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolera
   oldLogLik <- 0
   while (ContinueCondition) {
     iterations <- iterations + 1
-    rf <- ranger::ranger(x = X, y = AdjustedTarget, mtry = m_try, case.weights = survey_weigths,
-                         seed= seed, keep.inbag=keep.inbag, importance = imp)
+    rf <- ranger::ranger(x = X, y = AdjustedTarget,...)
     forest_preds  <- rf$predictions
     f0 <- as.formula(paste0("Target ~ -1+", random))
     lmefit <- lme4::lmer(f0, data = data, REML = FALSE, offset = forest_preds)
@@ -57,12 +55,13 @@ MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolera
                  RanEffSD = as.data.frame(lme4::VarCorr(lmefit))$sdcor[1],
                  ErrorSD = stats::sigma(lmefit),
                  VarianceCovariance =lme4::VarCorr(lmefit),
-                 data = data,
                  LogLik = oldLogLik,
                  IterationsUsed = iterations,
+                 OOBresiduals = residuals,
                  Random = random,
                  ErrorTolerance = ErrorTolerance,
-                 OOBresiduals = residuals )
+                 initialRandomEffects = initialRandomEffects,
+                 MaxIterations = MaxIterations)
 
   class(result) <- "SAEforest"
 

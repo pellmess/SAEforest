@@ -1,8 +1,8 @@
-MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25){
+MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25,
+                               initialRandomEffects, ErrorTolerance, MaxIterations, ...){
 
   # JUST FOR IN-sample observations
 
-  mod <- mod$MERFmodel
   in_dom <- survey_data[dName]
 
   rand_struc = paste0(paste0("(1|",dName),")")
@@ -54,7 +54,8 @@ MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25){
 
 
   my_estim_f <- function(x){MERFranger(Y=x$y_star_MSE, X = X, random = rand_struc,
-                                       data=x, ErrorTolerance = mod$ErrorTolerance, m_try = mod$Forest$mtry)}
+                                       data=x, initialRandomEffects = initialRandomEffects,
+                                       ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)}
 
   est_mods <- sapply(boots_pop,my_estim_f,simplify = FALSE)
 
@@ -80,6 +81,9 @@ MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25){
 
   #______________________________________
   MSE_analytical <- g_1 + g_2 + 2*g_3
+
+  MSE_analytical <- data.frame(unique(survey_data[dName]), MSE=MSE_analytical)
+  rownames(MSE_analytical) <- NULL
 
   return(MSE_analytical)
 }
