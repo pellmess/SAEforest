@@ -12,11 +12,7 @@ MERFranger(
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
-  m_try = 1,
-  survey_weigths = NULL,
-  seed = NULL,
-  keep.inbag = FALSE,
-  imp = "none"
+  ...
 )
 }
 \arguments{

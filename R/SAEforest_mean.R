@@ -19,64 +19,60 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
                            MaxIterations = 25, mse = "none", B=100, ...){
 
-  random = paste0(paste0("(1|",dName),")")
+# ERROR CHECKS OF INPUTS
+#________________________________________
 
-  unit_model <- MERFranger(Y = Y,
-                          X = X,
-                          random = random,
-                          data = survey_data,
-                          initialRandomEffects = initialRandomEffects,
-                          ErrorTolerance = ErrorTolerance,
-                          MaxIterations = MaxIterations,...)
 
-  unit_preds <- predict(unit_model$Forest, census_data)$predictions+
-                predict(unit_model$EffectModel,census_data, allow.new.levels=TRUE)
 
-  unit_preds_ID <- cbind(census_data[dName],unit_preds)
 
-  f0 <- as.formula(paste0("unit_preds ", " ~ ", dName))
+# Point Estimation
+#________________________________________
+  mean_preds <- point_mean(Y = Y, X = X, dName = dName, survey_data = survey_data, census_data = census_data,
+             initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
+             MaxIterations = MaxIterations,...)
 
-  mean_preds <- aggregate(f0,data = unit_preds_ID,
-                          FUN=mean)
-  colnames(mean_preds) <- c(dName,"Mean")
 
-if(mse == "none"){
+  if(mse == "none"){
   result <- list(
-    Mean_predictions = mean_preds,
-    MERFmodel = unit_model)
+    Mean_predictions = mean_preds[[1]],
+    MERFmodel = mean_preds[[2]])
 
   return(result)
 }
 
-if(mse != "none"){
-  adj_SD <- adjust_ErrorSD(Y=Y, X=X, surv_data = survey_data, mod = unit_model, B=100, ...)
-}
+# MSE Estimation
+#________________________________________
 
-if(mse == "analytic"){
-  mse_estims <- MSE_MERFanalytical(mod=unit_model, survey_data = survey_data, X = X,
+  if(mse != "none"){
+  adj_SD <- adjust_ErrorSD(Y=Y, X=X, surv_data = survey_data, mod = mean_preds[[2]], B=100, ...)
+  }
+
+  if(mse == "analytic"){
+    mse_estims <- MSE_MERFanalytical(mod=mean_preds[[2]], survey_data = survey_data, X = X,
                                    dName = dName, err_sd = adj_SD , B=B,
                                    initialRandomEffects = initialRandomEffects,
                                    ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
 
-  result <- list(
-    MERFmodel = unit_model,
-    Mean_predictions = mean_preds,
-    MSE_estimates = mse_estims)
-  return(result)
-}
+    result <- list(
+     MERFmodel = mean_preds[[2]],
+     Mean_predictions = mean_preds[[1]],
+     MSE_estimates = mse_estims)
 
-if(mse == "nonparametric"){
+    return(result)
+  }
+
+  if(mse == "nonparametric"){
     mse_estims <- MSE_SAEforest_mean_REB(Y=Y, X = X, dName = dName, survey_data = survey_data,
-                                         mod=unit_model, ADJsd = adj_SD, cens_data = census_data, B = B,
+                                         mod=mean_preds[[2]], ADJsd = adj_SD, cens_data = census_data, B = B,
                                          initialRandomEffects = initialRandomEffects,
                                          ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
 
     result <- list(
-      MERFmodel = unit_model,
-      Mean_predictions = mean_preds,
+      MERFmodel = mean_preds[[2]],
+      Mean_predictions = mean_preds[[1]],
       MSE_estimates = mse_estims)
+
     return(result)
   }
-
 
 }

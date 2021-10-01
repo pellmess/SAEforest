@@ -13,8 +13,9 @@ SAEforest_mean(
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
-  m_try = 1,
-  survey_weigths = NULL
+  mse = "none",
+  B = 100,
+  ...
 )
 }
 \arguments{

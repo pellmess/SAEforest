@@ -1,10 +1,8 @@
-MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens_data, B=100,
-                                     initialRandomEffects = 0, ErrorTolerance = 0.0001, MaxIterations = 25,
-                                     m_try = 1, survey_weigths = NULL, seed=1234){
+MSE_SAEforest_nonLin_wild <- function(Y, X, dName, threshold, survey_data, mod, ADJsd, cens_data, B=100,
+                                      initialRandomEffects = 0, ErrorTolerance = 0.0001,
+                                      MaxIterations = 25, ...){
 
-  getTrueVal <- function(pop, target, domain){
-    threshold <- 0.6*median(pop[[target]], na.rm=TRUE)
-
+  getTrueVal <- function(pop, target, domain, threshold){
     hcr_function <- function(y,threshold){
       mean(y < threshold, na.rm=TRUE)
     }
@@ -46,8 +44,13 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens
     )
   }
 
-  forest_m1 <- mod$MERFmodel
+  forest_m1 <- mod
   rand_struc = paste0(paste0("(1|",dName),")")
+  if(is.null(threshold)){
+    threshold = 0.6*median(Y, na.rm=TRUE)
+  }
+
+
   boots_pop <- vector(mode="list",length = B)
   boots_pop <- sapply(boots_pop,function(x){cens_data},simplify =FALSE)
 
@@ -134,8 +137,11 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens
   boots_pop <- boots_pop %>%  map(~dplyr::select(., -one_of(c("y_hat_MSE","e_ij"))))
 
 
-  my_agg <- function(x){getTrueVal(x, target = "y_star_MSE", domain = dName)[,c("mean","quant10","quant25","median","quant75",
-                                                                                   "quant90","gini","hcr","pgap","qsr")]}
+  my_agg <- function(x){getTrueVal(x, target = "y_star_MSE", domain = dName,
+                                   threshold = threshold)[ ,c("mean","quant10",
+                                                              "quant25","median",
+                                                              "quant75","quant90",
+                                                              "gini","hcr","pgap","qsr")]}
   tau_star <- sapply(boots_pop,my_agg,simplify = FALSE)
 
   # THINK ABOUT SEED
@@ -145,8 +151,10 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens
 
   # USE BOOTSTRAP SAMPLE TO ESITMATE
 
-  my_estim_f <- function(x){SAEforest_nonLin(Y=x$y_star_MSE, X = x[,colnames(X)], dName = dName, survey_data =x, census_data = cens_data,
-                                             m_try = mod$Forest$mtry)$Indicator_predictions[,-1]}
+
+  my_estim_f <- function(x){point_nonLin(Y = x$y_star_MSE, X = x[,colnames(X)], dName = dName, threshold = threshold, survey_data = x, census_data = cens_data,
+                                         initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
+                                         MaxIterations = MaxIterations,...)[[1]][,-1]}
 
   tau_b <- sapply(boots_sample, my_estim_f,simplify = FALSE)
 
@@ -159,10 +167,7 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens
   rownames(MSE_estimates) <- NULL
 
   #___________________________
-  out_list <- vector(length = 1, mode = "list")
 
-  out_list[[1]] <- MSE_estimates
-
-  return(out_list)
+  return(MSE_estimates)
 
 }

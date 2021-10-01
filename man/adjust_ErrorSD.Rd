@@ -4,7 +4,7 @@
 \alias{adjust_ErrorSD}
 \title{Nonparametric Adjustment of Residual Variance}
 \usage{
-adjust_ErrorSD(Y, X, mod, B = 100, survey_weights = NULL)
+adjust_ErrorSD(Y, X, surv_data, mod, B = 100, ...)
 }
 \arguments{
 \item{Y}{metric input target variable}

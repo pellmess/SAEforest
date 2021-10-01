@@ -123,11 +123,10 @@ ran_effs <- ran_effs-mean(ran_effs)
   boots_sample <- sapply(boots_pop, sample_b)
 
 
-  # USE BOOTSTRAP SAMPLE TO ESITMATE
-
-  my_estim_f <- function(x){SAEforest_mean(Y=x$y_star_u_star, X = x[,colnames(X)], dName = dName, survey_data =x,
-                                           census_data = cens_data, initialRandomEffects = initialRandomEffects,
-                                           ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)$Mean_predictions}
+  # USE BOOTSTRAP SAMPLE TO ESITMATES
+  my_estim_f <- function(x){point_mean(Y = x$y_star_u_star, X = x[,colnames(X)], dName = dName, survey_data = x,
+                                       census_data = cens_data, initialRandomEffects = initialRandomEffects,
+                                       ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)[[1]]}
   tau_b <- sapply(boots_sample, my_estim_f,simplify = FALSE)
 
   mean_square <- function(x,y){(x[,2]-y[,2])^2}
