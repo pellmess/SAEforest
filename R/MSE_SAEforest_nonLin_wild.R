@@ -91,10 +91,10 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens
   boots_pop <- sapply(boots_pop,function(x){cens_data},simplify =FALSE)
 
   # OOB marginal residuals
-  forest_res <- Y - forest_m1$Forest$predictions-predict(forest_m1$EffectModel, surv_data)
+  forest_res <- Y - forest_m1$Forest$predictions-predict(forest_m1$EffectModel, survey_data)
   forest_res <- forest_res-mean(forest_res)
 
-  ran_effs <- unique(predict(mod$EffectModel, surv_data))
+  ran_effs <- unique(predict(forest_m1$EffectModel, survey_data))
   ran_effs <- (ran_effs/sd(ran_effs))* forest_m1$RanEffSD
   ran_effs <- ran_effs-mean(ran_effs)
 
@@ -134,7 +134,7 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens
   boots_pop <- boots_pop %>%  map(~dplyr::select(., -one_of(c("y_hat_MSE","e_ij"))))
 
 
-  my_agg <- function(x){getTrueVal(x, target = "y_hat_MSE", domain = "idD")[,c("mean","quant10","quant25","median","quant75",
+  my_agg <- function(x){getTrueVal(x, target = "y_star_MSE", domain = dName)[,c("mean","quant10","quant25","median","quant75",
                                                                                    "quant90","gini","hcr","pgap","qsr")]}
   tau_star <- sapply(boots_pop,my_agg,simplify = FALSE)
 
@@ -145,7 +145,7 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, survey_data, mod, ADJsd, cens
 
   # USE BOOTSTRAP SAMPLE TO ESITMATE
 
-  my_estim_f <- function(x){SAEforest_nonLin(Y=x$y_hat_MSE, X = x[,colnames(X)], dName = dName, survey_data =x, census_data = cens_data,
+  my_estim_f <- function(x){SAEforest_nonLin(Y=x$y_star_MSE, X = x[,colnames(X)], dName = dName, survey_data =x, census_data = cens_data,
                                              m_try = mod$Forest$mtry)$Indicator_predictions[,-1]}
 
   tau_b <- sapply(boots_sample, my_estim_f,simplify = FALSE)
