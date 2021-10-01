@@ -1,4 +1,4 @@
-#' Main function for ALL Indicators of MERF with unit-level data
+#' Main function for means of MERF with unit-level data
 #'
 #' @param Y metric target variable
 #' @param X data.frame of covariates
@@ -11,63 +11,68 @@
 #' @param m_try default set to 1
 #' @param survey_weigths default set to NULL
 #'
-#' @return returns object including area level indicators such as quantiles, hcr, gini etc.
-#' as well as model details
+#' @return returns object including Mean predictions and model details
 #' @export
 #'
 #' @examples
 SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, m_try = 1, survey_weigths = NULL){
+                           MaxIterations = 25, mse = "none", B=100, threshold = NULL, ...){
 
-  random = paste0(paste0("(1|",dName),")")
-  threshold = 0.6*median(Y, na.rm=TRUE)
-
-
-  unit_model <- MERFranger(Y = Y,
-                           X = X,
-                           random = random,
-                           data = survey_data,
-                           initialRandomEffects = initialRandomEffects,
-                           ErrorTolerance = ErrorTolerance,
-                           MaxIterations = MaxIterations,
-                           m_try = m_try,
-                           survey_weigths = survey_weigths)
-
-  unit_preds <- predict(unit_model$Forest, census_data)$predictions+
-    predict(unit_model$EffectModel,census_data, allow.new.levels=TRUE)
-
-  unit_preds_ID <- data.frame(census_data[dName],"predictions" = unit_preds)
-
-  # SMEARING STEP HERE------------
-  smearing_grid <- tidyr::expand_grid("e_ij" = unit_model$OOBresiduals, unit_preds_ID)
-  smearing_grid <- dplyr::mutate(smearing_grid, y_star = predictions + e_ij, .keep="unused")
-
-  smear_list <-  smearing_grid %>% dplyr::group_split(idD, .keep = FALSE) %>% map(~calc_indicat(.x$y_star,threshold = threshold))
+  # ERROR CHECKS OF INPUTS
+  #________________________________________
 
 
-  indicators <- do.call(rbind.data.frame, smear_list)
-  indicators_out <- cbind("Domain" = unique(census_data[dName])[,1],indicators)
 
-  # THIS PARA WORKS AS SCRIPT BUT NOT IN THE PACKAGE..THINK ABOUT!
-  #cl <- parallel::makeCluster(parallel::detectCores()-1)
 
-  #calc_indicat2 <- SAEforest::calc_indicat
-  #helpfun <- function(x){calc_indicat2(x, threshold = threshold)}
+  # Point Estimation
+  #________________________________________
+  nonLin_preds <- point_nonLin(Y = Y, X = X, dName = dName, threshold = threshold, survey_data = survey_data, census_data = census_data,
+                           initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
+                           MaxIterations = MaxIterations,...)
 
-  #parallel::clusterExport(cl, c("calc_indicat2","threshold"))
-  #parallel::clusterEvalQ(cl, c("threshold"))
 
-  #indicators <- parallel::parLapply(cl,smear_list, fun = helpfun)
+  if(mse == "none"){
+    result <- list(
+      Indicators = nonLin_preds[[1]],
+      MERFmodel = nonLin_preds[[2]])
 
-  #parallel::stopCluster(cl)
+    return(result)
+  }
 
-  return( list(Indicator_predictions = indicators_out,
-                MERFmodel = unit_model))
+  # MSE Estimation
+  #________________________________________
+
+  if(mse != "none"){
+    adj_SD <- adjust_ErrorSD(Y=Y, X=X, surv_data = survey_data, mod = nonLin_preds[[2]], B=100, ...)
+  }
+
+  if(mse == "wild"){
+    mse_estims <- MSE_SAEforest_nonLin_wild(Y=Y, X = X, mod=nonLin_preds[[2]], survey_data = survey_data,
+                                            cens_data = census_data, dName = dName, ADJsd = adj_SD , B=B,
+                                            threshold = threshold, initialRandomEffects = initialRandomEffects,
+                                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
+
+    result <- list(
+      MERFmodel = nonLin_preds[[2]],
+      Indicators = nonLin_preds[[1]],
+      MSE_estimates = mse_estims)
+
+    return(result)
+  }
+
+  if(mse == "nonparametric"){
+    mse_estims <- MSE_SAEforest_nonLin_REB(Y=Y, X = X, mod=nonLin_preds[[2]], survey_data = survey_data,
+                                           cens_data = census_data, dName = dName, ADJsd = adj_SD , B=B,
+                                           threshold = threshold, initialRandomEffects = initialRandomEffects,
+                                           ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
+
+    result <- list(
+      MERFmodel = nonLin_preds[[2]],
+      Indicators = nonLin_preds[[1]],
+      MSE_estimates = mse_estims)
+
+    return(result)
+  }
+
 }
-
-
-
-
-
-
