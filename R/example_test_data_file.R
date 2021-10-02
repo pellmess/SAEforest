@@ -51,7 +51,9 @@
 
 #tic()
 #set.seed(1234)
-#mod <- SAEforest_agg(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, OOsample_obs = 20)
+#mod <- point_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, w_min = 2,
+#                     initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
+#                     MaxIterations = MaxIterations, importance = "impurity", ADDsamp_obs = 0 )
 #mod2 <- SAEforest_agg_SIMPLE(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg)
 #toc()
 

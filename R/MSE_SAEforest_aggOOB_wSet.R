@@ -27,8 +27,8 @@
 #' @examples
 
 MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg, B=100,
-                               popnsize, initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                               MaxIterations = 25, m_try = 1, survey_weigths = NULL, seed=1234){
+                               popnsize, initialRandomEffects, ErrorTolerance,
+                               MaxIterations, ...){
 
   dom <- survey_data[dName]
   in_dom <- t(unique(survey_data[dName]))
@@ -104,7 +104,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
   b <- 1
   while (b <= B) {
     print(b)
-    set.seed(seed + b)
+
     ys.B<-BLOCKys.B <- rep(0, n)
     ys.B_oob<-BLOCKys.B_oob <- rep(0, n)
 
@@ -137,15 +137,11 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
 
     mse_dat <- data.frame(survey_data[dName], X , y=ys.B)
 
-    mod_2 <- SAEforest_agg_wSet(Y = mse_dat$y, X=X, dName = dName, survey_data = mse_dat,
+    mod_2 <- point_meanAGG(Y = mse_dat$y, X=X, dName = dName, survey_data = mse_dat,
                            Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
-                           m_try = m_try, survey_weigths = survey_weigths,
-                           OOsample_obs = mod$OOsample_obs, wSet = mod$wSet, w_min = mod$w_min)
-
-    if(round(sum(mod_2$ModifiedSet$weights)) != length(total_dom)){
-      print("Consider choosing a higher Level of OOsample_obs")
-    }
+                           OOsample_obs = mod$OOsample_obs, ADDsamp_obs = mod$ADDsamp_obs,
+                           w_min = mod$w_min, wSet = mod$wSet, ...)
 
 
     mse_estims <- mod_2$Mean_Predictions$Mean
@@ -153,23 +149,10 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
     MSE.B <- MSE.B + (mse_estims - truemean.B)^2
     b <- b + 1
 
-#    if (adBLOCK== TRUE){
-#      mse_dat$y <- BLOCKys.B
-
-#      mod_3 <- SAEforest_agg(Y = mse_dat$y, X=X, dName = dName, survey_data = mse_dat,
-#                             Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
-#                             ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
-#                             m_try = m_try, survey_weigths = survey_weigths)
-
-#      mse_estimsBLOCK <- mod_3$Mean_Predictions
-#      BLOCK1MSE.B<- BLOCK1MSE.B +(mse_estimsBLOCK - BLOCK1truemean.B)^2
-#    }
-
   }
 
 
   MSEEB.B <- MSE.B/B
- # BLOCK1MSE.B <- BLOCK1MSE.B/B
 
   return(data.frame(Xcensus_agg[dName],MSE=MSEEB.B))
   }

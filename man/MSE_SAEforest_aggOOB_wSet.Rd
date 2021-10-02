@@ -14,12 +14,10 @@ MSE_SAEforest_aggOOB_wSet(
   Xcensus_agg,
   B = 100,
   popnsize,
-  initialRandomEffects = 0,
-  ErrorTolerance = 1e-04,
-  MaxIterations = 25,
-  m_try = 1,
-  survey_weigths = NULL,
-  seed = 1234
+  initialRandomEffects,
+  ErrorTolerance,
+  MaxIterations,
+  ...
 )
 }
 \arguments{

@@ -2,7 +2,7 @@
 
 export(MERFranger)
 export(MSE_SAEforest_aggOOB_wSet)
-export(SAEforest_agg_wSet)
 export(SAEforest_mean)
+export(SAEforest_meanAGG)
 export(SAEforest_nonLin)
 export(adjust_ErrorSD)
