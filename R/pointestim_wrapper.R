@@ -58,16 +58,20 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
   unit_preds_ID <- data.frame(census_data[dName],"predictions" = unit_preds)
 
   # SMEARING STEP HERE------------
-  smearing_grid <- tidyr::expand_grid("e_ij" = unit_model$OOBresiduals, unit_preds_ID)
-  smearing_grid <- dplyr::mutate(smearing_grid, y_star = predictions + e_ij, .keep="unused")
 
-  smear_list <-  smearing_grid %>% dplyr::group_split(idD, .keep = FALSE) %>% map(~calc_indicat(.x$y_star,threshold = threshold))
+  smear_list <- vector(mode="list", length = length(unique(survey_data[[dName]])))
 
+  for (i in seq_along(unique(survey_data[[dName]]))){
+
+  smear_i <- rowSums(expand_gridALT(unit_preds_ID[unit_preds_ID[[dName]]==i, 2], unit_model$OOBresiduals))
+  smear_list[[i]] <-  calc_indicat(smear_i, threshold = threshold)
+  }
 
   indicators <- do.call(rbind.data.frame, smear_list)
-  indicators_out <- cbind("Domain" = unique(census_data[dName])[,1],indicators)
+  indicators_out <- cbind("Domain" = unique(census_data[[dName]]), indicators)
 
- #_______________________________________
+  # __________________________________
+
   out_ob <- vector(mode="list", length = 2)
 
   out_ob[[1]] <- indicators_out

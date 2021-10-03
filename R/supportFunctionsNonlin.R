@@ -28,4 +28,7 @@ calc_indicat <- function(Y, threshold){
   return(indicators)
 }
 
-
+expand_gridALT <- function(s1, s2) {
+  cbind(rep.int(s1, length(s2)),
+        c(t(matrix(rep.int(s2, length(s1)), nrow=length(s2)))))
+}
