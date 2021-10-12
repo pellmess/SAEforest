@@ -1,52 +1,23 @@
-#' Nonparametric Adjustment of Residual Variance
-#'
-#' This is a bootstrap adjustment of the residual variance
-#' Used only internally as preparation for bootstrap-MSEs
-#'
-#' @param Y metric input target variable
-#' @param X variable of predictive covariates
-#' @param mod model trained by MERFranger
-#' @param B number of bootstrap replications. default to B= 100
-#' @param survey_weights possibility to include weights. default is NULL
-#'
-#' @return returns an numeric integer of the corrected SD
-#' @export
-#'
-#' @examples
+# Nonparametric Adjustment of Residual Variance
+
 adjust_ErrorSD <- function(Y, X, surv_data, mod, B=100, ...){
 
-
-  OOB_samp <- vector(mode="list",length = B)
-
-  OOB_samp <- sapply(OOB_samp,function(x){surv_data},simplify =FALSE)
-
-  my_pred_f <- function(x){mod$Forest$predictions}
-
-  pred_OOB <- sapply(OOB_samp,my_pred_f,simplify = FALSE)
-
+  pred_OOB <- matrix(mod$Forest$predictions, ncol = B, nrow = length(mod$Forest$predictions), byrow = FALSE)
 
   e_ij <- Y - predict(mod$Forest, surv_data)$predictions
   e_ij <- e_ij- mean(e_ij)
-  e_ij_oob <- replicate(length(OOB_samp),sample(e_ij,length(e_ij),replace = TRUE),simplify = FALSE)
 
-  y_star_OOB <- mapply("+", pred_OOB, e_ij_oob, SIMPLIFY = FALSE)
-  OOB_samp <-Map(cbind,OOB_samp,"y_star_OOB"=y_star_OOB)
+  y_star_OOB <- pred_OOB + sample(e_ij, size = length(pred_OOB), replace = TRUE)
 
-
-  my_estim_f2 <- function(x){ranger::ranger(y=x$y_star_OOB, x=x[,colnames(X)], data=x, ...)}
-  my_f_n2 <- sapply(OOB_samp, my_estim_f2,simplify = FALSE)
+  my_estim_f2 <- function(x){ranger::ranger(y=x, x=X, data = surv_data, ...)}
+  my_f_n2 <- apply(y_star_OOB, 2, my_estim_f2)
 
   my_pred_f <- function(x){x$predictions}
-  pred_OOB_star <- sapply(my_f_n2,my_pred_f,simplify = FALSE)
+  pred_OOB_star <- sapply(my_f_n2,my_pred_f)
 
+  Adjustment <- (pred_OOB_star-pred_OOB)^2
 
-  mean_square <- function(x,y){(x-y)^2}
-
-  Adjustment <- mapply(mean_square, pred_OOB_star,pred_OOB, SIMPLIFY = FALSE)
-
-  Adjustment <- Reduce('+',Adjustment)/length(Adjustment)
-
-  outvar <- sqrt(mod$ErrorSD^2 - mean(Adjustment))
+  outvar <- sqrt(mod$ErrorSD^2 - mean(rowMeans(Adjustment)))
 
   return(outvar)
 }

@@ -3,9 +3,8 @@ MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25,
 
   # JUST FOR IN-sample observations
 
-  in_dom <- survey_data[dName]
-
-  rand_struc = paste0(paste0("(1|",dName),")")
+  in_dom <- survey_data[[dName]]
+  rand_struc <- paste0(paste0("(1|",dName),")")
   ran_sd <- mod$RanEffSD
 
   n_i <- as.numeric(table(in_dom))
@@ -24,60 +23,32 @@ MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25,
 
 
   # BOOTSTRAP FOR g_2
-  boots_pop <- vector(mode="list",length = B)
-  boots_pop <- sapply(boots_pop,function(x){survey_data},simplify =FALSE)
+  pred_val <- matrix(predict(mod$Forest, survey_data)$predictions, ncol = B,
+                     nrow = length(mod$Forest$predictions), byrow = FALSE)
 
+  y_hat <- pred_val + rnorm(sd=err_sd, n = length(pred_val))
+  u_i <- apply(y_hat, 2, function(x){rep(rnorm(sd=ran_sd, n = m_all), n_i)})
+  y_star <- y_hat + u_i
 
-  pred_val <- predict(mod$Forest,boots_pop[[1]])$predictions
-
-  pred_t <-sapply(boots_pop,function(x){pred_val},simplify = FALSE)
-
-  # Errors
-  err_sample <- function(x){
-    return(rnorm(sd=err_sd, n = n_all))
-  }
-
-  e_ij <- sapply(boots_pop,err_sample,simplify = FALSE)
-
-  # combine
-  y_star <- mapply("+", pred_t,e_ij, SIMPLIFY = FALSE)
-
-  boots_pop<-Map(cbind,boots_pop,"y_star"=y_star, "predz"=pred_t)
-
-  u_i <- replicate(length(boots_pop),data.frame(u_i_star=rnorm(sd=ran_sd, n = m_all),
-                                                unique(survey_data[dName])),simplify = FALSE)
-
-  boots_pop <- map2(boots_pop, u_i, left_join, by = dName ,simplify=FALSE)
-
-  boots_pop <- boots_pop %>%  map(~mutate(., y_star_MSE = y_star+u_i_star))
-  boots_pop <- boots_pop %>%  map(~dplyr::select(., -one_of(c("u_i_star","y_star","predz"))))
-
-
-  my_estim_f <- function(x){MERFranger(Y=x$y_star_MSE, X = X, random = rand_struc,
-                                       data=x, initialRandomEffects = initialRandomEffects,
+  my_estim_f <- function(x){MERFranger(Y=x, X = X, random = rand_struc,
+                                       data=survey_data, initialRandomEffects = initialRandomEffects,
                                        ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)}
 
-  est_mods <- sapply(boots_pop,my_estim_f,simplify = FALSE)
+  est_mods <- apply(y_star, 2, my_estim_f)
 
-  new_preds <- function(x){predict(x$Forest,boots_pop[[1]])$predictions}
-  f_b <- sapply(est_mods,new_preds,simplify = FALSE)
+  new_preds <- function(x){predict(x$Forest, survey_data)$predictions}
+  f_b <- sapply(est_mods, new_preds)
 
-  f_diffs <- mapply("-", pred_t,f_b, SIMPLIFY = FALSE)
-  boots_pop<-Map(cbind,boots_pop,"f_diffs"=f_diffs)
+  f_diff <- data.frame(in_dom, pred_val - f_b)
+  colnames(f_diff)[1] <- dName
 
-  formRF <- formula(paste("f_diffs ~", paste0(dName)))
-  diff_agg <- function(x){aggregate(formRF, data=x, FUN = mean)[,-1]}
-
-  agg_diffs <- sapply(boots_pop,diff_agg,simplify = FALSE)
+  formRF <- formula(paste(". ~", paste0(dName)))
+  agg_diffs <- aggregate(formRF, data=f_diff, mean)[,-1]
 
   B_gams <- function(x){1-((x$RanEffSD^2)/(x$RanEffSD^2 + x$ErrorSD^2/n_i))}
-  One_minus_gam_b <- sapply(est_mods,B_gams,simplify = FALSE)
+  One_minus_gam_b <- sapply(est_mods,B_gams)
 
-
-  D_i_hat <- mapply("*", agg_diffs,One_minus_gam_b, SIMPLIFY = FALSE)
-  D_i_hat_2 <- sapply(D_i_hat,function(x){x^2},simplify = FALSE)
-
-  g_2 <- Reduce('+',D_i_hat_2)/B
+  g_2 <- rowMeans((One_minus_gam_b * agg_diffs)^2)
 
   #______________________________________
   MSE_analytical <- g_1 + g_2 + 2*g_3
