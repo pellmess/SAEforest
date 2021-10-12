@@ -12,9 +12,6 @@
 #' @param initialRandomEffects default set to 0
 #' @param ErrorTolerance default set to 1e-04
 #' @param MaxIterations default to 25
-#' @param m_try change the number of trees for split decision. default to 1
-#' @param survey_weigths specify survey weights. default to NULL
-#' @param imp variable importance passed to ranger
 #'
 #' @return object of class SAEforest
 #' @export
