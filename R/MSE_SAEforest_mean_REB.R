@@ -102,7 +102,7 @@ ran_effs <- ran_effs-mean(ran_effs)
   # combine
   y_star <- mapply("+", pred_t,e_ij, SIMPLIFY = FALSE)
 
-  boots_pop<-Map(cbind,boots_pop,"y_star"=y_star, "predz"=pred_t)
+  boots_pop <- Map(cbind,boots_pop,"y_star"=y_star, "predz"=pred_t)
 
 
   u_i <- replicate(length(boots_pop),data.frame(u_i_star=sample(ran_effs, size = length(t(unique(cens_data[dName]))),
@@ -119,7 +119,7 @@ ran_effs <- ran_effs-mean(ran_effs)
   tau_star <- sapply(boots_pop,my_agg,simplify = FALSE)
 
   # THINK ABOUT SEED
-  sample_b <- function(x){sample_select(x,smp=survey_data,times=1)}
+  sample_b <- function(x){sample_select(x, smp = survey_data, times = 1)}
   boots_sample <- sapply(boots_pop, sample_b)
 
 
@@ -129,7 +129,7 @@ ran_effs <- ran_effs-mean(ran_effs)
                                        ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)[[1]]}
   tau_b <- sapply(boots_sample, my_estim_f,simplify = FALSE)
 
-  mean_square <- function(x,y){(x[,2]-y[,2])^2}
+  mean_square <- function(x,y){(x[,2] - y[,2])^2}
 
   Mean_square_B <- mapply(mean_square, tau_b,tau_star, SIMPLIFY = FALSE)
 
