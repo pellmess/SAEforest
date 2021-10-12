@@ -8,8 +8,9 @@
 #' @param initialRandomEffects default set to 0
 #' @param ErrorTolerance default set to 1e-04
 #' @param MaxIterations default set to 0
-#' @param m_try default set to 1
-#' @param survey_weigths default set to NULL
+#' @param mse Choose between "none, "wild" and "nonparametric"
+#' @param B number of bootstrap replications for the MSE
+#' @param threshold Set a custom threshold for indicators. Default set to NULL
 #'
 #' @return returns object including Mean predictions and model details
 #' @export
