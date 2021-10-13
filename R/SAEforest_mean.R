@@ -74,5 +74,4 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
 
     return(result)
   }
-
 }

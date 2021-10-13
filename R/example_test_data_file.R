@@ -39,8 +39,9 @@
 
 
 # APPLICATION OF FUNCTION
+
 #tic()
-# mod <- SAEforest_nonLinV1(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens,mtry=1, mse ="wild", B=2)
+#mod_alt <- SAEforest_mean(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens, mse ="nonparametric", B=100)
 #toc()
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)
