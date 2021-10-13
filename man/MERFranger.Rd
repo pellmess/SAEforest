@@ -29,12 +29,6 @@ MERFranger(
 \item{ErrorTolerance}{default set to 1e-04}
 
 \item{MaxIterations}{default to 25}
-
-\item{m_try}{change the number of trees for split decision. default to 1}
-
-\item{survey_weigths}{specify survey weights. default to NULL}
-
-\item{imp}{variable importance passed to ranger}
 }
 \value{
 object of class SAEforest

@@ -36,9 +36,11 @@ SAEforest_nonLin(
 
 \item{MaxIterations}{default set to 0}
 
-\item{m_try}{default set to 1}
+\item{mse}{Choose between "none, "wild" and "nonparametric"}
 
-\item{survey_weigths}{default set to NULL}
+\item{B}{number of bootstrap replications for the MSE}
+
+\item{threshold}{Set a custom threshold for indicators. Default set to NULL}
 }
 \value{
 returns object including Mean predictions and model details

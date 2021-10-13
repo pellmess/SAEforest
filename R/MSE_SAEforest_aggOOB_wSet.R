@@ -2,29 +2,6 @@
 # IT BUILD STRONGLY on the CODE from the sae package (!)
 # Recoding might be needed (!)
 
-#' MSE function for MERF with aggregated data
-#'
-#' @param Y metric target variable
-#' @param X data.frame of covariates
-#' @param dName name of group-identifier
-#' @param survey_data survey data set
-#' @param mod explicit model from SAE_forest_agg
-#' @param ADJsd input for adjusted variance
-#' @param Xcensus_agg aggregated census level covariates. Note that the
-#' first column should include the group identifier
-#' @param B number of bootstrap replications
-#' @param popnsize known number of population size in specific areas
-#' @param initialRandomEffects default set to 0
-#' @param ErrorTolerance default set to 1e-04
-#' @param MaxIterations default to 25
-#' @param m_try default set to 1
-#' @param survey_weigths default set to NULL
-#' @param seed default set 1234
-#'
-#' @return returns a data.set with group-identifier and MSE results
-#' @export
-#'
-#' @examples
 
 MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg, B=100,
                                popnsize, initialRandomEffects, ErrorTolerance,

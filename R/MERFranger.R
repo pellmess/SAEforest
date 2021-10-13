@@ -60,7 +60,7 @@ MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolera
                  initialRandomEffects = initialRandomEffects,
                  MaxIterations = MaxIterations)
 
-  class(result) <- "SAEforest"
+  class(result) <- "MERF"
 
   return(result)
 }

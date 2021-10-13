@@ -12,21 +12,21 @@ point_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffec
                          ErrorTolerance = ErrorTolerance,
                          MaxIterations = MaxIterations,...)
 
-unit_preds <- predict(unit_model$Forest, census_data)$predictions+
-  predict(unit_model$EffectModel,census_data, allow.new.levels=TRUE)
+  unit_preds <- predict(unit_model$Forest, census_data)$predictions+
+    predict(unit_model$EffectModel,census_data, allow.new.levels=TRUE)
 
-unit_preds_ID <- cbind(census_data[dName],unit_preds)
+  unit_preds_ID <- cbind(census_data[dName],unit_preds)
 
-f0 <- as.formula(paste0("unit_preds ", " ~ ", dName))
+  f0 <- as.formula(paste0("unit_preds ", " ~ ", dName))
 
-mean_preds <- aggregate(f0,data = unit_preds_ID,
-                        FUN=mean)
-colnames(mean_preds) <- c(dName,"Mean")
+  mean_preds <- aggregate(f0,data = unit_preds_ID,
+                          FUN=mean)
+  colnames(mean_preds) <- c(dName,"Mean")
 
-out_ob <- vector(mode="list", length = 2)
+  out_ob <- vector(mode="list", length = 2)
 
-out_ob[[1]] <- mean_preds
-out_ob[[2]] <- unit_model
+  out_ob[[1]] <- mean_preds
+  out_ob[[2]] <- unit_model
 
 return(out_ob)
 }
@@ -58,7 +58,6 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
   unit_preds_ID <- data.frame(census_data[dName],"predictions" = unit_preds)
 
   # SMEARING STEP HERE------------
-
   smear_list <- vector(mode="list", length = length(unique(survey_data[[dName]])))
 
   for (i in seq_along(unique(survey_data[[dName]]))){
@@ -69,7 +68,6 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
 
   indicators <- do.call(rbind.data.frame, smear_list)
   indicators_out <- cbind("Domain" = unique(census_data[[dName]]), indicators)
-
   # __________________________________
 
   out_ob <- vector(mode="list", length = 2)
@@ -149,7 +147,7 @@ point_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
   smp_weightsIncluded <- vector(mode="list", length = length(groupNamesCens))
   smp_weightsNames <- vector(mode="list", length = length(groupNamesCens))
 
-  for(i in groupNamesCens){
+    for(i in groupNamesCens){
     pos <- which(i == groupNamesCens)
 
     X_input_elm  <- as.matrix(joint_survey_data[wSet])[joint_survey_data[dName]==i,]

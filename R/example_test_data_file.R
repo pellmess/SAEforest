@@ -35,9 +35,7 @@
 #                         data = survey_data,
 #                         initialRandomEffects = initialRandomEffects,
 #                         ErrorTolerance = ErrorTolerance,
-#                         MaxIterations = MaxIterations,
-#                         m_try = m_try,
-#                         survey_weigths = survey_weigths, min.node.size=15)
+#                         MaxIterations = MaxIterations, min.node.size=15)
 
 
 # APPLICATION OF FUNCTION
