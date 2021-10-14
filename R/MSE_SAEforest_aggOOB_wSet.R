@@ -7,9 +7,9 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
                                popnsize, initialRandomEffects, ErrorTolerance,
                                MaxIterations, ...){
 
-  dom <- survey_data[dName]
-  in_dom <- t(unique(survey_data[dName]))
-  total_dom <- t(unique(Xcensus_agg[dName]))
+  dom <- survey_data[[dName]]
+  in_dom <- unique(survey_data[[dName]])
+  total_dom <- unique(Xcensus_agg[[dName]])
   p <- dim(X)[2]
 
   sigmae2est <- mod$MERFmodel$ErrorSD^2
@@ -45,91 +45,52 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
 
   #________________________________________________________________
 
-  I <- length(total_dom)
-  n <- length(Y)
-  popnsize <- as.matrix(popnsize)
+  pred_t <- matrix(mod$MERFmodel$Forest$predictions, nrow = length(dom), ncol=B)
 
-  D <- length(in_dom)
-  nd <- rep(0, D)
-  SampSizeselectdom <- rep(0, I)
-  musd.B <- mud.B <- list()
+  mu_t <- mod$Mean_Predictions$Mean - unlist(lme4::ranef(mod$MERFmodel$EffectModel))
+  mu_pred <- matrix(mu_t, nrow = length(total_dom), ncol=B)
 
-  for (d in 1:D) {
-    rowsd <- (dom == in_dom[d])
-    musd.B[[d]] <- mod$MERFmodel$Forest$predictions[rowsd]
-    nd[d] <- sum(rowsd)
-  }
+  N_i <- popnsize[,2]
+  n_i <- rep(0, length(total_dom))
+  n_i[total_dom %in% in_dom] <- as.numeric(table(dom))
 
-  for (i in 1:I) {
-    mud.B[[i]] <- mod$Mean_Predictions$Mean[i] - unlist(ranef(mod$MERFmodel$EffectModel))[i]
-    if (is.na(mud.B[[i]])){
-      mud.B[[i]] <- mod$Mean_Predictions$Mean[i]
-    }
-    d <- total_dom[i]
-    posd <- which(in_dom == d)
-    if (length(posd) > 0)
-      SampSizeselectdom[i] <- nd[posd]
-  }
+  rd <- N_i - n_i
 
-  Ni <- popnsize[,2]
-  rd <- Ni - SampSizeselectdom
+  e_ij <- matrix(sample(forest_res, size = length(pred_t), replace=TRUE),
+                 nrow = length(dom), ncol=B, byrow = FALSE)
 
-  MSE.B <- BLOCK1MSE.B<-BLOCK2MSE.B <- truemean.B_w0 <- truemean.B <-BLOCK1truemean.B<- rep(0, I)
-  MSE.B_oob <- BLOCK1MSE.B_oob <-BLOCK2MSE.B_oob <-BLOCK2truemean.B<- rep(0, I)
+  e_i_mean <- as.matrix(aggregate(.~dom, data=data.frame(dom,e_ij), mean)[,-1])
+
+  u_i <- apply(mu_pred, 2, function(x){sample(ran_effs, size=length(total_dom), replace = TRUE )})
+  u_ij <- apply(u_i[total_dom %in% in_dom,], 2, function(x){rep(x, n_i)})
+
+  y_star <- pred_t + u_ij + e_ij
 
 
-  b <- 1
-  while (b <= B) {
-    print(b)
+  samp_erd <- function(x){sample((forest_res/ADJsd)*sqrt(ADJsd^2/x), size = B, replace = TRUE )}
+  erd_mean <- t(sapply(rd, samp_erd))
 
-    ys.B<-BLOCKys.B <- rep(0, n)
-    ys.B_oob<-BLOCKys.B_oob <- rep(0, n)
+  insamp_ei <- e_i_mean[total_dom %in% in_dom,] * n_i/N_i[total_dom %in% in_dom] +
+    erd_mean[total_dom %in% in_dom,] * rd[total_dom %in% in_dom]/N_i[total_dom %in% in_dom]
 
-    ud.B <- rep(0, D)
-    esdmean.B <-BLOCKesdmean.B<- rep(0, D)
-    for (d in 1:D) {
+  tau_star <- mu_pred + u_i + erd_mean
 
-      esd.B <- sample(forest_res,
-                      size = nd[d], replace=TRUE)
-
-      ud.B[d] <- sample(ran_effs, size=1, replace = TRUE )
-
-      rowsd <- (dom == in_dom[d])
-      ys.B[rowsd] <- musd.B[[d]] + ud.B[d] + esd.B
-      esdmean.B[d] <- mean(esd.B)
-    }
-    for (i in 1:I) {
-      erdmean.B <- sample((forest_res/ADJsd)*sqrt(ADJsd^2/rd[i]), size=1, replace = TRUE )
-      posd <- which(in_dom == total_dom[i])
-
-      if (length(posd) != 0) {
-        edmean.B <- esdmean.B[posd] * nd[posd]/Ni[i] +
-          erdmean.B * rd[i]/Ni[i]
-
-        truemean.B[i] <- mud.B[[i]] + edmean.B + ud.B[posd]
-      }
-      else truemean.B[i] <- mud.B[[i]] + sample(ran_effs, size=1, replace = TRUE ) +
-        erdmean.B
-    }
-
-    mse_dat <- data.frame(survey_data[dName], X , y=ys.B)
-
-    mod_2 <- point_meanAGG(Y = mse_dat$y, X=X, dName = dName, survey_data = mse_dat,
-                           Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
-                           ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
-                           OOsample_obs = mod$OOsample_obs, ADDsamp_obs = mod$ADDsamp_obs,
-                           w_min = mod$w_min, wSet = mod$wSet, ...)
+  tau_star[total_dom %in% in_dom,] <- mu_pred[total_dom %in% in_dom,] + u_i[total_dom %in% in_dom,]+
+    insamp_ei
 
 
-    mse_estims <- mod_2$Mean_Predictions$Mean
+  my_estim_f <- function(x){point_meanAGG(Y = x, X=X, dName = dName, survey_data = survey_data,
+                                          Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
+                                          ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
+                                          OOsample_obs = mod$OOsample_obs, ADDsamp_obs = mod$ADDsamp_obs,
+                                          w_min = mod$w_min, wSet = mod$wSet,...)[[1]]$Mean}
 
-    MSE.B <- MSE.B + (mse_estims - truemean.B)^2
-    b <- b + 1
+  tau_b <- pbapply::pbapply(y_star, 2, my_estim_f)
 
-  }
+  MSE_estimates <- rowMeans((tau_star - tau_b)^2)
 
+  MSE_estimates <- data.frame(Xcensus_agg[dName], MSE=MSE_estimates)
+  rownames(MSE_estimates) <- NULL
 
-  MSEEB.B <- MSE.B/B
-
-  return(data.frame(Xcensus_agg[dName],MSE=MSEEB.B))
+  return(MSE_estimates)
   }

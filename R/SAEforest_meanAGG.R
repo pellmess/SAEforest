@@ -48,6 +48,7 @@ SAEforest_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg,
 
   if(mse != "none"){
     adj_SD <- adjust_ErrorSD(Y=Y, X=X, surv_data = survey_data, mod = meanAGG_preds[[2]], B=100, ...)
+    print(paste("Bootstrap with", B,"rounds started"))
   }
 
   if(mse == "nonparametric"){

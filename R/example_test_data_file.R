@@ -23,10 +23,10 @@
 #survey_weigths = NULL
 
 #AGG
-#x_bar1 <- as.numeric(tapply(cens$x1, INDEX = cens$idD, FUN = mean))
-#x_bar2 <- as.numeric(tapply(cens$x2, INDEX = cens$idD, FUN = mean))
+#x1 <- as.numeric(tapply(cens$x1, INDEX = cens$idD, FUN = mean))
+#x2 <- as.numeric(tapply(cens$x2, INDEX = cens$idD, FUN = mean))
 
-#Xcensus_agg <- cbind(unique(surv[dName]), x_bar1, x_bar2)
+#Xcensus_agg <- cbind(unique(surv[dName]), x1, x2)
 #popnsize <- data.frame(idD= 1:50, PopnSegments=1000)
 
 #unit_model <- MERFranger(Y = Y,
@@ -53,7 +53,8 @@
 #mod <- point_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, w_min = 2,
 #                     initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
 #                     MaxIterations = MaxIterations, importance = "impurity", ADDsamp_obs = 0 )
-#mod2 <- SAEforest_agg_SIMPLE(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg)
+#mod2 <- SAEforest_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, mse="nonparametric",
+#                          importance = "impurity", popnsize = popnsize, B=100)
 #toc()
 
 #tic()
