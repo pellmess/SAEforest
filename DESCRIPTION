@@ -16,6 +16,7 @@ Imports:
     magrittr,
     MASS,
     parallel,
+    pbapply,
     ranger,
     stats,
     tidyr

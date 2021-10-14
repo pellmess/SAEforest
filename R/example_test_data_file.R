@@ -41,12 +41,12 @@
 # APPLICATION OF FUNCTION
 
 #tic()
-#mod_alt <- SAEforest_mean(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens, mse ="nonparametric", B=100)
+#mod_alt <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens, mse ="wild", B=5)
 #toc()
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)
 #test2 <-MSE_SAEforest_nonLin_wild(Y=Y, X=X, dName = "idD", survey_data =surv, cens_data=cens, B=5,
-#                               ADJsd = 1000, mod=mod)
+#                               ADJsd = 500, mod=mod, threshold = NULL)
 
 #tic()
 #set.seed(1234)

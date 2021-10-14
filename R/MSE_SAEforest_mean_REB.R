@@ -89,7 +89,7 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, survey_data, mod, ADJsd, cens_da
                                        census_data = cens_data, initialRandomEffects = initialRandomEffects,
                                        ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,...)[[1]][,2]}
 
-  tau_b <- sapply(boots_sample, my_estim_f)
+  tau_b <- pbapply::pbsapply(boots_sample, my_estim_f)
 
   MSE_estimates <- rowMeans((tau_star - tau_b)^2)
 

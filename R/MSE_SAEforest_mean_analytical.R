@@ -34,7 +34,7 @@ MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25,
                                        data=survey_data, initialRandomEffects = initialRandomEffects,
                                        ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)}
 
-  est_mods <- apply(y_star, 2, my_estim_f)
+  est_mods <- pbapply::pbapply(y_star, 2, my_estim_f)
 
   new_preds <- function(x){predict(x$Forest, survey_data)$predictions}
   f_b <- sapply(est_mods, new_preds)
