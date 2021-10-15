@@ -57,7 +57,8 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
     result <- list(
      MERFmodel = mean_preds[[2]],
      Mean_predictions = mean_preds[[1]],
-     MSE_estimates = mse_estims)
+     MSE_estimates = mse_estims,
+     AdjustedSD = adj_SD)
 
     return(result)
   }
@@ -71,7 +72,8 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
     result <- list(
       MERFmodel = mean_preds[[2]],
       Mean_predictions = mean_preds[[1]],
-      MSE_estimates = mse_estims)
+      MSE_estimates = mse_estims,
+      AdjustedSD = adj_SD)
 
     return(result)
   }

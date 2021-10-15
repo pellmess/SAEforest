@@ -58,7 +58,8 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
     result <- list(
       MERFmodel = nonLin_preds[[2]],
       Indicators = nonLin_preds[[1]],
-      MSE_estimates = mse_estims)
+      MSE_estimates = mse_estims,
+      AdjustedSD = adj_SD)
 
     return(result)
   }
@@ -72,7 +73,8 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
     result <- list(
       MERFmodel = nonLin_preds[[2]],
       Indicators = nonLin_preds[[1]],
-      MSE_estimates = mse_estims)
+      MSE_estimates = mse_estims,
+      AdjustedSD = adj_SD)
 
     return(result)
   }

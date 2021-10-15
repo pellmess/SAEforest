@@ -62,7 +62,8 @@ SAEforest_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg,
       MERFmodel = meanAGG_preds[[2]],
       Mean_Predictions = meanAGG_preds[[1]],
       MSE_estimates = mse_estims,
-      wAreaInfo = meanAGG_preds$wAreaInfo)
+      wAreaInfo = meanAGG_preds$wAreaInfo,
+      AdjustedSD = adj_SD)
 
     return(result)
   }
