@@ -50,7 +50,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
   mu_t <- mod$Mean_Predictions$Mean - unlist(lme4::ranef(mod$MERFmodel$EffectModel))
   mu_pred <- matrix(mu_t, nrow = length(total_dom), ncol=B)
 
-  N_i <- popnsize[,2]
+  N_i <- popnsize[,!colnames(popnsize) %in% dName]
   n_i <- rep(0, length(total_dom))
   n_i[total_dom %in% in_dom] <- as.numeric(table(dom))
 
