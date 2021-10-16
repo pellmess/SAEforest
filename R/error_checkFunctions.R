@@ -1,230 +1,275 @@
-throw_class_error <- function(object, subclass){
-  if(!inherits(object, "emdi")){
-    error_string <- paste0(subclass, " object has to be created by the emdi package for emdi methods to work.")
-    stop(error_string)
-  }
-}
+# THROWIN A CLASS ERROR FOR PRINT SUMMARY AND PLOT OPTIONS
+
+#class_error <- function(object, subclass){
+#  if(!inherits(object, "SAEforest")){
+#    error_string <- paste0(subclass, " object has to be created by the SAEforest package for SAEforest methods to work.")
+#    stop(error_string)
+#  }
+#}
 
 
-# Function called in ebp
-ebp_check1 <- function(fixed, pop_data, pop_domains, smp_data, smp_domains, L){
+# Function called in SAEforest_mean
+input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
+                              ErrorTolerance, MaxIterations, mse, B){
 
-
-
-  if (is.null(fixed)  || !inherits(fixed, "formula")) {
-    stop('Fixed must be a formula object. See also help(ebp).')
-  }
-  if (!is.data.frame(pop_data)) {
-    stop('Pop_data must be a data frame containing population data.
-           See also help(ebp).')
-  }
-  if (!is.character(pop_domains) || length(pop_domains) != 1) {
-    stop('Pop_domains must be a vector of lenght 1 and of class character
-         specifying the variable name of a numeric or factor variable
-         indicating domains in the population data. See also help(ebp).')
-  }
-  if (!is.data.frame(smp_data)) {
-    stop('Smp_data must be a data frame containing sample data.
-           See also help(ebp).')
-  }
-  if (!is.character(smp_domains) || length(smp_domains) != 1) {
-    stop('Smp_domains must be a vector of lenght 1 and of class character
-          specifying the variable (name)  of a numeric or factor variable
-          indicating domains in the sample data. See also help(ebp).')
+  if (!is.numeric(Y) || !(Y %in% survey_data)) {
+    stop('Y must be a metric vector containing the target variable. Additionally Y must be contained
+         in the data frame of survey sample data. See also help(SAEforest_mean)')
   }
 
-  if (!is.numeric(L) || length(L) != 1 || L < 1) {
-    stop('L needs to be a single value, interpreted as an integer, determining
-          the number of Monte-Carlo simulations. The value must be at least
-          1. See also help(ebp).')
+  if (!(X %in% survey_data)) {
+    stop('X specifies the explanatory variabels from the sample data set and must be contaiend in in the
+         survey sample set. See also help(SAEforest_mean)')
   }
-  if (!all(unique(as.character(smp_data[[smp_domains]])) %in%
-           unique(as.character(pop_data[[pop_domains]])))) {
-    stop('The sample data contains domains that are
+
+  if (!is.data.frame(survey_data) || !is.data.frame(census_data)) {
+    stop('survey_data must be a data frame containing the survey sample data. census_data must be a data frame
+    containing the population data. See also help(SAEforest_mean).')
+  }
+
+  if (!is.character(dName) || length(dName) != 1) {
+    stop('dName must be an input of class character determining the variable name of the domain of interest provided in the
+    survey as well as the population data. See also help(SAEforest_mean).')
+  }
+
+  if (dim(census_data)[1] < dim(survey_data)[1]) {
+    stop('The population data set cannot have less observations than the
+         sample data set.')
+  }
+
+  if (is.null(survey_data[[dName]]) || is.null(census_data[[dName]])) {
+    stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
+    must contain a column labelled by the same name, ', dName))
+  }
+
+  if (!all(unique(as.character(survey_data[[dName]])) %in%
+           unique(as.character(census_data[[dName]])))) {
+    stop('The survey sample data contains domains that are
          not contained in the population data.')
   }
+
+  if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))){
+    stop(paste('initialRandomEffects specify initional values of random effects for the MERF. Acceptable inputs are
+         single values such as the default of 0 or numeric vectors of length: ', length(Y)))
+
+  }
+
+  if (!is.numeric(MaxIterations) || length(MaxIterations) != 1 || MaxIterations < 2) {
+    stop('MaxIterations needs to be a single integer value, determining
+          the number of maximum iterations for the convergence of the MERF algorithm. The value must be at least
+          2. See also help(MERFranger).')
+  }
+
+  if (!is.numeric(ErrorTolerance) || length(ErrorTolerance) != 1 || ErrorTolerance <= 0) {
+    stop('ErrorTolerance needs to be a single integer value, determining
+          the tolerance to monitor the convergence of the MERF algorithm. The value must be greater than 0. See also help(MERFranger).')
+  }
+
+  if (is.null(mse) || !(mse == "none" || mse == "analytic" || mse == "nonparametric" )) {
+    stop("The options for mse are ''none'', ''analytic'', ''nonparametric'' ")
+  }
+
+  if (mse != 'none' && !(is.numeric(B) && length(B) == 1  && B > 1)) {
+    stop('If MSE-estimation is specified, B needs to be a single integer value, determining
+          the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_mean).')
+  }
 }
 
-ebp_check2 <- function(threshold, transformation, interval, MSE, boot_type, B,
-                       custom_indicator, cpus, seed, na.rm, weights){
-  if (!is.null(threshold) && !(is.numeric(threshold) && length(threshold) == 1)
-      && !inherits(threshold, "function")) {
+
+# Function called in SAEforest_nonLin
+input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
+                              ErrorTolerance, MaxIterations, mse, B, threshold){
+
+  if (!is.numeric(Y) || !(Y %in% survey_data)) {
+    stop('Y must be a metric vector containing the target variable. Additionally Y must be contained
+         in the data frame of survey sample data. See also help(SAEforest_nonLin)')
+  }
+
+  if (!(X %in% survey_data)) {
+    stop('X specifies the explanatory variabels from the sample data set and must be contaiend in in the
+         survey sample set. See also help(SAEforest_nonLin)')
+  }
+
+  if (!is.data.frame(survey_data) || !is.data.frame(census_data)) {
+    stop('survey_data must be a data frame containing the survey sample data. census_data must be a data frame
+    containing the population data. See also help(SAEforest_nonLin).')
+  }
+
+  if (!is.character(dName) || length(dName) != 1) {
+    stop('dName must be an input of class character determining the variable name of the domain of interest provided in the
+    survey as well as the population data. See also help(SAEforest_nonLin).')
+  }
+
+  if (dim(census_data)[1] < dim(survey_data)[1]) {
+    stop('The population data set cannot have less observations than the
+         sample data set.')
+  }
+
+  if (is.null(survey_data[[dName]]) || is.null(census_data[[dName]])) {
+    stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
+    must contain a column labelled by the same name, ', dName))
+  }
+
+  if (!all(unique(as.character(survey_data[[dName]])) %in%
+           unique(as.character(census_data[[dName]])))) {
+    stop('The survey sample data contains domains that are
+         not contained in the population data.')
+  }
+
+  if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))){
+    stop(paste('initialRandomEffects specify initional values of random effects for the MERF. Acceptable inputs are
+         single values such as the default of 0 or numeric vectors of length: ', length(Y)))
+
+  }
+
+  if (!is.numeric(MaxIterations) || length(MaxIterations) != 1 || MaxIterations < 2) {
+    stop('MaxIterations needs to be a single integer value, determining
+          the number of maximum iterations for the convergence of the MERF algorithm. The value must be at least
+          2. See also help(MERFranger).')
+  }
+
+  if (!is.numeric(ErrorTolerance) || length(ErrorTolerance) != 1 || ErrorTolerance <= 0) {
+    stop('ErrorTolerance needs to be a single integer value, determining
+          the tolerance to monitor the convergence of the MERF algorithm. The value must be greater than 0. See also help(MERFranger).')
+  }
+
+  if (is.null(mse) || !(mse == "none" || mse == "analytic" || mse == "nonparametric" )) {
+    stop("The options for mse are ''none'', ''nonparametric'' and ''wild''.")
+  }
+
+  if (mse != 'none' && !(is.numeric(B) && length(B) == 1  && B > 1)) {
+    stop('If MSE-estimation is specified, B needs to be a single integer value, determining
+          the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_nonLin).')
+  }
+
+  if (!is.null(threshold) && !(is.numeric(threshold) && length(threshold) == 1)) {
     stop("threshold needs to be a single numeric value or a function of y.
-          If it is NULL 60% of the median is selected as threshold.
-         See also help(ebp).")
+          If it is NULL 60% of the median of Y is selected as threshold.
+         See also help(SAEforest_nonLin).")
   }
-  if (inherits(threshold, "function") && !all(attributes(formals(threshold))$names == c("y"))) {
-    stop('If threshold is a function the argument needs to be y and only y. Also
-          a single numeric value is possible as threshold. If it is
-          NULL 60% of the median of the target variable is selected as threshold.
-          See also help(ebp).')
-  }
-  if (is.null(transformation) || !(transformation == "box.cox"
-                                   || transformation == "log" || transformation == "dual" || transformation == "log.shift"
-                                   || transformation == "no")) {
-    stop("The five options for transformation are ''no'', ''log'', ''box.cox'',
-         ''dual'' or ''log.shift''." )
-  }
-  if (any(interval != 'default') & (!is.vector(interval, mode = "numeric") ||
-                                    length(interval) != 2 || !(interval[1] < interval[2]))) {
-    stop("interval needs to be a numeric vector of length 2
-              defining a lower and upper limit for the estimation of the optimal
-              transformation parameter. The value of the lower limit needs to be
-              smaller than the upper limit. You can also choose 'default'. See also help(ebp).")
-  }
-  if (transformation == 'dual' & any(interval < 0)) {
-    stop("For the dual transformation, lambda needs to be positive, so the lower
-          limit of the interval cannot be negative. See also help(ebp).")
-  }
-  if (!is.logical(MSE) || length(MSE) != 1) {
-    stop("MSE must be a logical value. Set MSE to TRUE or FALSE. See also
-         help(ebp).")
-  }
-  if (is.null(boot_type) || !(length(boot_type) == 1 && (boot_type == "parametric"
-                                                         || boot_type == "wild"))) {
-    stop("The two bootstrap procedures are ''parametric'' or ''wild''." )
-  }
-  if (MSE == TRUE && !(is.numeric(B) && length(B) == 1  && B > 1)) {
-    stop('If MSE is set to TRUE, a single numeric value for the number of bootstrap
-         sample needs to be chosen that is greater than 1. See also help(ebp).')
-  }
-  if (!is.numeric(cpus) || !(is.numeric(cpus) && length(cpus) == 1)) {
-    stop("Cpus must be a single number determining the number of kernels for the
-         parallelization.")
-  }
-  if (!is.null(seed) && (!is.numeric(seed) || !(is.numeric(seed) && length(seed) == 1))) {
-    stop("The seed must be a single value, interpreted as an integer, or NULL
-         See also help(ebp).")
-  }
-  if (!is.null(custom_indicator)) {
 
-    if (!inherits(custom_indicator, "list")) {
-      stop("Additional indicators need to be added in argument custom_indicator
-           as a list of functions. For help see Example 2 in help(ebp).")
-    }
+  # MIGHT BE USEFUL IF ALLOWING FOR custom indicators.
 
-    N_custom <- length(custom_indicator)
-    for (i in seq_len(N_custom)) {
-      if (!inherits(custom_indicator[[i]], "function")) {
-        stop("The elements of the list need to be functions. These Functions
-             for custom indicators need to have exactly the following
-             two arguments: y, threshold; even though a threshold might not
-             included in the indicator. For help see Example 2 in help(ebp).")
-      }
-      else if (inherits(custom_indicator[[i]], "function")
-               && !all(names(formals(custom_indicator[[i]])) == c("y", "threshold"))) {
-        stop("Functions for custom indicators need to have exactly the following
-             two arguments: y, threshold; even though a threshold might not
-             included in the indicator. For help see Example 2 in help(ebp).")
-      }
-    }
-  }
-  if (!(inherits(na.rm, "logical") && length(na.rm) == 1)) {
-    stop("na.rm needs to be a logical value. Set na.rm to TRUE or FALSE. See
-         also help(ebp).")
-  }
-  if(is.character(weights) && length(weights) != 1 || !is.character(weights) && !is.null(weights)) {
-    stop('Weights must be a vector of lenght 1 and of class character
-         specifying the variable name of a numeric variable
-         indicating weights in the sample data. See also help(ebp).')
-  }
-  # if(!is.null(weights) && !(transformation == "log"|| transformation == "no")) {
-  #   stop("Weighted ebp can only be used without transformation or the log-
-  #   transformation")
-  # }
-  if(!is.null(weights) && isTRUE(MSE) && boot_type == "wild") {
-    stop("The weighted version of ebp is only available with the ''parametric''
-         bootstrap.")
-  }
+  #    if (!is.null(custom_indicator)) {
+
+  #    if (!inherits(custom_indicator, "list")) {
+  #      stop("Additional indicators need to be added in argument custom_indicator
+  #           as a list of functions. For help see Example 2 in help(ebp).")
+  #    }
+
+  #    N_custom <- length(custom_indicator)
+  #    for (i in seq_len(N_custom)) {
+  #      if (!inherits(custom_indicator[[i]], "function")) {
+  #        stop("The elements of the list need to be functions. These Functions
+  #             for custom indicators need to have exactly the following
+  #             two arguments: y, threshold; even though a threshold might not
+  #             included in the indicator. For help see Example 2 in help(ebp).")
+  #      }
+  #      else if (inherits(custom_indicator[[i]], "function")
+  #               && !all(names(formals(custom_indicator[[i]])) == c("y", "threshold"))) {
+  #        stop("Functions for custom indicators need to have exactly the following
+  #             two arguments: y, threshold; even though a threshold might not
+  #             included in the indicator. For help see Example 2 in help(ebp).")
+  #      }
+  #    }
+  #  }
+  #  }
 
 }
 
 
-# Functions called in notation
-fw_check1 <- function(pop_data, mod_vars, pop_domains, smp_data,
-                      fixed, smp_domains, threshold, weights) {
-  if (!all(mod_vars %in% colnames(pop_data))) {
-    stop(paste0("Variable ", mod_vars[which(!(mod_vars %in% colnames(smp_data)))], " is not contained in pop_data.
-                Please provide valid variable names for the explanatory variables."))
-  }
-  if (!(pop_domains %in% colnames(pop_data))) {
-    stop(paste0("The domain variable ", pop_domains, " is not contained in pop_data.
-                Please provide valid variable name for pop_domains."))
-  }
-  if (!all(mod_vars %in% colnames(smp_data))) {
-    stop(paste0("Variable ", mod_vars[which(!(mod_vars %in% colnames(smp_data)))], " is not contained in smp_data.
-                 Please provide valid variable names for the explanatory variables."))
-  }
-  if (!(smp_domains %in% colnames(smp_data))) {
-    stop(paste0("The domain variable ", smp_domains, " is not contained in smp_data.
-                 Please provide valid variable name for smp_domains."))
-  }
-  if (!((as.character(fixed[2])) %in% colnames(smp_data))) {
-    stop(paste0("Variable ", as.character(fixed[2]), " is not contained in smp_data.
-                Please provide valid variable name for the dependent variable."))
+# Function called in SAEforest_nonLin
+input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects,
+                                ErrorTolerance, MaxIterations, mse, B, popnsize, OOsample_obs,
+                                ADDsamp_obs, w_min){
+
+  if (!is.numeric(Y) || !(Y %in% survey_data)) {
+    stop('Y must be a metric vector containing the target variable. Additionally Y must be contained
+         in the data frame of survey sample data. See also help(SAEforest_meanAGG)')
   }
 
-  if (!is.numeric(smp_data[[paste(fixed[2])]])) {
-    stop(paste0(as.character(fixed[2])," must be the name of a variable that
-               is a numeric vector."))
-  }
-  if (is.character(weights)) {
-    if(!(weights %in% colnames(smp_data)))
-      stop(paste0("The weights variable ", weights, " is not contained in smp_data.
-                Please provide a valid variable name for the weights variable."))
-  }
-  if (is.character(weights)) {
-    if (!is.numeric(smp_data[[weights]]))
-      stop(paste0("The variable ", weights, " must be the name of a variable that
-                is a numeric vector."))
-  }
-  if(is.character(weights)) {
-    if(!all(smp_data[[weights]] >= 1))
-      stop(paste0("Negativ or zero weights are included in ", weights, " Please remove
-                obersvations with weight values smaller than 1."))
+  if (!(X %in% survey_data)) {
+    stop('X specifies the explanatory variabels from the sample data set and must be contaiend in in the
+         survey sample set. See also help(SAEforest_meanAGG)')
   }
 
-  if (dim(pop_data)[1] < dim(smp_data)[1]) {
-    stop("The population data set cannot have less observations than the
-         sample data set.")
+  if (!is.data.frame(survey_data) || !is.data.frame(Xcensus_agg)) {
+    stop('survey_data must be a data frame containing the survey sample data. Xcensus_agg must be a data frame
+    containing the population data. See also help(SAEforest_meanAGG).')
   }
 
-  if (inherits(threshold, "function") && (!is.numeric(threshold(smp_data[[paste(fixed[2])]]))
-                                          || length(threshold(smp_data[[paste(fixed[2])]])) != 1)) {
-    stop("The threshold function must return a single numeric value when evaluated
-         with the dependent variable.")
+  if (!is.character(dName) || length(dName) != 1) {
+    stop('dName must be an input of class character determining the variable name of the domain of interest provided in the
+    survey as well as the population data. See also help(SAEforest_meanAGG).')
   }
 
+
+  if (is.null(survey_data[[dName]]) || is.null(Xcensus_agg[[dName]])) {
+    stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
+    must contain a column labelled by the same name, ', dName))
+  }
+
+  if (!all(unique(as.character(survey_data[[dName]])) %in%
+           unique(as.character(Xcensus_agg[[dName]])))) {
+    stop('The survey sample data contains domains that are
+         not contained in the population data.')
+  }
+
+  if (!is.data.frame(popnsize) || is.null(popnsize[[dName]]) || dim(popnsize)[1] != dim(Xcensus_agg)[1] ||
+                                          dim(popnsize)[2] > 2 || !is.numeric(popnsize[,!colnames(popnsize) %in% dName])){
+    stop(paste('popnsize must be a data frame with two columns: One column named ', dName, 'must contain the domains specifiers.
+         The other column must contain information on the population size of domains. See also help(SAEforest_meanAGG).'))
+  }
+
+  if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))){
+    stop(paste('initialRandomEffects specify initional values of random effects for the MERF. Acceptable inputs are
+         single values such as the default of 0 or numeric vectors of length: ', length(Y)))
+  }
+
+  if (!is.numeric(MaxIterations) || length(MaxIterations) != 1 || MaxIterations < 2) {
+    stop('MaxIterations needs to be a single integer value, determining
+          the number of maximum iterations for the convergence of the MERF algorithm. The value must be at least
+          2. See also help(MERFranger).')
+  }
+
+  if (!is.numeric(ErrorTolerance) || length(ErrorTolerance) != 1 || ErrorTolerance <= 0) {
+    stop('ErrorTolerance needs to be a single integer value, determining
+          the tolerance to monitor the convergence of the MERF algorithm. The value must be greater than 0. See also help(MERFranger).')
+  }
+
+  if (!is.numeric(OOsample_obs) || length(OOsample_obs) != 1 || OOsample_obs < 0) {
+    stop('OOsample_obs needs to be a single integer value, determining
+          the amount of observations sampled from the "closest" area for out-of-sample areas.
+         See also help(SAEforest_meanAGG).')
+  }
+
+  if (!is.numeric(ADDsamp_obs) || length(ADDsamp_obs) != 1 || ADDsamp_obs < 0) {
+    stop('ADDsamp_obs needs to be a single integer value, determining
+          the amount of observations sampled from the "closest" area in the case of failure of calculation
+          of calibration weights. See also help(SAEforest_meanAGG).')
+  }
+
+  if (!is.numeric(w_min) || length(w_min) != 1 || w_min < 2 || w_im > dim(Xcensus_agg)[2]) {
+    stop('w_min needs to be a single integer value, determining
+          the minimum amount of covariates incorporating auxilliary information for the assessment of
+          calibration weights. Thus, w_min must be smaller or equal to the number of existing covariates.
+         See also help(SAEforest_meanAGG).')
+  }
+
+  if (is.null(mse) || !(mse == "none" || mse == "nonparametric" )) {
+    stop("The options for mse are ''none'' or ''nonparametric''.")
+  }
+
+  if (mse != 'none' && !(is.numeric(B) && length(B) == 1  && B > 1)) {
+    stop('If MSE-estimation is specified, B needs to be a single integer value, determining
+          the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_meanAGG).')
+  }
+
+  if (!is.null(threshold) && !(is.numeric(threshold) && length(threshold) == 1)) {
+    stop("threshold needs to be a single numeric value or a function of y.
+          If it is NULL 60% of the median of Y is selected as threshold.
+         See also help(SAEforest_meanAGG).")
+  }
 }
 
 
-
-
-fw_check2 <- function(pop_domains, pop_domains_vec, smp_domains, smp_domains_vec){
-  if (!(is.numeric(pop_domains_vec) || any(inherits(pop_domains_vec, "factor")))) {
-    stop(paste0(pop_domains, " needs to be the name of a variable that is numeric or
-           a (ordered) factor."))
-  }
-  if (!(is.numeric(smp_domains_vec) || any(inherits(smp_domains_vec, "factor")))) {
-    stop(paste0(smp_domains, " needs to be the name of a variable that is numeric or
-           a (ordered) factor."))
-  }
-  if ((is.numeric(pop_domains_vec) && any(inherits(smp_domains_vec, "factor"))) ||
-      (is.numeric(smp_domains_vec) && any(inherits(pop_domains_vec, "factor"))) ) {
-    stop(paste0(pop_domains, " and ", smp_domains," need to be names of variables that are
-          of the same class (factor and ordered factor are considered to be
-         the same class). See also help(ebp)."))
-  }
-}
-
-fw_check3 <- function(obs_dom, dist_obs_dom, pop_domains, smp_domains){
-  if (sum(obs_dom) == 0 || sum(dist_obs_dom) == 0) {
-    #stop('Pop_domains and smp_domains do not have any value in common. Do really
-    #     both variables indicate the same domains in population data and sample
-    #     data, respectively?')
-    stop(paste0(pop_domains, " and ", smp_domains, " do not have any value in common.
-         Do really both variables indicate the same domains in population data
-         and sample data, respectively?"))
-  }
-
-}

@@ -62,7 +62,7 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
 
   for (i in seq_along(unique(survey_data[[dName]]))){
 
-  smear_i <- rowSums(expand_gridALT(unit_preds_ID[unit_preds_ID[[dName]]==i, 2], unit_model$OOBresiduals))
+  smear_i <- rowSums(expand_gridALT(unit_preds_ID[unit_preds_ID[[dName]] == unique(survey_data[[dName]])[i], 2], unit_model$OOBresiduals))
   smear_list[[i]] <-  calc_indicat(smear_i, threshold = threshold)
   }
 
@@ -91,8 +91,8 @@ point_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
 
 
   # Similarity Out-of-Sample
-  similarXcens <- Xcensus_agg[,-1]
-  rownames(similarXcens) <- Xcensus_agg[,1]
+  similarXcens <- Xcensus_agg[,colnames(Xcensus_agg)!= dName]
+  rownames(similarXcens) <- groupNamesCens
   simXcensMatrix <- as.matrix(dist(similarXcens))
   diag(simXcensMatrix) <- NA
 
@@ -169,8 +169,8 @@ point_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
 
     else{
       if(ADDsamp_obs != 0){
-        similarXcens <- Xcensus_agg[,-1]
-        rownames(similarXcens) <- Xcensus_agg[,1]
+        similarXcens <- Xcensus_agg[,colnames(Xcensus_agg)!= dName]
+        rownames(similarXcens) <- groupNamesCens
         simXcensMatrix <- as.matrix(dist(similarXcens))
         diag(simXcensMatrix) <- NA
 
