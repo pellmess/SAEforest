@@ -18,12 +18,14 @@
 #' @examples
 SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, mse = "none", B=100, threshold = NULL, ...){
+                           MaxIterations = 25, mse = "none", B=100, threshold = NULL, importance ="impurity", ...){
 
   # ERROR CHECKS OF INPUTS
   #________________________________________
 
-
+  input_checks_nonLin(Y = Y, X = X, dName = dName, survey_data = survey_data, census_data =census_data,
+                      initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance,
+                      MaxIterations =MaxIterations, mse=mse, B=B, threshold = threshold)
 
 
   # Point Estimation

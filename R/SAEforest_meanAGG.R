@@ -27,15 +27,16 @@ SAEforest_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg,
 
   # ERROR CHECKS OF INPUTS
   #________________________________________
-
-
-
+  input_checks_meanAGG(Y = Y, X = X, dName = dName, survey_data =survey_data, Xcensus_agg =Xcensus_agg,
+                       initialRandomEffects = initialRandomEffects, ErrorTolerance =ErrorTolerance,
+                       MaxIterations =MaxIterations, mse =mse, B = B, popnsize =popnsize,
+                       OOsample_obs =OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min =w_min)
 
   # Point Estimation
   #________________________________________
   meanAGG_preds <- point_meanAGG(Y = Y, X = X, dName = dName, survey_data = survey_data, Xcensus_agg = Xcensus_agg,
                                initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
-                               MaxIterations = MaxIterations, OOsample_obs = OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min = w_min, ...)
+                               MaxIterations = MaxIterations, OOsample_obs = OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min = w_min,...)
 
   if(mse == "none"){
     result <- meanAGG_preds

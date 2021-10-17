@@ -12,14 +12,14 @@
 input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
                               ErrorTolerance, MaxIterations, mse, B){
 
-  if (!is.numeric(Y) || !(Y %in% survey_data)) {
+  if (!is.numeric(Y) || sum(Y == survey_data) != dim(survey_data)[1]) {
     stop('Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_mean)')
   }
 
-  if (!(X %in% survey_data)) {
-    stop('X specifies the explanatory variabels from the sample data set and must be contaiend in in the
-         survey sample set. See also help(SAEforest_mean)')
+  if (sum(!(X %in% survey_data)) !=0) {
+  stop('X specifies the explanatory variabels from the sample data set and must be contaiend in in
+       the survey sample set. See also help(SAEforest_mean)')
   }
 
   if (!is.data.frame(survey_data) || !is.data.frame(census_data)) {
@@ -39,7 +39,7 @@ input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRand
 
   if (is.null(survey_data[[dName]]) || is.null(census_data[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
-    must contain a column labelled by the same name, ', dName))
+    must contain a column labelled by the same name specified under the input of "dName"'))
   }
 
   if (!all(unique(as.character(survey_data[[dName]])) %in%
@@ -80,12 +80,12 @@ input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRand
 input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
                               ErrorTolerance, MaxIterations, mse, B, threshold){
 
-  if (!is.numeric(Y) || !(Y %in% survey_data)) {
+  if (!is.numeric(Y) || sum(Y == survey_data) != dim(survey_data)[1]){
     stop('Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_nonLin)')
   }
 
-  if (!(X %in% survey_data)) {
+  if (sum(!(X %in% survey_data)) !=0) {
     stop('X specifies the explanatory variabels from the sample data set and must be contaiend in in the
          survey sample set. See also help(SAEforest_nonLin)')
   }
@@ -107,7 +107,7 @@ input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRa
 
   if (is.null(survey_data[[dName]]) || is.null(census_data[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
-    must contain a column labelled by the same name, ', dName))
+    must contain a column labelled by the same name specified under the input of "dName"'))
   }
 
   if (!all(unique(as.character(survey_data[[dName]])) %in%
@@ -133,7 +133,7 @@ input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRa
           the tolerance to monitor the convergence of the MERF algorithm. The value must be greater than 0. See also help(MERFranger).')
   }
 
-  if (is.null(mse) || !(mse == "none" || mse == "analytic" || mse == "nonparametric" )) {
+  if (is.null(mse) || !(mse == "none" || mse == "wild" || mse == "nonparametric" )) {
     stop("The options for mse are ''none'', ''nonparametric'' and ''wild''.")
   }
 
@@ -181,14 +181,14 @@ input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRa
 # Function called in SAEforest_nonLin
 input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects,
                                 ErrorTolerance, MaxIterations, mse, B, popnsize, OOsample_obs,
-                                ADDsamp_obs, w_min){
+                                ADDsamp_obs, w_min, importance){
 
-  if (!is.numeric(Y) || !(Y %in% survey_data)) {
+  if (!is.numeric(Y) || sum(Y == survey_data) != dim(survey_data)[1]) {
     stop('Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_meanAGG)')
   }
 
-  if (!(X %in% survey_data)) {
+  if (sum(!(X %in% survey_data)) !=0) {
     stop('X specifies the explanatory variabels from the sample data set and must be contaiend in in the
          survey sample set. See also help(SAEforest_meanAGG)')
   }
@@ -204,9 +204,9 @@ input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialR
   }
 
 
-  if (is.null(survey_data[[dName]]) || is.null(Xcensus_agg[[dName]])) {
+  if (is.null(survey_data[[dName]]) || is.null(census_data[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
-    must contain a column labelled by the same name, ', dName))
+    must contain a column labelled by the same name specified under the input of "dName"'))
   }
 
   if (!all(unique(as.character(survey_data[[dName]])) %in%
@@ -249,7 +249,7 @@ input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialR
           of calibration weights. See also help(SAEforest_meanAGG).')
   }
 
-  if (!is.numeric(w_min) || length(w_min) != 1 || w_min < 2 || w_im > dim(Xcensus_agg)[2]) {
+  if (!is.numeric(w_min) || length(w_min) != 1 || w_min < 2 || w_min > dim(Xcensus_agg)[2]) {
     stop('w_min needs to be a single integer value, determining
           the minimum amount of covariates incorporating auxilliary information for the assessment of
           calibration weights. Thus, w_min must be smaller or equal to the number of existing covariates.
@@ -265,11 +265,6 @@ input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialR
           the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_meanAGG).')
   }
 
-  if (!is.null(threshold) && !(is.numeric(threshold) && length(threshold) == 1)) {
-    stop("threshold needs to be a single numeric value or a function of y.
-          If it is NULL 60% of the median of Y is selected as threshold.
-         See also help(SAEforest_meanAGG).")
-  }
 }
 
 

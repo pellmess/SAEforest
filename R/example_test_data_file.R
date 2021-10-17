@@ -41,7 +41,7 @@
 # APPLICATION OF FUNCTION
 
 #tic()
-#mod_alt <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens, mse ="wild", B=5)
+#mod_alt <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens, mse ="wild", B=0)
 #toc()
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)
@@ -52,9 +52,9 @@
 #set.seed(1234)
 #mod <- point_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, w_min = 2,
 #                     initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
-#                     MaxIterations = MaxIterations, importance = "impurity", ADDsamp_obs = 0 )
-#mod2 <- SAEforest_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, mse="nonparametric",
-#                          importance = "impurity", popnsize = popnsize, B=100)
+#                     MaxIterations = MaxIterations, importance = "impurity", ADDsamp_obs = 0 )#
+#mod2 <- SAEforest_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, mse="none",
+#                          popnsize = popnsize, B=2, mtry=2, importance = "impurity")
 #toc()
 
 #tic()

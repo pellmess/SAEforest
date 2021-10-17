@@ -22,7 +22,9 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
 # ERROR CHECKS OF INPUTS
 #________________________________________
 
-
+  input_checks_mean(Y = Y, X = X, dName = dName, survey_data = survey_data, census_data =census_data,
+                    initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance, MaxIterations =MaxIterations,
+                    mse=mse, B=B)
 
 
 # Point Estimation
