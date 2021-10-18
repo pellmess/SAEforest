@@ -18,21 +18,21 @@
 #' @examples
 SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, mse = "none", B=100, threshold = NULL, importance ="impurity", ...){
+                           MaxIterations = 25, mse = "none", B=100, threshold = NULL, importance ="none", ...){
 
   # ERROR CHECKS OF INPUTS
   #________________________________________
 
   input_checks_nonLin(Y = Y, X = X, dName = dName, survey_data = survey_data, census_data =census_data,
                       initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance,
-                      MaxIterations =MaxIterations, mse=mse, B=B, threshold = threshold)
+                      MaxIterations =MaxIterations, mse=mse, B=B, threshold = threshold, importance = importance)
 
 
   # Point Estimation
   #________________________________________
   nonLin_preds <- point_nonLin(Y = Y, X = X, dName = dName, threshold = threshold, survey_data = survey_data, census_data = census_data,
                            initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
-                           MaxIterations = MaxIterations,...)
+                           MaxIterations = MaxIterations,importance = importance,...)
 
 
   if(mse == "none"){
@@ -55,7 +55,7 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
     mse_estims <- MSE_SAEforest_nonLin_wild(Y=Y, X = X, mod=nonLin_preds[[2]], survey_data = survey_data,
                                             cens_data = census_data, dName = dName, ADJsd = adj_SD , B=B,
                                             threshold = threshold, initialRandomEffects = initialRandomEffects,
-                                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
+                                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, importance = importance, ...)
 
     result <- list(
       MERFmodel = nonLin_preds[[2]],

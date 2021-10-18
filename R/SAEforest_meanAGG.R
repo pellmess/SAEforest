@@ -22,7 +22,7 @@
 SAEforest_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg,
                              initialRandomEffects = 0, ErrorTolerance = 0.0001,
                              MaxIterations = 25, mse = "none", B=100, popnsize,
-                             OOsample_obs = 25, ADDsamp_obs=0, w_min=3, ...){
+                             OOsample_obs = 25, ADDsamp_obs=0, w_min=3, importance = "impurity",...){
 
 
   # ERROR CHECKS OF INPUTS
@@ -30,13 +30,14 @@ SAEforest_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg,
   input_checks_meanAGG(Y = Y, X = X, dName = dName, survey_data =survey_data, Xcensus_agg =Xcensus_agg,
                        initialRandomEffects = initialRandomEffects, ErrorTolerance =ErrorTolerance,
                        MaxIterations =MaxIterations, mse =mse, B = B, popnsize =popnsize,
-                       OOsample_obs =OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min =w_min)
+                       OOsample_obs =OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min =w_min, importance = importance)
 
   # Point Estimation
   #________________________________________
   meanAGG_preds <- point_meanAGG(Y = Y, X = X, dName = dName, survey_data = survey_data, Xcensus_agg = Xcensus_agg,
                                initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
-                               MaxIterations = MaxIterations, OOsample_obs = OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min = w_min,...)
+                               MaxIterations = MaxIterations, OOsample_obs = OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min = w_min,
+                               importance = importance, ...)
 
   if(mse == "none"){
     result <- meanAGG_preds

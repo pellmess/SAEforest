@@ -10,7 +10,7 @@
 
 # Function called in SAEforest_mean
 input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
-                              ErrorTolerance, MaxIterations, mse, B){
+                              ErrorTolerance, MaxIterations, mse, B, importance){
 
   if (!is.numeric(Y) || sum(Y == survey_data) != dim(survey_data)[1]) {
     stop('Y must be a metric vector containing the target variable. Additionally Y must be contained
@@ -73,12 +73,17 @@ input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRand
     stop('If MSE-estimation is specified, B needs to be a single integer value, determining
           the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_mean).')
   }
+
+  if (is.null(importance) || !(importance == "none" || importance == "impurity" || importance == "impurity_corrected" || importance ="permutation")) {
+    stop('Variable importance is needed for vip plots. To reduce runtime importance can be set to "none". Furhter options are "impurity", "impurity_corrected" or "permutation".
+         See details on the variable importance mode with help(ranger).' )
+  }
 }
 
 
 # Function called in SAEforest_nonLin
 input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
-                              ErrorTolerance, MaxIterations, mse, B, threshold){
+                              ErrorTolerance, MaxIterations, mse, B, threshold, importance){
 
   if (!is.numeric(Y) || sum(Y == survey_data) != dim(survey_data)[1]){
     stop('Y must be a metric vector containing the target variable. Additionally Y must be contained
@@ -147,6 +152,12 @@ input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRa
           If it is NULL 60% of the median of Y is selected as threshold.
          See also help(SAEforest_nonLin).")
   }
+
+  if (is.null(importance) || !(importance == "none" || importance == "impurity" || importance == "impurity_corrected" || importance ="permutation")) {
+    stop('Variable importance is needed for vip plots. To reduce runtime importance can be set to "none". Furhter options are "impurity", "impurity_corrected" or "permutation".
+         See details on the variable importance mode with help(ranger).' )
+  }
+
 
   # MIGHT BE USEFUL IF ALLOWING FOR custom indicators.
 
@@ -263,6 +274,12 @@ input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialR
   if (mse != 'none' && !(is.numeric(B) && length(B) == 1  && B > 1)) {
     stop('If MSE-estimation is specified, B needs to be a single integer value, determining
           the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_meanAGG).')
+  }
+
+  if (is.null(importance) || !(importance == "impurity" || importance == "impurity_corrected" || importance ="permutation")) {
+    stop('The calculation of calibration weights requires a concept of variable importance.
+         The options are passed to the MERF and must be "impurity", "impurity_corrected" or "permutation".
+         See details on the variable importance mode with help(ranger). See details on the caluclation of calibration weights help(SAEforest_meanAGG).' )
   }
 
 }

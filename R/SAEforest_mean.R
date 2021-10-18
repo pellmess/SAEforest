@@ -17,21 +17,21 @@
 #' @examples
 SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, mse = "none", B=100, ...){
+                           MaxIterations = 25, mse = "none", B=100, importance = "none",...){
 
 # ERROR CHECKS OF INPUTS
 #________________________________________
 
   input_checks_mean(Y = Y, X = X, dName = dName, survey_data = survey_data, census_data =census_data,
                     initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance, MaxIterations =MaxIterations,
-                    mse=mse, B=B)
+                    mse=mse, B=B, importance = importance)
 
 
 # Point Estimation
 #________________________________________
   mean_preds <- point_mean(Y = Y, X = X, dName = dName, survey_data = survey_data, census_data = census_data,
              initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
-             MaxIterations = MaxIterations,...)
+             MaxIterations = MaxIterations,importance = importance,...)
 
 
   if(mse == "none"){

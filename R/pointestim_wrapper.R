@@ -1,6 +1,6 @@
 
 point_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
-                       ErrorTolerance, MaxIterations, ...){
+                       ErrorTolerance, MaxIterations, importance = "none", ...){
 
   random = paste0(paste0("(1|",dName),")")
 
@@ -10,7 +10,7 @@ point_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffec
                          data = survey_data,
                          initialRandomEffects = initialRandomEffects,
                          ErrorTolerance = ErrorTolerance,
-                         MaxIterations = MaxIterations,...)
+                         MaxIterations = MaxIterations,importance = importance, ...)
 
   unit_preds <- predict(unit_model$Forest, census_data)$predictions+
     predict(unit_model$EffectModel,census_data, allow.new.levels=TRUE)
@@ -36,7 +36,7 @@ return(out_ob)
 
 
 point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initialRandomEffects,
-                       ErrorTolerance, MaxIterations, ...){
+                       ErrorTolerance, MaxIterations, importance = "none", ...){
 
   random = paste0(paste0("(1|",dName),")")
 
@@ -50,7 +50,7 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
                            data = survey_data,
                            initialRandomEffects = initialRandomEffects,
                            ErrorTolerance = ErrorTolerance,
-                           MaxIterations = MaxIterations,...)
+                           MaxIterations = MaxIterations,importance = importance, ...)
 
   unit_preds <- predict(unit_model$Forest, census_data)$predictions+
     predict(unit_model$EffectModel,census_data, allow.new.levels=TRUE)
@@ -81,7 +81,7 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
 
 
 point_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects, ErrorTolerance,
-                         MaxIterations, OOsample_obs, ADDsamp_obs, w_min, wSet = NULL, ...){
+                         MaxIterations, OOsample_obs, ADDsamp_obs, w_min, wSet = NULL, importance = "none", ...){
 
   random <- paste0(paste0("(1|",dName),")")
   groupNames <- as.vector(t(unique(survey_data[dName])))
@@ -102,7 +102,7 @@ point_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEf
                            data = survey_data,
                            initialRandomEffects = initialRandomEffects,
                            ErrorTolerance = ErrorTolerance,
-                           MaxIterations = MaxIterations, ...)
+                           MaxIterations = MaxIterations, importance = importance, ...)
 
   unit_preds <- predict(unit_model$Forest, survey_data)$predictions +
     predict(unit_model$EffectModel,survey_data, allow.new.levels=TRUE)
