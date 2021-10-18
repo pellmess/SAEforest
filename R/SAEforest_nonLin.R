@@ -27,6 +27,7 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                       initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance,
                       MaxIterations =MaxIterations, mse=mse, B=B, threshold = threshold, importance = importance)
 
+  out_call <- match.call()
 
   # Point Estimation
   #________________________________________
@@ -34,12 +35,14 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
                            MaxIterations = MaxIterations,importance = importance,...)
 
+  data_specs <- sae_specs(dName = dName,cns = census_data,smp = survey_data)
 
   if(mse == "none"){
     result <- list(
       Indicators = nonLin_preds[[1]],
-      MERFmodel = nonLin_preds[[2]])
+      MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs)))
 
+    class(result) <- c("SAEforest_nonLin", "SAEforest")
     return(result)
   }
 
@@ -58,11 +61,12 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                                             ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, importance = importance, ...)
 
     result <- list(
-      MERFmodel = nonLin_preds[[2]],
+      MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs)),
       Indicators = nonLin_preds[[1]],
       MSE_estimates = mse_estims,
       AdjustedSD = adj_SD)
 
+    class(result) <- c("SAEforest_nonLin", "SAEforest")
     return(result)
   }
 
@@ -73,11 +77,12 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
 
     result <- list(
-      MERFmodel = nonLin_preds[[2]],
+      MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs)),
       Indicators = nonLin_preds[[1]],
       MSE_estimates = mse_estims,
       AdjustedSD = adj_SD)
 
+    class(result) <- c("SAEforest_nonLin", "SAEforest")
     return(result)
   }
 

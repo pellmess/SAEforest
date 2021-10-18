@@ -32,6 +32,8 @@ SAEforest_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg,
                        MaxIterations =MaxIterations, mse =mse, B = B, popnsize =popnsize,
                        OOsample_obs =OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min =w_min, importance = importance)
 
+  out_call <- match.call()
+
   # Point Estimation
   #________________________________________
   meanAGG_preds <- point_meanAGG(Y = Y, X = X, dName = dName, survey_data = survey_data, Xcensus_agg = Xcensus_agg,
@@ -39,9 +41,15 @@ SAEforest_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg,
                                MaxIterations = MaxIterations, OOsample_obs = OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min = w_min,
                                importance = importance, ...)
 
-  if(mse == "none"){
-    result <- meanAGG_preds
+  data_specs <- sae_specs(dName = dName,cns = Xcensus_agg, smp = survey_data)
 
+
+  if(mse == "none"){
+    result <- list(
+      MERFmodel =  c(meanAGG_preds[[2]], call = out_call, data_specs = list(data_specs)),
+      Mean_Predictions = meanAGG_preds[[1]])
+
+    class(result) <- c("SAEforest_meanAGG", "SAEforest")
     return(result)
   }
 
@@ -61,12 +69,13 @@ SAEforest_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg,
                                            popnsize = popnsize, ...)
 
     result <- list(
-      MERFmodel = meanAGG_preds[[2]],
+      MERFmodel =  c(meanAGG_preds[[2]], call = out_call, data_specs = list(data_specs)),
       Mean_Predictions = meanAGG_preds[[1]],
       MSE_estimates = mse_estims,
       wAreaInfo = meanAGG_preds$wAreaInfo,
       AdjustedSD = adj_SD)
 
+    class(result) <- c("SAEforest_meanAGG", "SAEforest")
     return(result)
   }
 

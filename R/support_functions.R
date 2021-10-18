@@ -32,3 +32,19 @@ expand_gridALT <- function(s1, s2) {
   cbind(rep.int(s1, length(s2)),
         c(t(matrix(rep.int(s2, length(s1)), nrow=length(s2)))))
 }
+
+
+sae_specs <- function(dName,cns,smp){
+  in_dom<- unique(smp[[dName]])
+  total_dom <- unique(cns[[dName]])
+  OOsamp <- !total_dom %in% in_dom
+
+  return(list(
+    n_surv = length(smp[[dName]]),
+    n_pop = length(cns[[dName]]),
+    n_out = sum(OOsamp),
+    n_in = length(in_dom),
+    n_total = length(total_dom),
+    n_smp = table(smp[[dName]]),
+    n_cns = table(cns[[dName]])))
+}

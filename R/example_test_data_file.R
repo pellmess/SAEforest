@@ -41,7 +41,7 @@
 # APPLICATION OF FUNCTION
 
 #tic()
-#mod_alt <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens, mse ="wild", B=0)
+#mod_alt <- SAEforest_mean(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens, mse ="none", B=0)
 #toc()
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)

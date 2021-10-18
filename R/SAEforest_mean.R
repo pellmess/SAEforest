@@ -26,6 +26,7 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                     initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance, MaxIterations =MaxIterations,
                     mse=mse, B=B, importance = importance)
 
+  out_call <- match.call()
 
 # Point Estimation
 #________________________________________
@@ -33,12 +34,15 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
              initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
              MaxIterations = MaxIterations,importance = importance,...)
 
+  data_specs <- sae_specs(dName = dName,cns = census_data,smp = survey_data)
+
 
   if(mse == "none"){
   result <- list(
     Mean_predictions = mean_preds[[1]],
-    MERFmodel = mean_preds[[2]])
+    MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs)))
 
+  class(result) <- c("SAEforest_mean", "SAEforest")
   return(result)
 }
 
@@ -57,11 +61,12 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                                    ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
 
     result <- list(
-     MERFmodel = mean_preds[[2]],
+     MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs)),
      Mean_predictions = mean_preds[[1]],
      MSE_estimates = mse_estims,
      AdjustedSD = adj_SD)
 
+    class(result) <- c("SAEforest_mean", "SAEforest")
     return(result)
   }
 
@@ -72,11 +77,12 @@ SAEforest_mean <- function(Y, X, dName, survey_data, census_data,
                                          ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
 
     result <- list(
-      MERFmodel = mean_preds[[2]],
+      MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs)),
       Mean_predictions = mean_preds[[1]],
       MSE_estimates = mse_estims,
       AdjustedSD = adj_SD)
 
+    class(result) <- c("SAEforest_mean", "SAEforest")
     return(result)
   }
 }
