@@ -12,6 +12,7 @@ MERFranger(
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
+  importance,
   ...
 )
 }

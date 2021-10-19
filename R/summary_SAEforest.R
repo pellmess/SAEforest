@@ -1,7 +1,9 @@
 # Summarizes an SAEforest Object
 
-summary.SAEforest <- function(object, ...) {
-  class_error(object)
+#'@export
+
+summary.SAEforest <- function(object) {
+  class_error(object=object)
 
   call_SAE <- object$MERFmodel$call
 
@@ -73,16 +75,16 @@ summary.SAEforest <- function(object, ...) {
 
 
 #' @export
-print.summary.SAEforest <- function(x, ...) {
-  class_error(object)
+print.summary.SAEforest <- function(x) {
+  class_error(object=x)
   cat("________________________________________________________________\n")
   cat("Mixed Effects Random Forest for Small Area Estimation\n")
-  cat("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
+  cat("________________________________________________________________\n")
   cat("Call:\n")
   print(x$call_SAE)
   cat("\n")
   cat("Domains\n")
-  cat("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
+  cat("________________________________________________________________")
   cat("\n")
   print(x$dom_info)
   cat("\n")
@@ -94,17 +96,17 @@ print.summary.SAEforest <- function(x, ...) {
   print(x$sizedom_smp_pop)
   cat("\n")
   cat("Random forest component: \n")
-  cat("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
+  cat("________________________________________________________________\n")
   print(x$forest_info)
   cat("\n")
   cat("Structural component of random effects:\n")
-  cat("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
+  cat("________________________________________________________________\n")
   print(x$sum_lm)
   cat("\n")
   cat("ICC: ", x$icc, "\n")
   cat("\n")
   cat("Convergence of MERF-algorithm: \n")
-  cat("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n")
+  cat("________________________________________________________________\n")
   cat("Convergence achieved after", x$iter,"iterations.\nA maximum of", x$maxIter,"iterations was used and tolerance set to:", x$Tol,"\n")
   cat("\n")
   cat("Monitored Log-Likelihood:")

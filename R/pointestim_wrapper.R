@@ -58,11 +58,11 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
   unit_preds_ID <- data.frame(census_data[dName],"predictions" = unit_preds)
 
   # SMEARING STEP HERE------------
-  smear_list <- vector(mode="list", length = length(unique(survey_data[[dName]])))
+  smear_list <- vector(mode="list", length = length(unique(census_data[[dName]])))
 
-  for (i in seq_along(unique(survey_data[[dName]]))){
+  for (i in seq_along(unique(census_data[[dName]]))){
 
-  smear_i <- rowSums(expand_gridALT(unit_preds_ID[unit_preds_ID[[dName]] == unique(survey_data[[dName]])[i], 2], unit_model$OOBresiduals))
+  smear_i <- rowSums(expand_gridALT(unit_preds_ID[as.character(unit_preds_ID[[dName]]) == as.character(unique(census_data[[dName]])[i]), 2], unit_model$OOBresiduals))
   smear_list[[i]] <-  calc_indicat(smear_i, threshold = threshold)
   }
 

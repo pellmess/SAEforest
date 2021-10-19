@@ -16,6 +16,7 @@ SAEforest_nonLin(
   mse = "none",
   B = 100,
   threshold = NULL,
+  importance = "none",
   ...
 )
 }

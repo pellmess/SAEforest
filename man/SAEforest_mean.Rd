@@ -15,6 +15,7 @@ SAEforest_mean(
   MaxIterations = 25,
   mse = "none",
   B = 100,
+  importance = "none",
   ...
 )
 }

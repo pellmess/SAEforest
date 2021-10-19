@@ -10,7 +10,7 @@
 # Function called in SAEforest_mean
 input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
                               ErrorTolerance, MaxIterations, mse, B, importance) {
-  if (!is.numeric(Y) || sum(Y == survey_data) != dim(survey_data)[1]) {
+  if (!is.numeric(Y) || !any(eusilcA_smp$eqIncome == eusilcA_smp$eqIncome)) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_mean)")
   }
@@ -81,7 +81,7 @@ input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRand
 # Function called in SAEforest_nonLin
 input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
                                 ErrorTolerance, MaxIterations, mse, B, threshold, importance) {
-  if (!is.numeric(Y) || sum(Y == survey_data) != dim(survey_data)[1]) {
+  if (!is.numeric(Y) || !any(eusilcA_smp$eqIncome == eusilcA_smp$eqIncome)) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_nonLin)")
   }
@@ -187,7 +187,7 @@ input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRa
 input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects,
                                  ErrorTolerance, MaxIterations, mse, B, popnsize, OOsample_obs,
                                  ADDsamp_obs, w_min, importance) {
-  if (!is.numeric(Y) || sum(Y == survey_data) != dim(survey_data)[1]) {
+  if (!is.numeric(Y) || !any(eusilcA_smp$eqIncome == eusilcA_smp$eqIncome)) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_meanAGG)")
   }

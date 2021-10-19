@@ -39,9 +39,13 @@
 
 
 # APPLICATION OF FUNCTION
+#library(emdi)
+#data("eusilcA_pop")
+#data("eusilcA_smp")
 
 #tic()
-#mod_alt <- SAEforest_mean(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=cens, mse ="none", B=0)
+#mod_alt <- SAEforest_mean(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,18)], dName = "district", survey_data =eusilcA_smp, census_data=eusilcA_pop,
+#                          mse ="none", B=0, importance = "impurity", keep.inbag=TRUE)
 #toc()
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)

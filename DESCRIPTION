@@ -17,9 +17,11 @@ Imports:
     MASS,
     parallel,
     pbapply,
+    pdp,
     ranger,
     stats,
-    tidyr
+    tidyr,
+    vip
 RoxygenNote: 7.1.2
 Depends: 
     tidyverse
