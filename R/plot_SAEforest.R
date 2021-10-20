@@ -4,6 +4,12 @@
 plot.SAEforest <- function(obj, num_features =2, col ="darkgreen", fill = "darkgreen", alpha=0.55,
                            include_type =TRUE, horizontal = TRUE, gg_specs = theme_minimal(),
                            lsize=1.5, lty= "solid", grid_row=2, out_list = FALSE, pdp_plot =TRUE){
+
+  class_error(obj)
+
+  input_checks_plot(num_features = num_features, alpha = alpha, include_type = include_type, horizontal =horizontal,
+                                lsize = lsize, grid_row = grid_row, out_list = out_list, pdp_plot=pdp_plot)
+
   # VIP PLOT
   vip_plot <- vip::vip(obj$MERFmodel$Forest, aes = list(col =col, fill = fill, alpha=alpha),
                   include_type =include_type, horizontal = horizontal, num_features=num_features)+ ggtitle("Variable Importance")+ gg_specs
@@ -21,10 +27,10 @@ plot.SAEforest <- function(obj, num_features =2, col ="darkgreen", fill = "darkg
   set_rm <- levels(factor(c(set_fact, set_char)))
 
   if(length(set_rm) !=0){
-    print(paste("The data contained",length(set_rm) ,"character or factor variables from which no pdp plots can be made."))
+    print(paste0("The data contained ", length(set_rm) ," character or factor variables unsuitable for pdp plots(",paste(set_rm, collapse=", ") ,")."))
   }
 
-  forest_imp <- as.data.frame(vi(mod_alt$MERFmodel$Forest))
+  forest_imp <- as.data.frame(vip::vi(mod_alt$MERFmodel$Forest))
   forest_imp <- forest_imp[order(forest_imp$Importance, decreasing = TRUE),]
   forest_imp <- forest_imp[!forest_imp[,"Variable"] %in% set_rm,]
   forest_imp <- na.omit(forest_imp[1:num_features,])
@@ -36,7 +42,7 @@ plot.SAEforest <- function(obj, num_features =2, col ="darkgreen", fill = "darkg
       ggtitle(paste("Partial Dependence of",feature)) + gg_specs
   })
 
-  grid.arrange(grobs = pdp_curves, nrow = grid_row)
+  vip::grid.arrange(grobs = pdp_curves, nrow = grid_row)
 }
 
   # Output for furhter adaptions

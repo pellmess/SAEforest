@@ -4,9 +4,6 @@ MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, survey_data, mod, A
 
   forest_m1 <- mod
   rand_struc = paste0(paste0("(1|",dName),")")
-  if(is.null(threshold)){
-    threshold = 0.6*median(Y, na.rm=TRUE)
-  }
 
   n_i <- as.numeric(table(cens_data[[dName]]))
 
@@ -77,10 +74,20 @@ MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, survey_data, mod, A
   # combine
   y_star_u_star <-  Map(function(x,y,z){x+y+z}, pred_t, e_ij, u_i)
 
-  boots_pop <- Map(cbind, boots_pop, "y_star_u_star" = y_star_u_star)
+  if(is.numeric(threshold)){
+    thresh <- sapply(y_star_u_star, threshold, simplify = FALSE)
+  }
+  if(is.null(threshold)){
+    thresh <- sapply(y_star_u_star, function(x){0.6*median(x, na.rm=TRUE)}, simplify = FALSE)
+  }
+  if(is.function(threshold)){
+    thresh <- sapply(y_star_u_star, threshold, simplify = FALSE)
+  }
+
+  boots_pop <- Map(cbind, boots_pop, "y_star_u_star" = y_star_u_star, "thresh"=thresh)
 
 
-  my_agg <-  function(x){tapply(x[["y_star_u_star"]],x[[dName]],calc_indicat, threshold = threshold )}
+  my_agg <-  function(x){tapply(x[["y_star_u_star"]],x[[dName]],function(X){calc_indicat(x, threshold =unique(x$thresh))})}
   tau_star <- sapply(boots_pop, my_agg, simplify = FALSE)
   comb <- function(x){matrix(unlist(x), nrow = length(n_i), byrow = TRUE)}
   tau_star <- sapply(tau_star, comb, simplify = FALSE)

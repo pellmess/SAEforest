@@ -31,7 +31,17 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
 
   # Point Estimation
   #________________________________________
-  nonLin_preds <- point_nonLin(Y = Y, X = X, dName = dName, threshold = threshold, survey_data = survey_data, census_data = census_data,
+  if(is.null(threshold)){
+    thresh_point = 0.6*median(Y, na.rm=TRUE)
+  }
+  if(is.function(threshold)){
+    thresh_point = threshold(Y)
+  }
+  if(is.numeric(threshold)){
+    thresh_point = threshold
+  }
+
+  nonLin_preds <- point_nonLin(Y = Y, X = X, dName = dName, threshold = thresh_point, survey_data = survey_data, census_data = census_data,
                            initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
                            MaxIterations = MaxIterations,importance = importance,...)
 

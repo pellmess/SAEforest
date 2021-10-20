@@ -6,9 +6,6 @@ calc_indicat <- function(Y, threshold){
   qsr_function <- function(y){
     sum(y[(y > quantile(y,0.8, na.rm = TRUE))]) / sum(y[(y < quantile(y,0.2, na.rm = TRUE))])
   }
-  qsr2_function <- function(y){
-    sum(y[(y > quantile(y,0.6, na.rm = TRUE))]) / sum(y[(y < quantile(y,0.4, na.rm = TRUE))])
-  }
   pgap_function <- function(y,threshold) {
     mean((y < threshold)*(threshold - y) / threshold, na.rm = TRUE)
   }

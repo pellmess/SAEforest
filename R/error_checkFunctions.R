@@ -10,7 +10,7 @@
 # Function called in SAEforest_mean
 input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
                               ErrorTolerance, MaxIterations, mse, B, importance) {
-  if (!is.numeric(Y) || !any(eusilcA_smp$eqIncome == eusilcA_smp$eqIncome)) {
+  if (!is.numeric(Y) || !data.frame(Y) %in% survey_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_mean)")
   }
@@ -81,7 +81,7 @@ input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRand
 # Function called in SAEforest_nonLin
 input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
                                 ErrorTolerance, MaxIterations, mse, B, threshold, importance) {
-  if (!is.numeric(Y) || !any(eusilcA_smp$eqIncome == eusilcA_smp$eqIncome)) {
+  if (!is.numeric(Y) || !data.frame(Y) %in% survey_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_nonLin)")
   }
@@ -187,7 +187,7 @@ input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRa
 input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects,
                                  ErrorTolerance, MaxIterations, mse, B, popnsize, OOsample_obs,
                                  ADDsamp_obs, w_min, importance) {
-  if (!is.numeric(Y) || !any(eusilcA_smp$eqIncome == eusilcA_smp$eqIncome)) {
+  if (!is.numeric(Y) || !data.frame(Y) %in% survey_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_meanAGG)")
   }
@@ -275,3 +275,50 @@ input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialR
          See details on the variable importance mode with help(ranger). See details on the caluclation of calibration weights help(SAEforest_meanAGG).')
   }
 }
+
+
+
+input_checks_plot <- function(num_features, alpha, include_type, horizontal,
+                              lsize, grid_row, out_list, pdp_plot){
+
+  if (!is.numeric(num_features) || length(num_features) != 1 || num_features < 2) {
+    stop("num_features needs to be a single integer value, determining
+          the amount of covariates for which importance shoudl be plotted.")
+  }
+
+  if (!is.numeric(alpha) || length(alpha) != 1 ) {
+    stop("alpha needs to be a single integer value between 0 and 1, determining the transperancy of colors.")
+  }
+
+  if (!is.numeric(grid_row) || length(grid_row) != 1 ) {
+    stop("grid_row must be a single integer value determining the number of rows for the joint plot of pdps.")
+  }
+
+  if(!is.logical(include_type)){
+    stop("include_type must be logical! See details help(plot.SAEforest).")
+  }
+
+  if(!is.logical(horizontal)){
+    stop("horizontal must be logical! See details help(plot.SAEforest).")
+  }
+
+  if(!is.logical(out_list)){
+    stop("out_list must be logical! See details help(plot.SAEforest).")
+  }
+
+  if(!is.logical(pdp_plot)){
+    stop("pdp_plot must be logical! See details help(plot.SAEforest).")
+  }
+
+  if (!is.numeric(lsize) || length(lsize) != 1 ) {
+    stop("lsize must be a single integer value determining the line size for pdp plots.")
+  }
+
+}
+
+
+
+
+
+
+

@@ -33,16 +33,10 @@ return(out_ob)
 
 
 
-
-
 point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initialRandomEffects,
                        ErrorTolerance, MaxIterations, importance = "none", ...){
 
   random = paste0(paste0("(1|",dName),")")
-
-  if(is.null(threshold)){
-    threshold = 0.6*median(Y, na.rm=TRUE)
-  }
 
   unit_model <- MERFranger(Y = Y,
                            X = X,
