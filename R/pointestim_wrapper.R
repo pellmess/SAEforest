@@ -39,13 +39,13 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
   random = paste0(paste0("(1|",dName),")")
 
   if(is.null(threshold)){
-    threshold = 0.6*median(Y, na.rm=TRUE)
+    thresh = 0.6*median(Y, na.rm=TRUE)
   }
   if(is.function(threshold)){
-    threshold = threshold(Y)
+    thresh = threshold(Y)
   }
   if(is.numeric(threshold)){
-    threshold = threshold
+    thresh = threshold
   }
 
   unit_model <- MERFranger(Y = Y,
@@ -63,11 +63,13 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
 
   # SMEARING STEP HERE------------
   smear_list <- vector(mode="list", length = length(unique(census_data[[dName]])))
+  popSize <- as.numeric(table(census_data[[dName]]))
 
   for (i in seq_along(unique(census_data[[dName]]))){
+    smear_i <- matrix(rep(unit_model$OOBresiduals,popSize[i]), nrow=popSize[i],ncol=length(unit_model$OOBresiduals),byrow=TRUE)
+    smear_i <- smear_i + unit_preds_ID[as.character(unit_preds_ID[[dName]]) == as.character(unique(census_data[[dName]])[i]), 2]
 
-  smear_i <- rowSums(expand_gridALT(unit_preds_ID[as.character(unit_preds_ID[[dName]]) == as.character(unique(census_data[[dName]])[i]), 2], unit_model$OOBresiduals))
-  smear_list[[i]] <-  calc_indicat(smear_i, threshold = threshold, custom = custom_indicator)
+    smear_list[[i]] <-  calc_indicat(c(smear_i), threshold = thresh, custom = custom_indicator)
   }
 
   indicators <- do.call(rbind.data.frame, smear_list)

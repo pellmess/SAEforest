@@ -57,12 +57,13 @@
 #test2 <-MSE_SAEforest_nonLin_wild(Y=Y, X=X, dName = "idD", survey_data =surv, cens_data=cens, B=5,
 #                               ADJsd = 500, mod=mod, threshold = NULL)
 
-#tic()
+
 #set.seed(1234)
 #mod <- point_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, w_min = 2,
 #                     initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
 #                     MaxIterations = MaxIterations, importance = "impurity", ADDsamp_obs = 0 )#
-#mod3 <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=census_data, mse="none", threshold = 0)
+#tic()
+#mod3 <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=census_data, mse="none", B=5)
 #toc()
 
 #tic()
