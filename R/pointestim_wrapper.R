@@ -34,9 +34,19 @@ return(out_ob)
 
 
 point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initialRandomEffects,
-                       ErrorTolerance, MaxIterations, importance = "none", ...){
+                       ErrorTolerance, MaxIterations, importance = "none", custom_indicator, ...){
 
   random = paste0(paste0("(1|",dName),")")
+
+  if(is.null(threshold)){
+    threshold = 0.6*median(Y, na.rm=TRUE)
+  }
+  if(is.function(threshold)){
+    threshold = threshold(Y)
+  }
+  if(is.numeric(threshold)){
+    threshold = threshold
+  }
 
   unit_model <- MERFranger(Y = Y,
                            X = X,
@@ -57,7 +67,7 @@ point_nonLin <- function(Y, X, dName, threshold, survey_data, census_data, initi
   for (i in seq_along(unique(census_data[[dName]]))){
 
   smear_i <- rowSums(expand_gridALT(unit_preds_ID[as.character(unit_preds_ID[[dName]]) == as.character(unique(census_data[[dName]])[i]), 2], unit_model$OOBresiduals))
-  smear_list[[i]] <-  calc_indicat(smear_i, threshold = threshold)
+  smear_list[[i]] <-  calc_indicat(smear_i, threshold = threshold, custom = custom_indicator)
   }
 
   indicators <- do.call(rbind.data.frame, smear_list)

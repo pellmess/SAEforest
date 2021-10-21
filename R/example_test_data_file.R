@@ -29,6 +29,11 @@
 #Xcensus_agg <- cbind(unique(surv[dName]), x1, x2)
 #popnsize <- data.frame(idD= 1:50, PopnSegments=1000)
 
+#cust_ind = list(my_max = function(y, threshold){max(y)},
+#     my_min = function(y, threshold){min(y)},
+#     my_quant = function(y, threshold){quantile(y, probs=c(0.01,0.99))})
+
+
 #unit_model <- MERFranger(Y = Y,
 #                         X = X,
 #                         random = random,
@@ -57,8 +62,7 @@
 #mod <- point_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, w_min = 2,
 #                     initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
 #                     MaxIterations = MaxIterations, importance = "impurity", ADDsamp_obs = 0 )#
-#mod2 <- SAEforest_meanAGG(Y=Y, X=X, dName = "idD", survey_data =surv, Xcensus_agg=Xcensus_agg, mse="none",
-#                          popnsize = popnsize, B=2, mtry=2, importance = "impurity")
+#mod3 <- SAEforest_nonLin(Y=Y, X=X, dName = "idD", survey_data =surv, census_data=census_data, mse="none", threshold = 0)
 #toc()
 
 #tic()

@@ -1,12 +1,9 @@
 MSE_SAEforest_nonLin_wild <- function(Y, X, dName, threshold, survey_data, mod, ADJsd, cens_data, B=100,
                                       initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                                      MaxIterations = 25, ...){
+                                      MaxIterations = 25, custom_indicator,...){
 
   forest_m1 <- mod
   rand_struc = paste0(paste0("(1|",dName),")")
-  if(is.null(threshold)){
-    threshold = 0.6*median(Y, na.rm=TRUE)
-  }
 
   n_i <- as.numeric(table(cens_data[[dName]]))
 
@@ -55,10 +52,19 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, threshold, survey_data, mod, 
   e_ij <- sapply(y_hat_MSE, wild_errors, simplify = FALSE)
   y_star_u_star <- Map('+', y_hat_MSE, e_ij)
 
-  boots_pop <- Map(cbind,boots_pop, "y_star_u_star" = y_star_u_star)
+  if(is.numeric(threshold)){
+    thresh <- sapply(y_star_u_star, function(x){threshold}, simplify = FALSE)
+  }
+  if(is.null(threshold)){
+    thresh <- sapply(y_star_u_star, function(x){0.6*median(x, na.rm=TRUE)}, simplify = FALSE)
+  }
+  if(is.function(threshold)){
+    thresh <- sapply(y_star_u_star, threshold, simplify = FALSE)
+  }
 
+  boots_pop <- Map(cbind, boots_pop, "y_star_u_star" = y_star_u_star, "thresh"=thresh)
 
-  my_agg <-  function(x){tapply(x[["y_star_u_star"]],x[[dName]],calc_indicat, threshold = threshold )}
+  my_agg <-  function(x){tapply(x[["y_star_u_star"]], x[[dName]], calc_indicat, threshold = unique(x[["thresh"]]), custom = custom_indicator)}
   tau_star <- sapply(boots_pop, my_agg, simplify = FALSE)
   comb <- function(x){matrix(unlist(x), nrow = length(n_i), byrow = TRUE)}
   tau_star <- sapply(tau_star, comb, simplify = FALSE)
@@ -72,7 +78,7 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, threshold, survey_data, mod, 
 
   my_estim_f <- function(x){point_nonLin(Y = x$y_star_u_star, X = x[,colnames(X)], dName = dName, threshold = threshold, survey_data = x, census_data = cens_data,
                                          initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
-                                         MaxIterations = MaxIterations,...)[[1]][,-1]}
+                                         MaxIterations = MaxIterations,custom_indicator=custom_indicator,...)[[1]][,-1]}
 
   tau_b <- pbapply::pbsapply(boots_sample, my_estim_f,simplify = FALSE)
 

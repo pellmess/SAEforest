@@ -1,4 +1,4 @@
-calc_indicat <- function(Y, threshold){
+calc_indicat <- function(Y, threshold, custom){
 
   hcr_function <- function(y,threshold){
     mean(y < threshold, na.rm = TRUE)
@@ -22,7 +22,13 @@ calc_indicat <- function(Y, threshold){
   colnames(indicators) <- c("mean","quant10","quant25","median","quant75",
                           "quant90","gini","hcr","pgap","qsr")
 
+  if(!is.null(custom)){
+    custom_ind <- unlist(lapply(custom_indicator, function(f) f(Y, threshold)))
+    indicators <- cbind(indicators,t(custom_ind))
+  }
+
   return(indicators)
+
 }
 
 expand_gridALT <- function(s1, s2) {

@@ -18,7 +18,8 @@
 #' @examples
 SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, mse = "none", B=100, threshold = NULL, importance ="none", ...){
+                           MaxIterations = 25, mse = "none", B=100, threshold = NULL, importance ="none",
+                           custom_indicator =NULL, ...){
 
   # ERROR CHECKS OF INPUTS
   #________________________________________
@@ -31,19 +32,11 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
 
   # Point Estimation
   #________________________________________
-  if(is.null(threshold)){
-    thresh_point = 0.6*median(Y, na.rm=TRUE)
-  }
-  if(is.function(threshold)){
-    thresh_point = threshold(Y)
-  }
-  if(is.numeric(threshold)){
-    thresh_point = threshold
-  }
 
-  nonLin_preds <- point_nonLin(Y = Y, X = X, dName = dName, threshold = thresh_point, survey_data = survey_data, census_data = census_data,
-                           initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
-                           MaxIterations = MaxIterations,importance = importance,...)
+  nonLin_preds <- point_nonLin(Y = Y, X = X, dName = dName, threshold = threshold, survey_data = survey_data,
+                               census_data = census_data, initialRandomEffects = initialRandomEffects,
+                               ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, importance = importance,
+                               custom_indicator=custom_indicator,...)
 
   data_specs <- sae_specs(dName = dName,cns = census_data,smp = survey_data)
 
@@ -68,7 +61,8 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
     mse_estims <- MSE_SAEforest_nonLin_wild(Y=Y, X = X, mod=nonLin_preds[[2]], survey_data = survey_data,
                                             cens_data = census_data, dName = dName, ADJsd = adj_SD , B=B,
                                             threshold = threshold, initialRandomEffects = initialRandomEffects,
-                                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, importance = importance, ...)
+                                            ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
+                                            custom_indicator =custom_indicator, ...)
 
     result <- list(
       MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(survey_data)),
@@ -84,7 +78,8 @@ SAEforest_nonLin <- function(Y, X, dName, survey_data, census_data,
     mse_estims <- MSE_SAEforest_nonLin_REB(Y=Y, X = X, mod=nonLin_preds[[2]], survey_data = survey_data,
                                            cens_data = census_data, dName = dName, ADJsd = adj_SD , B=B,
                                            threshold = threshold, initialRandomEffects = initialRandomEffects,
-                                           ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
+                                           ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
+                                           custom_indicator =custom_indicator, ...)
 
     result <- list(
       MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(survey_data)),
