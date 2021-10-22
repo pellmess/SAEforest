@@ -1,9 +1,9 @@
-MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25,
+MSE_MERFanalytical <- function(mod, smp_data, X, dName, err_sd, B=25,
                                initialRandomEffects, ErrorTolerance, MaxIterations, ...){
 
   # JUST FOR IN-sample observations
 
-  in_dom <- survey_data[[dName]]
+  in_dom <- smp_data[[dName]]
   rand_struc <- paste0(paste0("(1|",dName),")")
   ran_sd <- mod$RanEffSD
 
@@ -23,7 +23,7 @@ MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25,
 
 
   # BOOTSTRAP FOR g_2
-  pred_val <- matrix(predict(mod$Forest, survey_data)$predictions, ncol = B,
+  pred_val <- matrix(predict(mod$Forest, smp_data)$predictions, ncol = B,
                      nrow = length(mod$Forest$predictions), byrow = FALSE)
 
   y_hat <- pred_val + rnorm(sd=err_sd, n = length(pred_val))
@@ -31,12 +31,12 @@ MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25,
   y_star <- y_hat + u_i
 
   my_estim_f <- function(x){MERFranger(Y=x, X = X, random = rand_struc,
-                                       data=survey_data, initialRandomEffects = initialRandomEffects,
+                                       data=smp_data, initialRandomEffects = initialRandomEffects,
                                        ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)}
 
   est_mods <- pbapply::pbapply(y_star, 2, my_estim_f)
 
-  new_preds <- function(x){predict(x$Forest, survey_data)$predictions}
+  new_preds <- function(x){predict(x$Forest, smp_data)$predictions}
   f_b <- sapply(est_mods, new_preds)
 
   f_diff <- data.frame(in_dom, pred_val - f_b)
@@ -53,7 +53,7 @@ MSE_MERFanalytical <- function(mod, survey_data, X, dName, err_sd, B=25,
   #______________________________________
   MSE_analytical <- g_1 + g_2 + 2*g_3
 
-  MSE_analytical <- data.frame(unique(survey_data[dName]), MSE=MSE_analytical)
+  MSE_analytical <- data.frame(unique(smp_data[dName]), MSE=MSE_analytical)
   rownames(MSE_analytical) <- NULL
 
   return(MSE_analytical)

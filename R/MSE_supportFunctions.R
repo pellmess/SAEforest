@@ -1,7 +1,7 @@
 # DEFINE AND USE SAMPLE SELECT WRAPPER FUNCTION
 sample_select <- function(pop, smp, dName, times=100, set_seed = 1234){
   # pop.............. the population or census data
-  # smp.............. the survey data
+  # smp.............. the sample data
   # n................ the number of samples drawn
   # set_seed......... set seed for reproduceability
 

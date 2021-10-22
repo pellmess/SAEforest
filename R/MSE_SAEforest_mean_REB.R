@@ -1,28 +1,28 @@
-MSE_SAEforest_mean_REB <- function(Y, X, dName, survey_data, mod, ADJsd, cens_data, B=100,
+MSE_SAEforest_mean_REB <- function(Y, X, dName, smp_data, mod, ADJsd, pop_data, B=100,
                                    initialRandomEffects = 0, ErrorTolerance = 0.0001,
                                    MaxIterations = 25, ...){
 
   forest_m1 <- mod
   rand_struc = paste0(paste0("(1|",dName),")")
   boots_pop <- vector(mode="list",length = B)
-  boots_pop <- sapply(boots_pop,function(x){cens_data},simplify =FALSE)
-  n_i <- as.numeric(table(cens_data[[dName]]))
+  boots_pop <- sapply(boots_pop,function(x){pop_data},simplify =FALSE)
+  n_i <- as.numeric(table(pop_data[[dName]]))
 
   # DATA PREP ________________________________________________
-  forest_res1 <- Y - predict(mod$Forest, survey_data)$predictions
+  forest_res1 <- Y - predict(mod$Forest, smp_data)$predictions
 
-  survey_data$forest_res <- forest_res1
+  smp_data$forest_res <- forest_res1
 
   # Random Effects
   formRF <- formula(paste("forest_res ~", paste0(dName)))
-  ran_effs1 <- aggregate(data=survey_data, formRF, FUN=mean)
+  ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
   colnames(ran_effs1) <- c(dName,"r_bar")
 
-  survey_data <- merge(survey_data,ran_effs1,by = dName)
-  survey_data$forest_eij <- survey_data$forest_res-survey_data$r_bar
+  smp_data <- merge(smp_data,ran_effs1,by = dName)
+  smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
 
   # prepare for sampling
-  forest_res <- survey_data$forest_eij
+  forest_res <- smp_data$forest_eij
   forest_res<-(forest_res/sd(forest_res))*ADJsd
 
   # CENTER
@@ -35,7 +35,7 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, survey_data, mod, ADJsd, cens_da
   # CENTER
   ran_effs <- ran_effs-mean(ran_effs)
 
-  pred_vals<- predict(forest_m1$Forest, cens_data)$predictions
+  pred_vals<- predict(forest_m1$Forest, pop_data)$predictions
   my_pred_f <- function(x){pred_vals}
   pred_t <- vector(mode="list", length = B)
   pred_t <- sapply(pred_t, my_pred_f,simplify = FALSE)
@@ -45,18 +45,18 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, survey_data, mod, ADJsd, cens_da
   # Errors
   block_sample <- function(x){
 
-    in_samp <- t(unique(cens_data[dName]))  %in% t(unique(survey_data[dName]))
-    domains <- t(unique(cens_data[dName]))
+    in_samp <- t(unique(pop_data[dName]))  %in% t(unique(smp_data[dName]))
+    domains <- t(unique(pop_data[dName]))
 
     block_err <- vector(mode="list",length = length(domains))
 
     for (idd in which(in_samp)){
-      block_err[[idd]] <- sample(forest_res[survey_data[dName]==domains[idd]],size = sum(cens_data[dName] == domains[idd]),replace=TRUE)
+      block_err[[idd]] <- sample(forest_res[smp_data[dName]==domains[idd]],size = sum(pop_data[dName] == domains[idd]),replace=TRUE)
     }
 
     if (sum(in_samp)!= length(domains)){
       for (idd in which(!in_samp)){
-        block_err[[idd]] <- sample(forest_res, size = sum(cens_data[dName] == domains[idd]), replace=TRUE)
+        block_err[[idd]] <- sample(forest_res, size = sum(pop_data[dName] == domains[idd]), replace=TRUE)
       }
     }
 
@@ -65,9 +65,9 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, survey_data, mod, ADJsd, cens_da
 
   e_ij <- sapply(boots_pop, block_sample, simplify = FALSE)
 
-  survey_data$forest_res <- NULL
+  smp_data$forest_res <- NULL
 
-  u_i <- replicate(length(boots_pop),rep(sample(ran_effs, size = length(t(unique(cens_data[dName]))),
+  u_i <- replicate(length(boots_pop),rep(sample(ran_effs, size = length(t(unique(pop_data[dName]))),
                                                 replace=TRUE), n_i), simplify = FALSE)
 
   # combine
@@ -80,20 +80,20 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, survey_data, mod, ADJsd, cens_da
   tau_star <- sapply(boots_pop, my_agg)
 
   # THINK ABOUT SEED
-  sample_b <- function(x){sample_select(x, smp = survey_data, times = 1, dName = dName)}
+  sample_b <- function(x){sample_select(x, smp = smp_data, times = 1, dName = dName)}
   boots_sample <- sapply(boots_pop, sample_b)
 
 
   # USE BOOTSTRAP SAMPLE TO ESITMATES
-  my_estim_f <- function(x){point_mean(Y = x$y_star_u_star, X = x[,colnames(X)], dName = dName, survey_data = x,
-                                       census_data = cens_data, initialRandomEffects = initialRandomEffects,
+  my_estim_f <- function(x){point_mean(Y = x$y_star_u_star, X = x[,colnames(X)], dName = dName, smp_data = x,
+                                       pop_data = pop_data, initialRandomEffects = initialRandomEffects,
                                        ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,...)[[1]][,2]}
 
   tau_b <- pbapply::pbsapply(boots_sample, my_estim_f)
 
   MSE_estimates <- rowMeans((tau_star - tau_b)^2)
 
-  MSE_estimates <- data.frame(unique(cens_data[dName]), MSE=MSE_estimates)
+  MSE_estimates <- data.frame(unique(pop_data[dName]), MSE=MSE_estimates)
   rownames(MSE_estimates) <- NULL
 
   #___________________________

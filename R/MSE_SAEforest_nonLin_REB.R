@@ -1,30 +1,30 @@
-MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, survey_data, mod, ADJsd, cens_data, B=100,
+MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, smp_data, mod, ADJsd, pop_data, B=100,
                                       initialRandomEffects = 0, ErrorTolerance = 0.0001,
                                       MaxIterations = 25, custom_indicator,...){
 
   forest_m1 <- mod
   rand_struc = paste0(paste0("(1|",dName),")")
 
-  n_i <- as.numeric(table(cens_data[[dName]]))
+  n_i <- as.numeric(table(pop_data[[dName]]))
 
   boots_pop <- vector(mode="list",length = B)
-  boots_pop <- sapply(boots_pop,function(x){cens_data},simplify =FALSE)
+  boots_pop <- sapply(boots_pop,function(x){pop_data},simplify =FALSE)
 
   # DATA PREP ________________________________________________
-  forest_res1 <- Y - predict(forest_m1$Forest, survey_data)$predictions
+  forest_res1 <- Y - predict(forest_m1$Forest, smp_data)$predictions
 
-  survey_data$forest_res <- forest_res1
+  smp_data$forest_res <- forest_res1
 
   # Random Effects
   formRF <- formula(paste("forest_res ~", paste0(dName)))
-  ran_effs1 <- aggregate(data=survey_data, formRF, FUN=mean)
+  ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
   colnames(ran_effs1) <- c(dName,"r_bar")
 
-  survey_data <- merge(survey_data,ran_effs1,by = dName)
-  survey_data$forest_eij <- survey_data$forest_res-survey_data$r_bar
+  smp_data <- merge(smp_data,ran_effs1,by = dName)
+  smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
 
   # prepare for sampling
-  forest_res <- survey_data$forest_eij
+  forest_res <- smp_data$forest_eij
   forest_res<-(forest_res/sd(forest_res))*ADJsd
 
   # CENTER
@@ -37,7 +37,7 @@ MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, survey_data, mod, A
   # CENTER
   ran_effs <- ran_effs-mean(ran_effs)
 
-  pred_vals<- predict(forest_m1$Forest, cens_data)$predictions
+  pred_vals<- predict(forest_m1$Forest, pop_data)$predictions
   my_pred_f <- function(x){pred_vals}
   pred_t <- vector(mode="list", length = B)
   pred_t <- sapply(pred_t, my_pred_f,simplify = FALSE)
@@ -46,18 +46,18 @@ MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, survey_data, mod, A
   # Errors
   block_sample <- function(x){
 
-    in_samp <- t(unique(cens_data[dName]))  %in% t(unique(survey_data[dName]))
-    domains <- t(unique(cens_data[dName]))
+    in_samp <- t(unique(pop_data[dName]))  %in% t(unique(smp_data[dName]))
+    domains <- t(unique(pop_data[dName]))
 
     block_err <- vector(mode="list",length = length(domains))
 
     for (idd in which(in_samp)){
-      block_err[[idd]] <- sample(forest_res,size = sum(cens_data[dName] == domains[idd]),replace=TRUE)
+      block_err[[idd]] <- sample(forest_res,size = sum(pop_data[dName] == domains[idd]),replace=TRUE)
     }
 
     if (sum(in_samp)!= length(domains)){
       for (idd in which(!in_samp)){
-        block_err[[idd]] <- sample(forest_res, size = sum(cens_data[dName] == domains[idd]), replace=TRUE)
+        block_err[[idd]] <- sample(forest_res, size = sum(pop_data[dName] == domains[idd]), replace=TRUE)
       }
     }
 
@@ -66,9 +66,9 @@ MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, survey_data, mod, A
 
   e_ij <- sapply(boots_pop, block_sample, simplify = FALSE)
 
-  survey_data$forest_res <- NULL
+  smp_data$forest_res <- NULL
 
-  u_i <- replicate(length(boots_pop),rep(sample(ran_effs, size = length(t(unique(cens_data[dName]))),
+  u_i <- replicate(length(boots_pop),rep(sample(ran_effs, size = length(t(unique(pop_data[dName]))),
                                                 replace=TRUE), n_i), simplify = FALSE)
 
   # combine
@@ -94,13 +94,13 @@ MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, survey_data, mod, A
 
 
   # THINK ABOUT SEED
-  sample_b <- function(x){sample_select(x,smp=survey_data,times=1, dName = dName)}
+  sample_b <- function(x){sample_select(x,smp=smp_data,times=1, dName = dName)}
   boots_sample <- sapply(boots_pop, sample_b)
 
 
   # USE BOOTSTRAP SAMPLE TO ESITMATE
 
-  my_estim_f <- function(x){point_nonLin(Y = x$y_star_u_star, X = x[,colnames(X)], dName = dName, threshold = threshold, survey_data = x, census_data = cens_data,
+  my_estim_f <- function(x){point_nonLin(Y = x$y_star_u_star, X = x[,colnames(X)], dName = dName, threshold = threshold, smp_data = x, pop_data = pop_data,
                                          initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
                                          MaxIterations = MaxIterations, custom_indicator=custom_indicator,...)[[1]][,-1]}
 
@@ -111,7 +111,7 @@ MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, survey_data, mod, A
   Mean_square_B <- mapply(mean_square, tau_b,tau_star, SIMPLIFY = FALSE)
 
   MSE_estimates <- Reduce('+',Mean_square_B)/length(Mean_square_B)
-  MSE_estimates <- data.frame(unique(cens_data[dName]), MSE_estimates)
+  MSE_estimates <- data.frame(unique(pop_data[dName]), MSE_estimates)
   rownames(MSE_estimates) <- NULL
 
   #__________________________

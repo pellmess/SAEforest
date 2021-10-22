@@ -12,8 +12,8 @@
 #Y <- surv$y
 #X <- surv[,c(2:3)]
 
-#survey_data <- surv
-#census_data <- cens
+#samp_data <- surv
+#pop_data <- cens
 
 #dName <- "idD"
 #initialRandomEffects = 0
@@ -49,9 +49,12 @@
 #data("eusilcA_smp")
 
 #tic()
-#mod_alt <- SAEforest_mean(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,18)], dName = "district", survey_data =eusilcA_smp, census_data=eusilcA_pop,
+#mod_alt <- SAEforest_nonLin(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
 #                          mse ="none", B=0, importance = "impurity")
 #toc()
+
+#mod_alt2 <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
+#                            mse ="none", B=0, importance = "impurity")
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)
 #test2 <-MSE_SAEforest_nonLin_wild(Y=Y, X=X, dName = "idD", survey_data =surv, cens_data=cens, B=5,

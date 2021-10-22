@@ -3,13 +3,13 @@
 # Recoding might be needed (!)
 
 
-MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xcensus_agg, B=100,
+MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_agg, B=100,
                                popnsize, initialRandomEffects, ErrorTolerance,
                                MaxIterations, ...){
 
-  dom <- survey_data[[dName]]
-  in_dom <- unique(survey_data[[dName]])
-  total_dom <- unique(Xcensus_agg[[dName]])
+  dom <- smp_data[[dName]]
+  in_dom <- unique(smp_data[[dName]])
+  total_dom <- unique(Xpop_agg[[dName]])
   p <- dim(X)[2]
 
   sigmae2est <- mod$MERFmodel$ErrorSD^2
@@ -19,18 +19,18 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
   # NOPARA Errors ____________________________________________
   forest_res1 <- Y - mod$MERFmodel$Forest$predictions
 
-  survey_data$forest_res <- forest_res1
+  smp_data$forest_res <- forest_res1
 
   # Random Effects
   formRF <- formula(paste("forest_res ~", paste0(dName)))
-  ran_effs1 <- aggregate(data=survey_data, formRF, FUN=mean)
+  ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
   colnames(ran_effs1) <- c(dName,"r_bar")
 
-  survey_data <- merge(survey_data,ran_effs1,by = dName)
-  survey_data$forest_eij <- survey_data$forest_res-survey_data$r_bar
+  smp_data <- merge(smp_data,ran_effs1,by = dName)
+  smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
 
   # prepare for sampling
-  forest_res <- survey_data$forest_eij
+  forest_res <- smp_data$forest_eij
   forest_res<-(forest_res/sd(forest_res))*ADJsd
 
   # CENTER
@@ -79,8 +79,8 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
     insamp_ei
 
 
-  my_estim_f <- function(x){point_meanAGG(Y = x, X=X, dName = dName, survey_data = survey_data,
-                                          Xcensus_agg = Xcensus_agg, initialRandomEffects = initialRandomEffects,
+  my_estim_f <- function(x){point_meanAGG(Y = x, X=X, dName = dName, smp_data = smp_data,
+                                          Xpop_agg = Xpop_agg, initialRandomEffects = initialRandomEffects,
                                           ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
                                           OOsample_obs = mod$OOsample_obs, ADDsamp_obs = mod$ADDsamp_obs,
                                           w_min = mod$w_min, wSet = mod$wSet,...)[[1]]$Mean}
@@ -89,7 +89,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, survey_data, mod, ADJsd, Xce
 
   MSE_estimates <- rowMeans((tau_star - tau_b)^2)
 
-  MSE_estimates <- data.frame(Xcensus_agg[dName], MSE=MSE_estimates)
+  MSE_estimates <- data.frame(Xpop_agg[dName], MSE=MSE_estimates)
   rownames(MSE_estimates) <- NULL
 
   return(MSE_estimates)

@@ -8,20 +8,20 @@
 
 
 # Function called in SAEforest_mean
-input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
+input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffects,
                               ErrorTolerance, MaxIterations, mse, B, importance) {
-  if (!is.numeric(Y) || !data.frame(Y) %in% survey_data) {
+  if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_mean)")
   }
 
-  if (sum(!(X %in% survey_data)) != 0) {
+  if (sum(!(X %in% smp_data)) != 0) {
     stop("X specifies the explanatory variabels from the sample data set and must be contaiend in in
        the survey sample set. See also help(SAEforest_mean)")
   }
 
-  if (!is.data.frame(survey_data) || !is.data.frame(census_data)) {
-    stop("survey_data must be a data frame containing the survey sample data. census_data must be a data frame
+  if (!is.data.frame(smp_data) || !is.data.frame(pop_data)) {
+    stop("smp_data must be a data frame containing the survey sample data. pop_data must be a data frame
     containing the population data. See also help(SAEforest_mean).")
   }
 
@@ -30,18 +30,18 @@ input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRand
     survey as well as the population data. See also help(SAEforest_mean).")
   }
 
-  if (dim(census_data)[1] < dim(survey_data)[1]) {
+  if (dim(pop_data)[1] < dim(smp_data)[1]) {
     stop("The population data set cannot have less observations than the
          sample data set.")
   }
 
-  if (is.null(survey_data[[dName]]) || is.null(census_data[[dName]])) {
+  if (is.null(smp_data[[dName]]) || is.null(pop_data[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
     must contain a column labelled by the same name specified under the input of "dName"'))
   }
 
-  if (!all(unique(as.character(survey_data[[dName]])) %in%
-    unique(as.character(census_data[[dName]])))) {
+  if (!all(unique(as.character(smp_data[[dName]])) %in%
+    unique(as.character(pop_data[[dName]])))) {
     stop("The survey sample data contains domains that are
          not contained in the population data.")
   }
@@ -79,20 +79,20 @@ input_checks_mean <- function(Y, X, dName, survey_data, census_data, initialRand
 
 
 # Function called in SAEforest_nonLin
-input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRandomEffects,
+input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEffects,
                                 ErrorTolerance, MaxIterations, mse, B, threshold, importance) {
-  if (!is.numeric(Y) || !data.frame(Y) %in% survey_data) {
+  if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_nonLin)")
   }
 
-  if (sum(!(X %in% survey_data)) != 0) {
+  if (sum(!(X %in% smp_data)) != 0) {
     stop("X specifies the explanatory variabels from the sample data set and must be contaiend in in the
          survey sample set. See also help(SAEforest_nonLin)")
   }
 
-  if (!is.data.frame(survey_data) || !is.data.frame(census_data)) {
-    stop("survey_data must be a data frame containing the survey sample data. census_data must be a data frame
+  if (!is.data.frame(smp_data) || !is.data.frame(pop_data)) {
+    stop("smp_data must be a data frame containing the survey sample data. pop_data must be a data frame
     containing the population data. See also help(SAEforest_nonLin).")
   }
 
@@ -101,18 +101,18 @@ input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRa
     survey as well as the population data. See also help(SAEforest_nonLin).")
   }
 
-  if (dim(census_data)[1] < dim(survey_data)[1]) {
+  if (dim(pop_data)[1] < dim(smp_data)[1]) {
     stop("The population data set cannot have less observations than the
          sample data set.")
   }
 
-  if (is.null(survey_data[[dName]]) || is.null(census_data[[dName]])) {
+  if (is.null(smp_data[[dName]]) || is.null(pop_data[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
     must contain a column labelled by the same name specified under the input of "dName"'))
   }
 
-  if (!all(unique(as.character(survey_data[[dName]])) %in%
-    unique(as.character(census_data[[dName]])))) {
+  if (!all(unique(as.character(smp_data[[dName]])) %in%
+    unique(as.character(pop_data[[dName]])))) {
     stop("The survey sample data contains domains that are
          not contained in the population data.")
   }
@@ -184,21 +184,21 @@ input_checks_nonLin <- function(Y, X, dName, survey_data, census_data, initialRa
 
 
 # Function called in SAEforest_nonLin
-input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialRandomEffects,
+input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
                                  ErrorTolerance, MaxIterations, mse, B, popnsize, OOsample_obs,
                                  ADDsamp_obs, w_min, importance) {
-  if (!is.numeric(Y) || !data.frame(Y) %in% survey_data) {
+  if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_meanAGG)")
   }
 
-  if (sum(!(X %in% survey_data)) != 0) {
+  if (sum(!(X %in% smp_data)) != 0) {
     stop("X specifies the explanatory variabels from the sample data set and must be contaiend in in the
          survey sample set. See also help(SAEforest_meanAGG)")
   }
 
-  if (!is.data.frame(survey_data) || !is.data.frame(Xcensus_agg)) {
-    stop("survey_data must be a data frame containing the survey sample data. Xcensus_agg must be a data frame
+  if (!is.data.frame(smp_data) || !is.data.frame(Xpop_agg)) {
+    stop("smp_data must be a data frame containing the survey sample data. Xpop_agg must be a data frame
     containing the population data. See also help(SAEforest_meanAGG).")
   }
 
@@ -208,19 +208,19 @@ input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialR
   }
 
 
-  if (is.null(survey_data[[dName]]) || is.null(census_data[[dName]])) {
+  if (is.null(smp_data[[dName]]) || is.null(Xpop_agg[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
     must contain a column labelled by the same name specified under the input of "dName"'))
   }
 
-  if (!all(unique(as.character(survey_data[[dName]])) %in%
-    unique(as.character(Xcensus_agg[[dName]])))) {
+  if (!all(unique(as.character(smp_data[[dName]])) %in%
+    unique(as.character(Xpop_agg[[dName]])))) {
     stop("The survey sample data contains domains that are
          not contained in the population data.")
   }
 
-  if (!is.data.frame(popnsize) || is.null(popnsize[[dName]]) || dim(popnsize)[1] != dim(Xcensus_agg)[1] ||
-    dim(popnsize)[2] > 2 || !is.numeric(popnsize[, !colnames(popnsize) %in% dName])) {
+  if (mse != "none" && (!is.data.frame(popnsize) || is.null(popnsize[[dName]]) || dim(popnsize)[1] != dim(Xpop_agg)[1] ||
+    dim(popnsize)[2] > 2 || !is.numeric(popnsize[, !colnames(popnsize) %in% dName]))) {
     stop(paste("popnsize must be a data frame with two columns: One column named ", dName, "must contain the domains specifiers.
          The other column must contain information on the population size of domains. See also help(SAEforest_meanAGG)."))
   }
@@ -253,7 +253,7 @@ input_checks_meanAGG <- function(Y, X, dName, survey_data, Xcensus_agg, initialR
           of calibration weights. See also help(SAEforest_meanAGG).')
   }
 
-  if (!is.numeric(w_min) || length(w_min) != 1 || w_min < 2 || w_min > dim(Xcensus_agg)[2]) {
+  if (!is.numeric(w_min) || length(w_min) != 1 || w_min < 2 || w_min > dim(Xpop_agg)[2]) {
     stop("w_min needs to be a single integer value, determining
           the minimum amount of covariates incorporating auxilliary information for the assessment of
           calibration weights. Thus, w_min must be smaller or equal to the number of existing covariates.
