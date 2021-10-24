@@ -89,7 +89,8 @@ point_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialRand
 
 
 point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects, ErrorTolerance,
-                         MaxIterations, OOsample_obs, ADDsamp_obs, w_min, wSet = NULL, importance = "none", ...){
+                         MaxIterations, OOsample_obs, ADDsamp_obs, w_min, wSet = NULL, importance = "none",
+                         verbose=TRUE,...){
 
   random <- paste0(paste0("(1|",dName),")")
   groupNames <- as.character(unique(smp_data[[dName]]))
@@ -111,10 +112,12 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
                            ErrorTolerance = ErrorTolerance,
                            MaxIterations = MaxIterations, importance = importance, ...)
 
-  unit_preds <- predict(unit_model$Forest, smp_data)$predictions +
-    predict(unit_model$EffectModel,smp_data, allow.new.levels=TRUE)
+  unit_preds <- predict(unit_model$Forest, smp_data)$predictions
+  u_ij <- predict(unit_model$EffectModel,smp_data, allow.new.levels=TRUE)
 
-  smp_data$forest_preds <- unit_preds
+  smp_data$forest_preds <- unit_preds + u_ij
+  smp_data$u_ij <- u_ij
+
   joint_smp_data <- smp_data
 
   # Order vars by simularity
@@ -143,10 +146,13 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
     OOs_smp_data <- do.call(rbind.data.frame, smp_oos)
 
     # Out-of-sample observations
-    unit_preds_add <- predict(unit_model$Forest,OOs_smp_data)$predictions+
-      predict(unit_model$EffectModel,OOs_smp_data, allow.new.levels=TRUE)
+    unit_preds_add <- predict(unit_model$Forest,OOs_smp_data)$predictions
+    # just taking f(x_ij) from other areas - no random effects from other areas! (Best so..tested!)
+    u_ij <- 0
+
 
     OOs_smp_data$forest_preds <- unit_preds_add
+    OOs_smp_data$u_ij <- u_ij
 
     joint_smp_data <- rbind(smp_data,OOs_smp_data)
   }
@@ -237,7 +243,9 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
       }
 
       else{
+        if(verbose ==TRUE){
         print(paste("Calculation of weights failed for area:", i))
+        }
         rownames(w_smp_data)<- NULL
         w_smp_data$weights <- 1/dim(w_smp_data)[1]
         smp_weightsIncluded[[pos]] <- w_smp_data
@@ -261,7 +269,7 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
 
   return(list(Mean_Predictions = Mean_preds,
               MERFmodel = unit_model, ModifiedSet = final_smp_data, ADDsamp_obs = ADDsamp_obs,
-              wSet=wSet, w_min=w_min, wAreaInfo=smp_weightsNames))
+              OOsample_obs = OOsample_obs, wSet=wSet, w_min=w_min, wAreaInfo=smp_weightsNames))
 
 }
 

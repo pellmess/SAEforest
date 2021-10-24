@@ -53,12 +53,13 @@
 #                                                     mse ="none", B=0, importance = "impurity")
 #toc()
 
-#mod_alt2 <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
-#                            mse ="none", B=0, importance = "impurity")
+#mod_alt2 <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, OOsample_obs = 25 ,X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
+#                            mse ="nonparametric", B=2, importance = "impurity")
 
 #mean_method <- mod_alt$Mean_predictions
 #agg_method <- mod_alt2$Mean_Predictions
-#plot_values <- merge(mean_method, agg_method, by="district")
+#plot_values <- left_join(agg_method,mean_method, by="district")
+# Last 24 are Out-of-sample obs
 #matplot(plot_values[,-1], type="l")
 
 

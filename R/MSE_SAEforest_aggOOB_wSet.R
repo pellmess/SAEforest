@@ -9,7 +9,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
 
   dom <- smp_data[[dName]]
   in_dom <- unique(smp_data[[dName]])
-  total_dom <- unique(Xpop_agg[[dName]])
+  total_dom <- mod$Mean_Predictions[[dName]]
   p <- dim(X)[2]
 
   sigmae2est <- mod$MERFmodel$ErrorSD^2
@@ -47,7 +47,9 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
 
   pred_t <- matrix(mod$MERFmodel$Forest$predictions, nrow = length(dom), ncol=B)
 
-  mu_t <- mod$Mean_Predictions$Mean - unlist(lme4::ranef(mod$MERFmodel$EffectModel))
+  random_eff <- tapply(mod$ModifiedSet$u_ij, mod$ModifiedSet[[dName]],mean)
+  mu_t <- mod$Mean_Predictions$Mean - random_eff
+
   mu_pred <- matrix(mu_t, nrow = length(total_dom), ncol=B)
 
   N_i <- popnsize[,!colnames(popnsize) %in% dName]
@@ -62,7 +64,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
   e_i_mean <- as.matrix(aggregate(.~dom, data=data.frame(dom,e_ij), mean)[,-1])
 
   u_i <- apply(mu_pred, 2, function(x){sample(ran_effs, size=length(total_dom), replace = TRUE )})
-  u_ij <- apply(u_i[total_dom %in% in_dom,], 2, function(x){rep(x, n_i)})
+  u_ij <- apply(u_i[total_dom %in% in_dom,], 2, function(x){rep(x, n_i[total_dom %in% in_dom])})
 
   y_star <- pred_t + u_ij + e_ij
 
@@ -70,8 +72,8 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
   samp_erd <- function(x){sample((forest_res/ADJsd)*sqrt(ADJsd^2/x), size = B, replace = TRUE )}
   erd_mean <- t(sapply(rd, samp_erd))
 
-  insamp_ei <- e_i_mean[total_dom %in% in_dom,] * n_i/N_i[total_dom %in% in_dom] +
-    erd_mean[total_dom %in% in_dom,] * rd[total_dom %in% in_dom]/N_i[total_dom %in% in_dom]
+  insamp_ei <- e_i_mean * (n_i/N_i)[total_dom %in% in_dom] +
+    erd_mean[total_dom %in% in_dom,] * (rd/N_i)[total_dom %in% in_dom]
 
   tau_star <- mu_pred + u_i + erd_mean
 
@@ -83,13 +85,13 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
                                           Xpop_agg = Xpop_agg, initialRandomEffects = initialRandomEffects,
                                           ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
                                           OOsample_obs = mod$OOsample_obs, ADDsamp_obs = mod$ADDsamp_obs,
-                                          w_min = mod$w_min, wSet = mod$wSet,...)[[1]]$Mean}
+                                          w_min = mod$w_min, wSet = mod$wSet, verbose=FALSE,...)[[1]]$Mean}
 
   tau_b <- pbapply::pbapply(y_star, 2, my_estim_f)
 
   MSE_estimates <- rowMeans((tau_star - tau_b)^2)
 
-  MSE_estimates <- data.frame(Xpop_agg[dName], MSE=MSE_estimates)
+  MSE_estimates <- data.frame(mod$Mean_Predictions[dName], MSE=MSE_estimates)
   rownames(MSE_estimates) <- NULL
 
   return(MSE_estimates)
