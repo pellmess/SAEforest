@@ -49,12 +49,18 @@
 #data("eusilcA_smp")
 
 #tic()
-#mod_alt <- SAEforest_nonLin(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
-#                          mse ="none", B=0, importance = "impurity")
+#mod_alt <- SAEforest_mean(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
+#                                                     mse ="none", B=0, importance = "impurity")
 #toc()
 
-#mod_alt2 <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
+#mod_alt2 <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
 #                            mse ="none", B=0, importance = "impurity")
+
+#mean_method <- mod_alt$Mean_predictions
+#agg_method <- mod_alt2$Mean_Predictions
+#plot_values <- merge(mean_method, agg_method, by="district")
+#matplot(plot_values[,-1], type="l")
+
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)
 #test2 <-MSE_SAEforest_nonLin_wild(Y=Y, X=X, dName = "idD", survey_data =surv, cens_data=cens, B=5,

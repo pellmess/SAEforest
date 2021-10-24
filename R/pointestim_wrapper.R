@@ -123,6 +123,7 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
   wSet <- names(sort(ranger::importance(unit_model$Forest), decreasing = TRUE))
  }
 
+  # Can only respect variables that are part of Xpop_agg
   wSet <- wSet[wSet %in% names(Xpop_agg)]
 
   if (length(OOsamp) != 0){
@@ -178,6 +179,9 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
     }
 
     else{
+      mod_smp_data <- joint_smp_data[joint_smp_data[dName] == i,]
+      rownames(mod_smp_data)<- NULL
+
       if(ADDsamp_obs != 0){
         similarXcens <- Xpop_agg[,colnames(Xpop_agg)!= dName]
         rownames(similarXcens) <- groupNamesCens
@@ -194,9 +198,6 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
 
         rownames(mod_smp_data)<- NULL
       }
-
-      mod_smp_data <- joint_smp_data[joint_smp_data[dName] == i,]
-      rownames(mod_smp_data)<- NULL
 
       # RECALCULATE
       X_input_elm  <- as.matrix(mod_smp_data[wSet])
@@ -248,6 +249,9 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
   final_smp_data <- do.call(dplyr::bind_rows, smp_weightsIncluded)
 
   # ESTIMATE MEANS
+  #work here
+  #____________________--
+
   final_smp_data$W_mean <- with(final_smp_data, forest_preds  * weights)
   f0 <- as.formula(paste("W_mean", paste(dName), sep=" ~ "))
   Mean_preds <- aggregate(f0, data=final_smp_data, FUN=sum)
