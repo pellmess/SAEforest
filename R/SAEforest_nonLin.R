@@ -30,6 +30,10 @@ SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data,
 
   out_call <- match.call()
 
+  # Make domain variable to character and sort data-sets
+  smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(pop_data[[dName]]))
+  pop_data[[dName]] <- factor(pop_data[[dName]], levels=unique(pop_data[[dName]]))
+
   # Point Estimation
   #________________________________________
 

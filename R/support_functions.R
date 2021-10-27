@@ -51,3 +51,19 @@ sae_specs <- function(dName,cns,smp){
     n_smp = table(smp[[dName]]),
     n_cns = table(cns[[dName]])))
 }
+
+#sort_input <- function(dName, smp_data, pop_data, Y, X){
+
+#  smp_data[[dName]] <- as.character(smp_data[[dName]])
+
+#  smp_sort <- order(smp_data[[dName]])
+#  smp_data <- smp_data[smp_sort,]
+
+#  Y <- Y[smp_sort]
+#  X <- X[smp_sort,]
+
+#  pop_data[[dName]] <- as.character(pop_data[[dName]])
+#  pop_data <- pop_data[order(pop_data[[dName]]),]
+
+#  return(list(smp_data, pop_data, X, Y))
+#}

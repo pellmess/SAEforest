@@ -67,7 +67,7 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, smp_data, mod, ADJsd, pop_data, 
 
   smp_data$forest_res <- NULL
 
-  u_i <- replicate(length(boots_pop),rep(sample(ran_effs, size = length(t(unique(pop_data[dName]))),
+  u_i <- replicate(length(boots_pop),rep(sample(ran_effs, size = length(n_i),
                                                 replace=TRUE), n_i), simplify = FALSE)
 
   # combine

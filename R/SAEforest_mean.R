@@ -17,7 +17,7 @@
 #' @examples
 SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, mse = "none", B=100, importance = "none",...){
+                           MaxIterations = 25, mse = "none", B=100, importance = "none", ...){
 
 # ERROR CHECKS OF INPUTS
 #________________________________________
@@ -27,6 +27,12 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
                     mse=mse, B=B, importance = importance)
 
   out_call <- match.call()
+
+# Make domain variable to character and sort data-sets
+  smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(pop_data[[dName]]))
+  pop_data[[dName]] <- factor(pop_data[[dName]], levels=unique(pop_data[[dName]]))
+
+
 
 # Point Estimation
 #________________________________________
@@ -39,7 +45,7 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
 
   if(mse == "none"){
   result <- list(
-    Mean_predictions = mean_preds[[1]],
+    Mean_Predictions = mean_preds[[1]],
     MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)))
 
   class(result) <- c("SAEforest_mean", "SAEforest")

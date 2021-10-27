@@ -57,25 +57,24 @@ point_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialRand
                            data = smp_data,
                            initialRandomEffects = initialRandomEffects,
                            ErrorTolerance = ErrorTolerance,
-                           MaxIterations = MaxIterations,importance = importance)
+                           MaxIterations = MaxIterations,importance = importance, ...)
 
   unit_preds <- predict(unit_model$Forest, pop_data)$predictions+
     predict(unit_model$EffectModel,pop_data, allow.new.levels=TRUE)
 
 
   # SMEARING STEP HERE------------
-  smear_list <- vector(mode="list", length = length(unique(pop_data[[dName]])))
-  popSize <- as.numeric(table(pop_data[[dName]]))
+  smear_list <- vector(mode="list", length = length(domains))
 
-  for (i in seq_along(unique(pop_data[[dName]]))){
+  for (i in seq_along(domains)){
     smear_i <- matrix(rep(unit_model$OOBresiduals,popSize[i]), nrow=popSize[i],ncol=length(unit_model$OOBresiduals),byrow=TRUE)
-    smear_i <- smear_i + unit_preds[as.character(pop_data[[dName]]) == domains[i]]
+    smear_i <- smear_i + unit_preds[pop_data[[dName]] == domains[i]]
 
     smear_list[[i]] <-  calc_indicat(c(smear_i), threshold = thresh, custom = custom_indicator)
   }
 
   indicators <- do.call(rbind.data.frame, smear_list)
-  indicators_out <- cbind("Domain" = unique(pop_data[[dName]]), indicators)
+  indicators_out <- cbind("Domain" = domains, indicators)
   # __________________________________
 
   out_ob <- vector(mode="list", length = 2)
@@ -150,7 +149,6 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
     # just taking f(x_ij) from other areas - no random effects from other areas! (Best so..tested!)
     u_ij <- 0
 
-
     OOs_smp_data$forest_preds <- unit_preds_add
     OOs_smp_data$u_ij <- u_ij
 
@@ -159,6 +157,7 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
 
   # find weights and adjust for failure
   # USED CVXR as solver due to the observation that results are equivalent to the Lagrange Multiplier!
+  # Question on how to use the LiLiu optimizer function written by Nora ?
 
   smp_weightsIncluded <- vector(mode="list", length = length(groupNamesCens))
   smp_weightsNames <- vector(mode="list", length = length(groupNamesCens))

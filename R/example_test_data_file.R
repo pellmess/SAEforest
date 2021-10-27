@@ -47,20 +47,29 @@
 #library(emdi)
 #data("eusilcA_pop")
 #data("eusilcA_smp")
+#names(eusilcA_popAgg)[1] <- "district"
 
 #tic()
-#mod_alt <- SAEforest_mean(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
-#                                                     mse ="none", B=0, importance = "impurity")
+#mod_alt_NP <- SAEforest_mean(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
+#                                                     mse ="nonparametric", B=50, importance = "impurity", mtry=7)
 #toc()
 
-#mod_alt2 <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, OOsample_obs = 25 ,X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
-#                            mse ="nonparametric", B=2, importance = "impurity")
+#mod_alt2 <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, OOsample_obs = 25 ,X=eusilcA_smp[,-c(1,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
+#                            mse ="none", B=50, importance = "impurity")
 
-#mean_method <- mod_alt$Mean_predictions
-#agg_method <- mod_alt2$Mean_Predictions
-#plot_values <- left_join(agg_method,mean_method, by="district")
+#emdi_model <- ebp(fixed = eqIncome ~ gender + eqsize + cash + self_empl +
+#                    unempl_ben + age_ben + surv_ben + sick_ben + dis_ben + rent + fam_allow +
+#                    house_allow + cap_inv + tax_adj, pop_data = eusilcA_pop,
+#                  pop_domains = "district", smp_data = eusilcA_smp, smp_domains = "district",
+#                  na.rm = TRUE, MSE = TRUE, B=50)
+
+#mean_method <- mod_alt$MSE_estimates
+#agg_method <- mod_alt_NP$MSE_estimates
+#plot_values <- left_join(agg_method, mean_method, by="district")
+#plot_values <- merge(emdi_model$MSE[,1:2], plot_values, by.x="Domain", by.y="district")
+
 # Last 24 are Out-of-sample obs
-#matplot(plot_values[,-1], type="l")
+#matplot(sqrt(plot_values[,-1]), type="l")
 
 
 #test <- MSE_MERFanalytical(mod=mod, survey_data = surv, X = X, dName = "idD", err_sd=1000, B=2)
@@ -87,3 +96,28 @@
 #summary(sqrt(cbind((true$y-mod2$Mean_Predictions$Mean)^2, aggMSE$MSE, (true$y-mod$Mean_Predictions$Mean)^2)))
 
 #summary(sqrt(cbind(aggMSE$MSE,aggMSE2$MSE, (true$y-mod$Mean_Predictions$Mean)^2)))
+
+
+
+
+
+
+# TEST WITH NUMERICAL DATA ON EMDI
+#emdi_model <- ebp(fixed = y~ x1+ x2, pop_data = cens,
+#                  pop_domains = "idD", smp_data = surv, smp_domains = "idD",
+#                  na.rm = TRUE)
+
+
+#mod_alt <- SAEforest_nonLin(Y=surv$y, X=surv[,2:3], dName = "idD", smp_data =surv, pop_data=cens,
+#                            mse ="none", B=50, importance = "impurity", mtry=1)
+
+
+#mod_alt2 <- SAEforest_meanAGG(Y=surv$y, OOsample_obs = 25 , X=surv[,2:3], dName = "idD", smp_data =surv,
+#                              Xpop_agg=Xcensus_agg,
+#                              mse ="none", B=50, importance = "impurity")
+
+#mean_method <- mod_alt2$Mean_Predictions
+#agg_method <- emdi_model$ind[,1:2]
+#plot_values <- merge(agg_method,mean_method, by.x="Domain", by.y="idD")
+#matplot(plot_values[,-1], type="l")
+

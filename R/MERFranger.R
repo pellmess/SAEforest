@@ -18,7 +18,7 @@
 #'
 #' @examples
 MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                        MaxIterations = 25, importance, ...) {
+                        MaxIterations = 25, importance = "none", ...) {
 
   Target <- Y
   ContinueCondition <- TRUE

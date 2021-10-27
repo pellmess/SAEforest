@@ -34,6 +34,11 @@ SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
 
   out_call <- match.call()
 
+
+  # Make domain variable to character and sort data-sets
+  smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(Xpop_agg[[dName]]))
+  Xpop_agg[[dName]] <- factor(Xpop_agg[[dName]], levels=unique(Xpop_agg[[dName]]))
+
   # Point Estimation
   #________________________________________
   meanAGG_preds <- point_meanAGG(Y = Y, X = X, dName = dName, smp_data = smp_data, Xpop_agg = Xpop_agg,

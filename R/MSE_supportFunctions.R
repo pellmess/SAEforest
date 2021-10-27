@@ -6,15 +6,15 @@ sample_select <- function(pop, smp, dName, times=100, set_seed = 1234){
   # set_seed......... set seed for reproduceability
 
   smpSizes <- table(smp[dName])
-  smpSizes <- data.frame(smpidD = as.numeric(names(smpSizes)), n_smp = as.numeric(smpSizes),
+  smpSizes <- data.frame(smpidD = as.character(names(smpSizes)), n_smp = as.numeric(smpSizes),
                          stringsAsFactors = FALSE)
 
-  smpSizes <- left_join(data.frame(idD = unique(pop[dName])),
+  smpSizes <- dplyr::left_join(data.frame(idD = unique(pop[[dName]])),
                         smpSizes, by = c("idD" = "smpidD"))
 
   smpSizes$n_smp[is.na(smpSizes$n_smp)] <- 0
 
-  splitPop <- split(pop, pop$idD)
+  splitPop <- split(pop, pop[[dName]])
 
   stratSamp <- function(dfList, ns) {
     do.call(rbind, mapply(dfList, ns, FUN = function(df, n) {
