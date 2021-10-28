@@ -36,10 +36,11 @@ SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
 
 
   # Make domain variable to character and sort data-sets
-  smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(Xpop_agg[[dName]]))
-  Xpop_agg[[dName]] <- factor(Xpop_agg[[dName]], levels=unique(Xpop_agg[[dName]]))
+  smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(smp_data[[dName]]))
+  Xpop_agg[[dName]] <- factor(Xpop_agg[[dName]], levels = unique(Xpop_agg[[dName]]))
+  popnsize[[dName]] <- factor(popnsize[[dName]], levels = unique(Xpop_agg[[dName]]))
 
-  # Point Estimation
+    # Point Estimation
   #________________________________________
   meanAGG_preds <- point_meanAGG(Y = Y, X = X, dName = dName, smp_data = smp_data, Xpop_agg = Xpop_agg,
                                initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
@@ -67,6 +68,7 @@ SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
   }
 
   if(mse == "nonparametric"){
+
     mse_estims <- MSE_SAEforest_aggOOB_wSet(Y=Y, X = X, mod = meanAGG_preds, smp_data = smp_data,
                                             Xpop_agg = Xpop_agg, dName = dName, ADJsd = adj_SD , B=B,
                                             initialRandomEffects = initialRandomEffects,

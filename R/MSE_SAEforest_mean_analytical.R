@@ -7,7 +7,7 @@ MSE_MERFanalytical <- function(mod, smp_data, X, dName, err_sd, B=25,
   rand_struc <- paste0(paste0("(1|",dName),")")
   ran_sd <- mod$RanEffSD
 
-  n_i <- as.numeric(table(in_dom)[table(in_dom)>0])
+  n_i <- as.numeric(table(in_dom))
   n_all <- length(t(in_dom))
   m_all <- length(n_i)
 

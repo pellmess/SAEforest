@@ -1,16 +1,22 @@
 # THIS IS THE MSE FUNCTION FRO THE SAEforest_agg
-# IT BUILD STRONGLY on the CODE from the sae package (!)
-# Recoding might be needed (!)
-
 
 MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_agg, B=100,
                                popnsize, initialRandomEffects, ErrorTolerance,
                                MaxIterations, ...){
 
   dom <- smp_data[[dName]]
-  in_dom <- unique(smp_data[[dName]])
-  total_dom <- mod$Mean_Predictions[[dName]]
+  in_dom <- as.character(unique(smp_data[[dName]]))
+  total_dom <- as.character(mod$Mean_Predictions[[dName]])
   p <- dim(X)[2]
+
+  n_i <- as.numeric(table(dom))
+  freq <- merge(popnsize, data.frame(table(dom)), by.x=dName, by.y ="dom", all=TRUE)
+  freq[,3][is.na(freq[,3])] <-0
+
+  freq <- freq[match(total_dom, popnsize[[dName]]),]
+
+  rd <- freq[,2] - freq[,3]
+  N_i <- freq[,2]
 
   sigmae2est <- mod$MERFmodel$ErrorSD^2
   sigmau2est <- mod$MERFmodel$RanEffSD^2
@@ -26,7 +32,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
   ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
   colnames(ran_effs1) <- c(dName,"r_bar")
 
-  smp_data <- merge(smp_data,ran_effs1,by = dName)
+  smp_data <- dplyr::left_join(smp_data,ran_effs1,by = dName)
   smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
 
   # prepare for sampling
@@ -44,7 +50,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
   ran_effs <- ran_effs-mean(ran_effs)
 
   #________________________________________________________________
-
+  # Take OOB predictions from f() (?)
   pred_t <- matrix(mod$MERFmodel$Forest$predictions, nrow = length(dom), ncol=B)
 
   random_eff <- tapply(mod$ModifiedSet$u_ij, mod$ModifiedSet[[dName]],mean)
@@ -52,28 +58,25 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
 
   mu_pred <- matrix(mu_t, nrow = length(total_dom), ncol=B)
 
-  N_i <- popnsize[,!colnames(popnsize) %in% dName]
-  n_i <- rep(0, length(total_dom))
-  n_i[total_dom %in% in_dom] <- as.numeric(table(dom))
-
-  rd <- N_i - n_i
-
   e_ij <- matrix(sample(forest_res, size = length(pred_t), replace=TRUE),
                  nrow = length(dom), ncol=B, byrow = FALSE)
 
-  e_i_mean <- as.matrix(aggregate(.~dom, data=data.frame(dom,e_ij), mean)[,-1])
+  e_i_mean <- as.matrix(aggregate(.~dom, data.frame(dom,e_ij),FUN=mean)[,-1])
 
   u_i <- apply(mu_pred, 2, function(x){sample(ran_effs, size=length(total_dom), replace = TRUE )})
-  u_ij <- apply(u_i[total_dom %in% in_dom,], 2, function(x){rep(x, n_i[total_dom %in% in_dom])})
+
+  u_ij <- apply(u_i[total_dom %in% in_dom,], 2, function(x){rep(x, n_i)})
 
   y_star <- pred_t + u_ij + e_ij
-
 
   samp_erd <- function(x){sample((forest_res/ADJsd)*sqrt(ADJsd^2/x), size = B, replace = TRUE )}
   erd_mean <- t(sapply(rd, samp_erd))
 
-  insamp_ei <- e_i_mean * (n_i/N_i)[total_dom %in% in_dom] +
+  insamp_ei <- e_i_mean * n_i/N_i[total_dom %in% in_dom] +
     erd_mean[total_dom %in% in_dom,] * (rd/N_i)[total_dom %in% in_dom]
+
+# Should OUT-of-samples should be 0 ?
+#  u_i[!total_dom %in% in_dom,] <- 0
 
   tau_star <- mu_pred + u_i + erd_mean
 

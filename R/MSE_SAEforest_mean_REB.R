@@ -18,7 +18,7 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, smp_data, mod, ADJsd, pop_data, 
   ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
   colnames(ran_effs1) <- c(dName,"r_bar")
 
-  smp_data <- merge(smp_data,ran_effs1,by = dName)
+  smp_data <- dplyr::left_join(smp_data,ran_effs1,by = dName)
   smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
 
   # prepare for sampling
@@ -87,7 +87,7 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, smp_data, mod, ADJsd, pop_data, 
   # USE BOOTSTRAP SAMPLE TO ESITMATES
   my_estim_f <- function(x){point_mean(Y = x$y_star_u_star, X = x[,colnames(X)], dName = dName, smp_data = x,
                                        pop_data = pop_data, initialRandomEffects = initialRandomEffects,
-                                       ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,...)[[1]][,2]}
+                                       ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations)[[1]][,2]}
 
   tau_b <- pbapply::pbsapply(boots_sample, my_estim_f)
 

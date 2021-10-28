@@ -89,7 +89,7 @@ point_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialRand
 
 point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects, ErrorTolerance,
                          MaxIterations, OOsample_obs, ADDsamp_obs, w_min, wSet = NULL, importance = "none",
-                         verbose=TRUE,...){
+                         verbose=TRUE, samp_seed=0712,...){
 
   random <- paste0(paste0("(1|",dName),")")
   groupNames <- as.character(unique(smp_data[[dName]]))
@@ -137,6 +137,7 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
 
     for (i in seq(length(OOsamp))) {
       samp_from <- smp_data[as.character(smp_data[[dName]]) == sim_groups[i],]
+      set.seed(samp_seed)
       return_oos <- dplyr::sample_n(samp_from, OOsample_obs,replace = TRUE)
       return_oos[dName] <- OOsamp[i]
       smp_oos[[i]] <- return_oos
@@ -195,6 +196,7 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
 
         sim_group <- which.min(simXcensMatrix[, pos])
         samp_add <- joint_smp_data[joint_smp_data[dName]==groupNamesCens[sim_group],]
+        set.seed(samp_seed)
         return_add <- dplyr::sample_n(samp_add, ADDsamp_obs,replace = TRUE)
         return_add[dName] <- i
 
