@@ -20,7 +20,7 @@ MSE_SAEforest_nonLin_REB <- function(Y, X, dName, threshold, smp_data, mod, ADJs
   ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
   colnames(ran_effs1) <- c(dName,"r_bar")
 
-  smp_data <- merge(smp_data,ran_effs1,by = dName)
+  smp_data <- dplyr::left_join(smp_data,ran_effs1,by = dName)
   smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
 
   # prepare for sampling

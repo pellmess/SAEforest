@@ -80,8 +80,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
 
   tau_star <- mu_pred + u_i + erd_mean
 
-  tau_star[total_dom %in% in_dom,] <- mu_pred[total_dom %in% in_dom,] + u_i[total_dom %in% in_dom,]+
-    insamp_ei
+  tau_star[total_dom %in% in_dom,] <- mu_pred[total_dom %in% in_dom,] + u_i[total_dom %in% in_dom,]+insamp_ei
 
 
   my_estim_f <- function(x){point_meanAGG(Y = x, X=X, dName = dName, smp_data = smp_data,

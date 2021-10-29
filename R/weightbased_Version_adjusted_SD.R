@@ -2,6 +2,7 @@
 # to bring an efficiency gain. In this case the calculation and prediction with
 # standard ranger is preferred.
 
+# See the rccp version to obtain weights in partykit by hothorn
 
 #Forest_weight_preds <- function(inbagRanger, termNodes, OOB = FALSE){
 

@@ -38,7 +38,9 @@ SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
   # Make domain variable to character and sort data-sets
   smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(smp_data[[dName]]))
   Xpop_agg[[dName]] <- factor(Xpop_agg[[dName]], levels = unique(Xpop_agg[[dName]]))
-  popnsize[[dName]] <- factor(popnsize[[dName]], levels = unique(Xpop_agg[[dName]]))
+  if(mse != "none"){
+    popnsize[[dName]] <- factor(popnsize[[dName]], levels = unique(Xpop_agg[[dName]]))
+  }
 
     # Point Estimation
   #________________________________________
