@@ -2,14 +2,14 @@
 % Please edit documentation in R/SAEforest_meanAGG.R
 \name{SAEforest_meanAGG}
 \alias{SAEforest_meanAGG}
-\title{Main function for means of MERF with unit-level data}
+\title{Main function for means of MERF with aggregated-level data}
 \usage{
 SAEforest_meanAGG(
   Y,
   X,
   dName,
-  survey_data,
-  Xcensus_agg,
+  smp_data,
+  Xpop_agg,
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
@@ -30,9 +30,9 @@ SAEforest_meanAGG(
 
 \item{dName}{name of group-identifier}
 
-\item{survey_data}{survey data set}
+\item{smp_data}{sample data set}
 
-\item{Xcensus_agg}{aggregated census level covariates}
+\item{Xpop_agg}{aggregated population level covariates}
 
 \item{initialRandomEffects}{default set to 0}
 
@@ -48,13 +48,25 @@ SAEforest_meanAGG(
 
 \item{OOsample_obs}{Number of Out-of-sample observations taken from the closest area. Default set to 25}
 
-\item{ADDsamp_obs}{Number of Out-of-sample observations taken from the closest area if first iteration failes. Default is set to 0}
+\item{ADDsamp_obs}{Number of Out-of-sample observations taken from the closest area if first iteration fails. Default is set to 0}
 
 \item{w_min}{Minimal number of covariates from which informative weights are calculated. Default set to 3}
+
+\item{importance}{variable importance mode processed by the
+random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+'permutation'}
+
+\item{...}{variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}}
 }
 \value{
 returns object including Mean predictions and model details
 }
 \description{
-Main function for means of MERF with unit-level data
+Some detailed description and scientific references here
+}
+\details{
+Some scientific or function specific details
+}
+\seealso{
+\code{\link{SAEforest}}
 }

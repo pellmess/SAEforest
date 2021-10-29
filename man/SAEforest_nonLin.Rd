@@ -2,14 +2,14 @@
 % Please edit documentation in R/SAEforest_nonLin.R
 \name{SAEforest_nonLin}
 \alias{SAEforest_nonLin}
-\title{Main function for means of MERF with unit-level data}
+\title{Main function for nonlinear indicators of MERF with unit-level data}
 \usage{
 SAEforest_nonLin(
   Y,
   X,
   dName,
-  survey_data,
-  census_data,
+  smp_data,
+  pop_data,
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
@@ -28,9 +28,9 @@ SAEforest_nonLin(
 
 \item{dName}{name of group-identifier}
 
-\item{survey_data}{survey data set}
+\item{smp_data}{sample data set}
 
-\item{census_data}{aggregated census level covariates}
+\item{pop_data}{aggregated census level covariates}
 
 \item{initialRandomEffects}{default set to 0}
 
@@ -42,11 +42,28 @@ SAEforest_nonLin(
 
 \item{B}{number of bootstrap replications for the MSE}
 
-\item{threshold}{Set a custom threshold for indicators. Default set to NULL}
+\item{threshold}{Set a custom threshold for indicators. Threshold can be a value or function of \code{Y}
+Default set to NULL}
+
+\item{importance}{variable importance mode processed by the
+random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+'permutation'}
+
+\item{custom_indicator}{a list of functions containing the indicators to be
+calculated additionally. Such functions must and must only depend on the
+target variable \code{Y} and the \code{threshold}. Defaults to \code{NULL}}
+
+\item{...}{variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}}
 }
 \value{
 returns object including Mean predictions and model details
 }
 \description{
-Main function for means of MERF with unit-level data
+Some detailed description and scientific references here
+}
+\details{
+Some scientific or function specific details
+}
+\seealso{
+\code{\link{SAEforest}}
 }

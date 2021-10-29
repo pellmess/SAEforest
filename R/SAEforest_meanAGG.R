@@ -1,4 +1,6 @@
-#' Main function for means of MERF with unit-level data
+#' Main function for means of MERF with aggregated-level data
+#'
+#' Some detailed description and scientific references here
 #'
 #' @param Y metric target variable
 #' @param X data.frame of covariates
@@ -14,11 +16,17 @@
 #' @param OOsample_obs Number of Out-of-sample observations taken from the closest area. Default set to 25
 #' @param ADDsamp_obs Number of Out-of-sample observations taken from the closest area if first iteration fails. Default is set to 0
 #' @param w_min Minimal number of covariates from which informative weights are calculated. Default set to 3
+#' @param importance variable importance mode processed by the
+#' random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+#' 'permutation'
+#' @param ... variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}
 #'
 #' @return returns object including Mean predictions and model details
 #' @export
+#' @details Some scientific or function specific details
+#' @seealso \code{\link{SAEforest}}
 #'
-#' @examples
+#'
 SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
                              initialRandomEffects = 0, ErrorTolerance = 0.0001,
                              MaxIterations = 25, mse = "none", B=100, popnsize,

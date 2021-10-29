@@ -1,6 +1,7 @@
 # THESE ARE ORIGINAL AND UNCHANGED SUPPORTFUNCTIONS FROM
 # THE METHOD OF LI and LiU 2019
 
+# definitely needs rework
 
 ##
 fan1 <- function(y, lam){

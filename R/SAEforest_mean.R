@@ -1,20 +1,28 @@
 #' Main function for means of MERF with unit-level data
 #'
+#' Some detailed description and scientific references here
+#'
 #' @param Y metric target variable
 #' @param X data.frame of covariates
 #' @param dName name of group-identifier
 #' @param smp_data sample data set
-#' @param pop_data aggregated census level covariates
+#' @param pop_data unit-level population or census level covariates
 #' @param initialRandomEffects default set to 0
 #' @param ErrorTolerance default set to 1e-04
 #' @param MaxIterations default set to 0
 #' @param mse Choose between "none, "analytic" and "nonparametric"
 #' @param B number of bootstrap replications for the MSE
+#' @param importance variable importance mode processed by the
+#' random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+#' 'permutation'
+#' @param ... variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}
 #'
 #' @return returns object including Mean predictions and model details
 #' @export
+#' @details Some scientific or function specific details
+#' @seealso \code{\link{SAEforest}}
 #'
-#' @examples
+#'
 SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
                            MaxIterations = 25, mse = "none", B=100, importance = "none", ...){

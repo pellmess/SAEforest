@@ -8,8 +8,8 @@ SAEforest_mean(
   Y,
   X,
   dName,
-  survey_data,
-  census_data,
+  smp_data,
+  pop_data,
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
@@ -26,9 +26,9 @@ SAEforest_mean(
 
 \item{dName}{name of group-identifier}
 
-\item{survey_data}{survey data set}
+\item{smp_data}{sample data set}
 
-\item{census_data}{aggregated census level covariates}
+\item{pop_data}{unit-level population or census level covariates}
 
 \item{initialRandomEffects}{default set to 0}
 
@@ -39,10 +39,22 @@ SAEforest_mean(
 \item{mse}{Choose between "none, "analytic" and "nonparametric"}
 
 \item{B}{number of bootstrap replications for the MSE}
+
+\item{importance}{variable importance mode processed by the
+random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+'permutation'}
+
+\item{...}{variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}}
 }
 \value{
 returns object including Mean predictions and model details
 }
 \description{
-Main function for means of MERF with unit-level data
+Some detailed description and scientific references here
+}
+\details{
+Some scientific or function specific details
+}
+\seealso{
+\code{\link{SAEforest}}
 }

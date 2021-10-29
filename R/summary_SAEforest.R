@@ -1,6 +1,17 @@
-# Summarizes an SAEforest Object
+#' Summarizes an SAEforest Object
+#'
+#' Additional information about the data and model in small area estimation
+#' methods and components of an SAEforest object are extracted. The returned object
+#' is suitable for printing  with the \code{print}.
 
-#'@export
+#' @param object an object of type "SAEforest" representing point
+#' and MSE estimates. Objects differ depending on the estimation method
+#'
+#' @return an object of type "summary.SAEforest" including information about the sample
+#' and population data, the model fit and random forest specific metrics
+#' @seealso \code{\link{SAEforest}}
+#'
+#' @export
 
 summary.SAEforest <- function(object) {
   class_error(object=object)

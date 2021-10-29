@@ -12,7 +12,7 @@ MERFranger(
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
-  importance,
+  importance = "none",
   ...
 )
 }
@@ -30,12 +30,24 @@ MERFranger(
 \item{ErrorTolerance}{default set to 1e-04}
 
 \item{MaxIterations}{default to 25}
+
+\item{importance}{variable importance mode processed by the
+random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+'permutation'.}
+
+\item{...}{variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}}
 }
 \value{
 object of class SAEforest
 }
 \description{
-This function uses forests from the ranger package combined with lmer from lme4.
-The function is the base-function for following extensions. Offest is equivalent to
-previous verisons of subtraction. Advantage of offset is the use of the Likelihood as a whole!
+This function uses forests from the ranger package combined with lmer from \pkg{lme4}.
+The function is the base-function for following extensions. Offset is equivalent to
+previous versions of subtraction. Advantage of offset is the use of the Likelihood as a whole!
+}
+\details{
+Some scientific or function specific details
+}
+\seealso{
+\code{\link{SAEforest}}
 }

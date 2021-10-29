@@ -1,5 +1,28 @@
-
+#' Plot function for SAEforest Object
+#'
+#' Write some scientific information here
+#'
+#' @param obj An object of type "SAEforest" representing point and MSE estimates.
+#' @param num_features Number of features you want to see in plots
+#' @param col Color of plots
+#' @param fill Fill color of plots
+#' @param alpha Density of plots
+#' @param include_type Include the importance type in the vip plot. Default is TRUE
+#' @param horizontal Plot the vip horizontally. Default is TRUE
+#' @param gg_specs Additional \pkg{ggplot2}-options that one can add by + such as the theme
+#' @param lsize The line size for the pdp-plots
+#' @param lty The line type for the pdp plots
+#' @param grid_row How many rows the pdp plots should display. Default is set to 2
+#' @param out_list Whether the user wants the plots as additioanl list object to perform further
+#' modifications via \pkg{ggplot2} modifications. Default is FALSE
+#' @param pdp_plot Whether the user wants to see a pdp-plot for selected features.
+#'
+#' @return Plots of objects
 #' @export
+#'
+#' @details Some scientific or function specific details. What are pdp and vip plots?
+#' How can one modify them best with ggplot?
+#' @seealso \code{\link{SAEforest}}
 
 plot.SAEforest <- function(obj, num_features =2, col ="darkgreen", fill = "darkgreen", alpha=0.55,
                            include_type =TRUE, horizontal = TRUE, gg_specs = theme_minimal(),

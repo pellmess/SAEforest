@@ -1,4 +1,6 @@
-#' Main function for means of MERF with unit-level data
+#' Main function for nonlinear indicators of MERF with unit-level data
+#'
+#' Some detailed description and scientific references here
 #'
 #' @param Y metric target variable
 #' @param X data.frame of covariates
@@ -10,12 +12,22 @@
 #' @param MaxIterations default set to 0
 #' @param mse Choose between "none, "wild" and "nonparametric"
 #' @param B number of bootstrap replications for the MSE
-#' @param threshold Set a custom threshold for indicators. Default set to NULL
+#' @param threshold Set a custom threshold for indicators. Threshold can be a value or function of \code{Y}
+#' Default set to NULL
+#' @param importance variable importance mode processed by the
+#' random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+#' 'permutation'
+#' @param custom_indicator a list of functions containing the indicators to be
+#' calculated additionally. Such functions must and must only depend on the
+#' target variable \code{Y} and the \code{threshold}. Defaults to \code{NULL}
+#' @param ... variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}
 #'
 #' @return returns object including Mean predictions and model details
 #' @export
+#' @details Some scientific or function specific details
+#' @seealso \code{\link{SAEforest}}
 #'
-#' @examples
+#'
 SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
                            MaxIterations = 25, mse = "none", B=100, threshold = NULL, importance ="none",
