@@ -63,7 +63,7 @@ SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
   if(mse == "none"){
     result <- list(
       MERFmodel =  c(meanAGG_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
-      Mean_Predictions = meanAGG_preds[[1]])
+      Indicators = meanAGG_preds[[1]])
 
     class(result) <- c("SAEforest_meanAGG", "SAEforest")
     return(result)
@@ -87,8 +87,8 @@ SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
 
     result <- list(
       MERFmodel =  c(meanAGG_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
-      Mean_Predictions = meanAGG_preds[[1]],
-      MSE_estimates = mse_estims,
+      Indicators = meanAGG_preds[[1]],
+      MSE_Estimates = mse_estims,
       wAreaInfo = meanAGG_preds$wAreaInfo,
       AdjustedSD = adj_SD)
 

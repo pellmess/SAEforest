@@ -93,7 +93,7 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, smp_data, mod, ADJsd, pop_data, 
 
   MSE_estimates <- rowMeans((tau_star - tau_b)^2)
 
-  MSE_estimates <- data.frame(unique(pop_data[dName]), MSE=MSE_estimates)
+  MSE_estimates <- data.frame(unique(pop_data[dName]), Mean=MSE_estimates)
   rownames(MSE_estimates) <- NULL
 
   #___________________________

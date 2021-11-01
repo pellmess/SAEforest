@@ -19,8 +19,8 @@ calc_indicat <- function(Y, threshold, custom){
 
   indicators <- cbind(mean_est, t(quant_preds), Gini_est, Hcr_est, Pgap_est, Qsr_est)
 
-  colnames(indicators) <- c("mean","quant10","quant25","median","quant75",
-                          "quant90","gini","hcr","pgap","qsr")
+  colnames(indicators) <- c("Mean","Quant10","Quant25","Median","Quant75",
+                          "Quant90","Gini","Hcr","Pgap","Qsr")
 
   if(!is.null(custom)){
     custom_ind <- unlist(lapply(custom_indicator, function(f) f(Y, threshold)))

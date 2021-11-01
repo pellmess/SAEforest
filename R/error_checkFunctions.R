@@ -30,6 +30,11 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
     survey as well as the population data. See also help(SAEforest_mean).")
   }
 
+  if (data.frame(smp_data[[dName]]) %in% X) {
+    stop("X must not contain the domain-level specifier. X should contain only covariate data used for the estimation
+       of fixed effects part of the model.")
+  }
+
   if (dim(pop_data)[1] < dim(smp_data)[1]) {
     stop("The population data set cannot have less observations than the
          sample data set.")
@@ -44,6 +49,12 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
     unique(as.character(pop_data[[dName]])))) {
     stop("The survey sample data contains domains that are
          not contained in the population data.")
+  }
+
+  if (is.null(colnames(smp_data)) || is.null(colnames(pop_data)) ||
+      sum((colnames(smp_data) %in% colnames(pop_data))) == 0){
+    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage
+  of covariate data from the survey sample and the population level information. See also help(SAEforest_mean)")
   }
 
   if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))) {
@@ -81,6 +92,7 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
 # Function called in SAEforest_nonLin
 input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEffects,
                                 ErrorTolerance, MaxIterations, mse, B, threshold, importance) {
+
   if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_nonLin)")
@@ -101,6 +113,12 @@ input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEf
     survey as well as the population data. See also help(SAEforest_nonLin).")
   }
 
+
+  if (data.frame(smp_data[[dName]]) %in% X) {
+    stop("X must not contain the domain-level specifier. X should contain only covariate data used for the estimation
+       of fixed effects part of the model.")
+  }
+
   if (dim(pop_data)[1] < dim(smp_data)[1]) {
     stop("The population data set cannot have less observations than the
          sample data set.")
@@ -115,6 +133,12 @@ input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEf
     unique(as.character(pop_data[[dName]])))) {
     stop("The survey sample data contains domains that are
          not contained in the population data.")
+  }
+
+  if (is.null(colnames(smp_data)) || is.null(colnames(pop_data)) ||
+      sum((colnames(smp_data) %in% colnames(pop_data))) == 0){
+    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage
+  of covariate data from the survey sample and the population level information. See also help(SAEforest_mean)")
   }
 
   if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))) {
@@ -148,42 +172,45 @@ input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEf
          See also help(SAEforest_nonLin).")
   }
 
+  if (inherits(threshold, "function") && !all(attributes(formals(threshold))$names == c("y"))) {
+    stop("If threshold is a function the argument needs to be exclusively y. Also
+          a single numeric value is possible as threshold. If it is
+          NULL 60% of the median of the target variable is selected as threshold.
+          See also help(SAEforest_nonLin).")
+  }
+
   if (is.null(importance) || !(importance == "none" || importance == "impurity" || importance == "impurity_corrected" || importance == "permutation")) {
     stop('Variable importance is needed for vip plots. To reduce runtime importance can be set to "none". Furhter options are "impurity", "impurity_corrected" or "permutation".
          See details on the variable importance mode with help(ranger).')
   }
 
+  if (!is.null(custom_indicator)) {
 
-  # MIGHT BE USEFUL IF ALLOWING FOR custom indicators.
+      if (!inherits(custom_indicator, "list")) {
+        stop("Additional indicators need to be added in argument custom_indicator
+             as a list of functions. For help see the Example in help(SAEforest).")
+      }
 
-  #    if (!is.null(custom_indicator)) {
-
-  #    if (!inherits(custom_indicator, "list")) {
-  #      stop("Additional indicators need to be added in argument custom_indicator
-  #           as a list of functions. For help see Example 2 in help(ebp).")
-  #    }
-
-  #    N_custom <- length(custom_indicator)
-  #    for (i in seq_len(N_custom)) {
-  #      if (!inherits(custom_indicator[[i]], "function")) {
-  #        stop("The elements of the list need to be functions. These Functions
-  #             for custom indicators need to have exactly the following
-  #             two arguments: y, threshold; even though a threshold might not
-  #             included in the indicator. For help see Example 2 in help(ebp).")
-  #      }
-  #      else if (inherits(custom_indicator[[i]], "function")
-  #               && !all(names(formals(custom_indicator[[i]])) == c("y", "threshold"))) {
-  #        stop("Functions for custom indicators need to have exactly the following
-  #             two arguments: y, threshold; even though a threshold might not
-  #             included in the indicator. For help see Example 2 in help(ebp).")
-  #      }
-  #    }
-  #  }
-  #  }
+      N_custom <- length(custom_indicator)
+      for (i in seq_len(N_custom)) {
+        if (!inherits(custom_indicator[[i]], "function")) {
+          stop("The elements of the list need to be functions. These Functions
+               for custom indicators need to have exactly the following
+               two arguments: y, threshold; even though a threshold might not
+               included in the indicator. For help see the Example in help(SAEforest).")
+        }
+        else if (inherits(custom_indicator[[i]], "function")
+                 && !all(names(formals(custom_indicator[[i]])) == c("y", "threshold"))) {
+          stop("Functions for custom indicators need to have exactly the following
+               two arguments: y, threshold; even though a threshold might not
+               included in the indicator. For help the Example in help(SAEforest).")
+        }
+      }
+    }
 }
 
 
-# Function called in SAEforest_nonLin
+# Function called in SAEforest_meanAGG
 input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
                                  ErrorTolerance, MaxIterations, mse, B, popnsize, OOsample_obs,
                                  ADDsamp_obs, w_min, importance) {
@@ -208,6 +235,11 @@ input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomE
   }
 
 
+  if (data.frame(smp_data[[dName]]) %in% X) {
+    stop("X must not contain the domain-level specifier. X should contain only covariate data used for the estimation
+       of fixed effects part of the model.")
+  }
+
   if (is.null(smp_data[[dName]]) || is.null(Xpop_agg[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
     must contain a column labelled by the same name specified under the input of "dName"'))
@@ -217,6 +249,12 @@ input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomE
     unique(as.character(Xpop_agg[[dName]])))) {
     stop("The survey sample data contains domains that are
          not contained in the population data.")
+  }
+
+  if (is.null(colnames(smp_data)) || is.null(colnames(Xpop_agg)) ||
+      sum((colnames(smp_data) %in% colnames(Xpop_agg))) == 0){
+    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage
+  of covariate data from the survey sample and the population level information. See also help(SAEforest_mean)")
   }
 
   if (mse != "none" && (!is.data.frame(popnsize) || is.null(popnsize[[dName]]) || dim(popnsize)[1] != dim(Xpop_agg)[1] ||
@@ -316,6 +354,39 @@ input_checks_plot <- function(num_features, alpha, include_type, horizontal,
 
 }
 
+
+
+
+summarize_indicators_check <- function(object, indicator, MSE, CV){
+
+  class_error(object)
+
+  if (is.null(object$MSE_Estimates) && (MSE == TRUE || CV == TRUE)) {
+    stop('No MSE estimates in SAEforest object: arguments MSE and CV have to be FALSE
+          or a new SAEforest object with variance/MSE needs to be generated.')
+  }
+  if (!(inherits(MSE, "logical") && length(MSE) == 1)) {
+    stop("MSE must be a logical value. Set MSE to TRUE or FALSE.")
+  }
+  if (!(inherits(CV, "logical") && length(CV) == 1)) {
+    stop("CV must be a logical value. Set CV to TRUE or FALSE.")
+  }
+  if ((inherits(object,"SAEforest_mean") || inherits(object,"SAEforest_meanAGG")) && (indicator != "Mean" && indicator != "all"
+                                                                                      && indicator != "All")){
+    warning('For objects of class SAEforest_mean or SAEforest_meanAGG, only results for the Indicator "Mean" are reported')
+  }
+  if (inherits(object, "SAEforest_nonLin")) {
+    if (is.null(indicator) || !all(indicator == "all" | indicator == "All" | indicator == "Mean"|
+                                   indicator == "Quant10" | indicator == "Quant25" | indicator == "Median"|
+                                   indicator == "Quant75" | indicator == "Quant90" | indicator == "Gini" |
+                                   indicator == "Hcr" | indicator == "Pgap" | indicator == "Qsr"|
+                                   indicator %in% names(object$Indicators[-1]))) {
+      stop(paste0("The argument indicator is set to ", indicator, ". The argument
+                  only allows to be set to all, a name of estimated indicators or
+                  indicator groups defined by c(). For details see help(summarize_indicators)"))
+    }
+  }
+}
 
 
 

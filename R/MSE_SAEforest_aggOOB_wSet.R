@@ -6,7 +6,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
 
   dom <- smp_data[[dName]]
   in_dom <- as.character(unique(smp_data[[dName]]))
-  total_dom <- as.character(mod$Mean_Predictions[[dName]])
+  total_dom <- as.character(mod$Indicators[[dName]])
   p <- dim(X)[2]
 
   n_i <- as.numeric(table(dom))
@@ -54,7 +54,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
   pred_t <- matrix(mod$MERFmodel$Forest$predictions, nrow = length(dom), ncol=B)
 
   random_eff <- tapply(mod$ModifiedSet$u_ij, mod$ModifiedSet[[dName]],mean)
-  mu_t <- mod$Mean_Predictions$Mean - random_eff
+  mu_t <- mod$Indicators$Mean - random_eff
 
   mu_pred <- matrix(mu_t, nrow = length(total_dom), ncol=B)
 
@@ -93,7 +93,7 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
 
   MSE_estimates <- rowMeans((tau_star - tau_b)^2)
 
-  MSE_estimates <- data.frame(mod$Mean_Predictions[dName], MSE=MSE_estimates)
+  MSE_estimates <- data.frame(mod$Indicators[dName], Mean=MSE_estimates)
   rownames(MSE_estimates) <- NULL
 
   return(MSE_estimates)

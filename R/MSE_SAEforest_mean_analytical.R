@@ -53,7 +53,7 @@ MSE_MERFanalytical <- function(mod, smp_data, X, dName, err_sd, B=25,
   #______________________________________
   MSE_analytical <- g_1 + g_2 + 2*g_3
 
-  MSE_analytical <- data.frame(unique(smp_data[dName]), MSE=MSE_analytical)
+  MSE_analytical <- data.frame(unique(smp_data[dName]), Mean=MSE_analytical)
   rownames(MSE_analytical) <- NULL
 
   return(MSE_analytical)
