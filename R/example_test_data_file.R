@@ -121,3 +121,14 @@
 #plot_values <- merge(agg_method,mean_method, by.x="Domain", by.y="idD")
 #matplot(plot_values[,-1], type="l")
 
+
+
+
+# ADD FOR PLOTTING EXAMPLE OF map_indicators
+# a<- map_indicators(object = mod_alt_nonLin, MSE = FALSE, CV = TRUE,
+#                   map_obj = shape_austria_dis, indicator = c("Mean", "Gini"),
+#                   map_dom_id = "PB", return_plot = TRUE, return_data = TRUE, gg_theme = theme_minimal())
+
+# a$plotOb$Gini_CV +scale_fill_gradientn(colours = rainbow(10))
+
+

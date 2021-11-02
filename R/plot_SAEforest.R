@@ -9,7 +9,7 @@
 #' @param alpha Density of plots
 #' @param include_type Include the importance type in the vip plot. Default is TRUE
 #' @param horizontal Plot the vip horizontally. Default is TRUE
-#' @param gg_specs Additional \pkg{ggplot2}-options that one can add by + such as the theme
+#' @param gg_theme Specify an individual theme from \pkg{ggplot2}
 #' @param lsize The line size for the pdp-plots
 #' @param lty The line type for the pdp plots
 #' @param grid_row How many rows the pdp plots should display. Default is set to 2
@@ -24,18 +24,18 @@
 #' How can one modify them best with ggplot?
 #' @seealso \code{\link{SAEforest}}
 
-plot.SAEforest <- function(obj, num_features =2, col ="darkgreen", fill = "darkgreen", alpha=0.55,
-                           include_type =TRUE, horizontal = TRUE, gg_specs = theme_minimal(),
+plot.SAEforest <- function(obj, num_features =5, col ="darkgreen", fill = "darkgreen", alpha=0.8,
+                           include_type =TRUE, horizontal = TRUE, gg_theme = theme_minimal(),
                            lsize=1.5, lty= "solid", grid_row=2, out_list = FALSE, pdp_plot =TRUE){
 
   class_error(obj)
 
   input_checks_plot(num_features = num_features, alpha = alpha, include_type = include_type, horizontal =horizontal,
-                                lsize = lsize, grid_row = grid_row, out_list = out_list, pdp_plot=pdp_plot)
+                                lsize = lsize, grid_row = grid_row, out_list = out_list, pdp_plot=pdp_plot, gg_theme = gg_theme)
 
   # VIP PLOT
   vip_plot <- vip::vip(obj$MERFmodel$Forest, aes = list(col =col, fill = fill, alpha=alpha),
-                  include_type =include_type, horizontal = horizontal, num_features=num_features)+ ggtitle("Variable Importance")+ gg_specs
+                  include_type =include_type, horizontal = horizontal, num_features=num_features)+ ggtitle("Variable Importance")+ gg_theme
 
   print(vip_plot)
 
@@ -53,7 +53,7 @@ plot.SAEforest <- function(obj, num_features =2, col ="darkgreen", fill = "darkg
     print(paste0("The data contained ", length(set_rm) ," character or factor variables unsuitable for pdp plots(",paste(set_rm, collapse=", ") ,")."))
   }
 
-  forest_imp <- as.data.frame(vip::vi(mod_alt$MERFmodel$Forest))
+  forest_imp <- as.data.frame(vip::vi(obj$MERFmodel$Forest))
   forest_imp <- forest_imp[order(forest_imp$Importance, decreasing = TRUE),]
   forest_imp <- forest_imp[!forest_imp[,"Variable"] %in% set_rm,]
   forest_imp <- na.omit(forest_imp[1:num_features,])
@@ -62,13 +62,13 @@ plot.SAEforest <- function(obj, num_features =2, col ="darkgreen", fill = "darkg
     pd <- pdp::partial(obj$MERFmodel$Forest, pred.var = feature, train = obj$MERFmodel$data, plot=FALSE)
     colnames(pd)[2] <- "y"
     ggplot(data=pd, aes_string(y = "y", x = feature)) + geom_line(linetype = lty, color=col, size=lsize)+
-      ggtitle(paste("Partial Dependence of",feature)) + gg_specs
+      ggtitle(paste("Partial Dependence of",feature)) + gg_theme
   })
 
   vip::grid.arrange(grobs = pdp_curves, nrow = grid_row)
 }
 
-  # Output for furhter adaptions
+  # Output for further adaptions
   if(out_list == TRUE){
     outlist <- list(vip = vip_plot, pdp = pdp_curves)
     return(outlist)

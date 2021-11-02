@@ -38,7 +38,8 @@ SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data,
 
   input_checks_nonLin(Y = Y, X = X, dName = dName, smp_data = smp_data, pop_data =pop_data,
                       initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance,
-                      MaxIterations =MaxIterations, mse=mse, B=B, threshold = threshold, importance = importance)
+                      MaxIterations =MaxIterations, mse=mse, B=B, threshold = threshold,
+                      importance = importance, custom_indicator = custom_indicator)
 
   out_call <- match.call()
 
@@ -100,7 +101,7 @@ SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data,
     result <- list(
       MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
       Indicators = nonLin_preds[[1]],
-      MSE_estimates = mse_estims,
+      MSE_Estimates = mse_estims,
       AdjustedSD = adj_SD)
 
     class(result) <- c("SAEforest_nonLin", "SAEforest")

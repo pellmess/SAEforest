@@ -38,6 +38,8 @@ summarize_indicators <- function(object, indicator = "all", MSE = FALSE, CV = FA
   out_var <- data.frame(object$Indicators[colnames(object$Indicators)[1]],
                         object$Indicators[indicator])
 
+  selected <- colnames(out_var)[-1]
+
   if ( MSE == TRUE || CV == TRUE ) {
     mse_estims <- object$MSE_Estimates[indicator]
     cv_estims <- sqrt(object$MSE_Estimates[indicator])/object$Indicators[indicator]

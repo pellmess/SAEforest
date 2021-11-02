@@ -74,7 +74,9 @@ point_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialRand
   }
 
   indicators <- do.call(rbind.data.frame, smear_list)
-  indicators_out <- cbind("Domain" = domains, indicators)
+  indicators_out <- cbind(domains, indicators)
+  names(indicators_out)[1] <- dName
+
   # __________________________________
 
   out_ob <- vector(mode="list", length = 2)

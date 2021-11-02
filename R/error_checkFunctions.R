@@ -91,7 +91,7 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
 
 # Function called in SAEforest_nonLin
 input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEffects,
-                                ErrorTolerance, MaxIterations, mse, B, threshold, importance) {
+                                ErrorTolerance, MaxIterations, mse, B, threshold, importance, custom_indicator) {
 
   if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
@@ -317,7 +317,7 @@ input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomE
 
 
 input_checks_plot <- function(num_features, alpha, include_type, horizontal,
-                              lsize, grid_row, out_list, pdp_plot){
+                              lsize, grid_row, out_list, pdp_plot, gg_theme){
 
   if (!is.numeric(num_features) || length(num_features) != 1 || num_features < 2) {
     stop("num_features needs to be a single integer value, determining
@@ -351,6 +351,10 @@ input_checks_plot <- function(num_features, alpha, include_type, horizontal,
   if (!is.numeric(lsize) || length(lsize) != 1 ) {
     stop("lsize must be a single integer value determining the line size for pdp plots.")
   }
+  if (!inherits(gg_theme, "gg") || length(lsize) != 1 ) {
+    stop("gg_theme must be a single function of type 'gg' determining the theme of plots.")
+  }
+
 
 }
 
@@ -388,6 +392,68 @@ summarize_indicators_check <- function(object, indicator, MSE, CV){
   }
 }
 
+
+map_indicators_check <- function(object, indicator, MSE, CV, map_obj, map_dom_id, map_tab, color,
+                                 return_data, return_plot, gg_theme){
+
+  class_error(object)
+
+  if (!(inherits(CV, "logical") && length(CV) == 1)) {
+    stop("CV must be a logical value. Set CV to TRUE or FALSE.")
+  }
+  if (!(inherits(MSE, "logical") && length(MSE) == 1)) {
+    stop("MSE must be a logical value. Set MSE to TRUE or FALSE.")
+  }
+  if (!(inherits(return_data, "logical") && length(return_data) == 1)) {
+    stop("return_data must be a logical value. Set return_data to TRUE or FALSE.")
+  }
+  if (!(inherits(return_plot, "logical") && length(return_plot) == 1)) {
+    stop("return_plot must be a logical value. Set return_plot to TRUE or FALSE.")
+  }
+  if (is.null(object$MSE_Estimates) && (MSE == TRUE || CV == TRUE)) {
+    stop('No MSE estimates in SAEforest object: arguments MSE and CV have to be FALSE
+          or a new SAEforest object with variance/MSE needs to be generated.')
+  }
+  if (length(color) != 2 || !is.vector(color)) {
+    stop("col needs to be a vector of length 2
+           defining the starting and upper color of the map-plot")
+  }
+  if (!(map_dom_id %in% names(map_obj))) {
+    stop(paste0(map_dom_id, " is not contained in map_obj.
+        Please provide valid variable name for pop_domains."))
+  }
+
+  if (inherits(object, "SAEforest_nonLin")) {
+    if (is.null(indicator) || !all(indicator == "all" | indicator == "All" | indicator == "Mean"|
+                                   indicator == "Quant10" | indicator == "Quant25" | indicator == "Median"|
+                                   indicator == "Quant75" | indicator == "Quant90" | indicator == "Gini" |
+                                   indicator == "Hcr" | indicator == "Pgap" | indicator == "Qsr"|
+                                   indicator %in% names(object$Indicators[-1]))) {
+      stop(paste0("The argument indicator is set to ", indicator, ". The argument
+                  only allows to be set to all, a name of estimated indicators or
+                  indicator groups defined by c(). For details see help(summarize_indicators)"))
+    }
+  }
+  if (is.null(object$MSE_Estimates) && (MSE == TRUE || CV == TRUE)) {
+    stop('No MSE estimates in SAEforest object: arguments MSE and CV have to be FALSE
+          or a new SAEforest object with variance/MSE needs to be generated.')
+  }
+
+  if (!inherits(gg_theme, "gg")) {
+    stop("gg_theme must be a single function of type 'gg' determining the theme of plots.")
+  }
+
+  if (class(map_obj) != "SpatialPolygonsDataFrame" ||
+      attr(class(map_obj), "package") != "sp") {
+    stop("map_obj is not of class SpatialPolygonsDataFrame from the sp package")
+  }
+  if (!is.null(map_tab) && !(inherits(map_tab, "data.frame")
+                             && dim(map_tab)[2] == 2)) {
+    stop("If the IDs in the data object and shape file differ a mapping
+         table needs to be used. This table needs to be a data frame with
+         two colums. See also help(map_indicators).")
+  }
+}
 
 
 

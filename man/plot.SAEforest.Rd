@@ -6,13 +6,13 @@
 \usage{
 \method{plot}{SAEforest}(
   obj,
-  num_features = 2,
+  num_features = 5,
   col = "darkgreen",
   fill = "darkgreen",
-  alpha = 0.55,
+  alpha = 0.8,
   include_type = TRUE,
   horizontal = TRUE,
-  gg_specs = theme_minimal(),
+  gg_theme = theme_minimal(),
   lsize = 1.5,
   lty = "solid",
   grid_row = 2,
@@ -35,7 +35,7 @@
 
 \item{horizontal}{Plot the vip horizontally. Default is TRUE}
 
-\item{gg_specs}{Additional \pkg{ggplot2}-options that one can add by + such as the theme}
+\item{gg_theme}{Specify an individual theme from \pkg{ggplot2}}
 
 \item{lsize}{The line size for the pdp-plots}
 

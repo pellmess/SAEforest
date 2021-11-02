@@ -1,28 +1,83 @@
-map_plot <- function(object,
+#' Visualizes regional disaggregated estimates on a map
+#'
+#' Function \code{map_indicators} creates spatial visualizations of the estimates
+#' obtained by small area estimation methods or direct estimation.
+#'
+#' @param object an object of type SAEforest, containing the estimates to be
+#' visualized.
+#' @param indicator optional character vector that selects which indicators
+#' shall be returned: (i) all calculated indicators ("all");
+#' (ii) each indicator name: "Mean", "Quant10", "Quant25", "Median",
+#' "Quant75", "Quant90", "Gini", "Hcr", "Pgap",
+#' "Qsr" or the function name/s of "custom_indicator/s";
+#' (iii) groups of indicators: specified by \code{c()}. If the \code{model}
+#' argument is of type "fh", indicator can be set to "all", "Direct", FH", or "FH_Bench" (if emdi
+#' object is overwritten by function benchmark). Defaults to "all".
+#' @param MSE optional logical. If \code{TRUE}, the MSE is also visualized.
+#' Defaults to \code{FALSE}.
+#' @param CV optional logical. If \code{TRUE}, the CV is also visualized.
+#' Defaults to \code{FALSE}.
+#' @param map_obj an \code{SpatialPolygonsDataFrame} object as defined by the
+#' \pkg{sp} package on which the data should be visualized.
+#' @param map_dom_id a character string containing the name of a variable in
+#' \code{map_obj} that indicates the domains.
+#' @param map_tab a \code{data.frame} object with two columns that match the
+#' domain variable from the census data set (first column) with the domain
+#' variable in the map_obj (second column). This should only be used if the IDs
+#' in both objects differ.
+#' @param color a \code{vector} of length 2 defining the lowest and highest
+#' color in the plots.
+#' @param scale_points a structure defining the lowest, the mid and the highest
+#' value of the colorscale. If a numeric vector of length two is given, this scale
+#' will be used for every plot. Alternatively, a list defining colors for each
+#' plot separately may be given.
+#' @param guide character passed to
+#' \code{scale_colour_gradient} from \pkg{ggplot2}.
+#' Possible values are "none", "colourbar", and "legend".
+#' @param return_data if set to \code{TRUE}, a fortified data frame including the
+#' map data as well as the chosen indicators is returned. Customized maps can
+#' easily be obtained from this data frame via the package \pkg{ggplot2}. Defaults
+#' @param return_plot if set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
+#' is returned for further individual customization and processing
+#' @param gg_theme Specify a predifined theme from \pkg{ggplot2}.
+#' to \code{FALSE}.
+#' @return Creates the plots demanded, and, if selected, a fortified data.frame
+#' containing the mapdata and chosen indicators.
+#' @seealso \code{\link{SAEforest}}, \code{\link[maptools]{readShapePoly}}
+#'
+#'
+#' @export
+#' @importFrom reshape2 melt
+#' @importFrom ggplot2 aes geom_polygon facet_wrap fortify coord_equal labs
+#' @importFrom ggplot2 theme element_blank guides scale_fill_gradient
+#' @importFrom ggplot2 scale_colour_gradient
+
+
+map_indicators <- function(object,
                      indicator = "all",
                      MSE = FALSE,
                      CV = FALSE,
                      map_obj = NULL,
                      map_dom_id = NULL,
                      map_tab = NULL,
-                     color = c("white", "red4"),
+                     color = c("white", "darkgreen"),
                      scale_points = NULL,
                      guide = "colourbar",
-                     return_data = FALSE
-){
+                     return_data = FALSE,
+                     return_plot = FALSE,
+                     gg_theme = theme_minimal()){
+
+  map_indicators_check(object = object, indicator = indicator, MSE = MSE, CV = CV, map_obj = map_obj,
+                       map_dom_id = map_dom_id, map_tab = map_tab, color = color,
+                       return_data = return_data, return_plot = return_plot, gg_theme = gg_theme)
+
+
   if (is.null(map_obj)) {
     message("No Map Object has been provided. An artificial polygone is used for
             visualization")
     map_pseudo(object = object , indicator = indicator, panelplot = FALSE, MSE = MSE,
-               CV = CV)
-  } else if (class(map_obj) != "SpatialPolygonsDataFrame" ||
-             attr(class(map_obj), "package") != "sp") {
-    stop("map_obj is not of class SpatialPolygonsDataFrame from the sp package")
-  } else {
-    if (length(color) != 2 || !is.vector(color)) {
-      stop("col needs to be a vector of length 2
-           defining the starting, mid and upper color of the map-plot")
-    }
+               CV = CV, gg_theme = gg_theme, return_plot = return_plot)
+  }
 
     plot_real(object,
               indicator = indicator,
@@ -34,12 +89,11 @@ map_plot <- function(object,
               col = color,
               scale_points = scale_points,
               return_data = return_data,
-              guide = guide
+              guide = guide, gg_theme = gg_theme, return_plot = return_plot
     )
   }
-}
 
-map_pseudo <- function(object, indicator, panelplot, MSE, CV)
+map_pseudo <- function(object, indicator, panelplot, MSE, CV, gg_theme, return_plot)
 {
   x <- y <- id <- value <- NULL #avoid note due to usage in ggplot
   values <-  summarize_indicators(object = object, indicator = indicator,
@@ -48,16 +102,24 @@ map_pseudo <- function(object, indicator, panelplot, MSE, CV)
 
   tplot <- get_polygone(values = values)
 
+  plot_list <- vector(mode="list", length = length(indicator))
+  names(plot_list) <- indicator
+
   if (panelplot) {
     ggplot(tplot, aes(x = x, y = y)) + geom_polygon(aes(group=id, fill = value))
-    + facet_wrap( ~ variable, ncol = ceiling(sqrt(length(unique(tplot$variable)))))
+    + facet_wrap( ~ variable, ncol = ceiling(sqrt(length(unique(tplot$variable))))) + gg_theme
   } else {
     for (ind in indicator) {
-      print(ggplot(tplot[tplot$variable == ind,], aes(x = x, y = y)) +
-              ggtitle(paste0(ind)) + geom_polygon(aes(group = id, fill = value)) )
+      plot_list[[ind]] <- eval(substitute(ggplot(tplot[tplot$variable == ind,], aes(x = x, y = y)) +
+        ggtitle(paste0(ind)) + geom_polygon(aes(group = id, fill = value)) + gg_theme, list(ind=ind)))
+
+      print(plot_list[[ind]])
       cat("Press [enter] to continue")
       line <- readline()
     }
+  }
+  if(return_plot){
+    return(plot_list)
   }
 }
 
@@ -71,10 +133,12 @@ plot_real <- function(object,
                       col = col,
                       scale_points = NULL,
                       return_data = FALSE,
-                      guide = NULL
+                      guide = NULL,
+                      gg_theme,
+                      return_plot =FALSE
 ) {
   if (!is.null(map_obj) && is.null(map_dom_id)) {
-    stop("No district ID for the map object is given")
+    stop("No correct ID for the map object is given")
   }
   long <- lat <- group <- NULL
 
@@ -85,29 +149,29 @@ plot_real <- function(object,
 
   if (!is.null(map_tab)) {
     map_data <- merge(x = map_data, y = map_tab,
-                      by.x = "district", by.y = names(map_tab)[1])
+                      by.x = names(object$Indicators)[1], by.y = names(map_tab)[1])
     matcher <- match(map_obj@data[map_dom_id][,1], map_data[,names(map_tab)[2]])
 
     if (any(is.na(matcher))) {
       if (all(is.na(matcher))) {
-        stop("districts of map_tab and Map object do not match. Check map_tab")
+        stop("Domain identifier of map_tab and Map object do not match. Check map_tab")
       } else {
-        warnings("Not all districts of map_tab and Map object could be matched.
+        warnings("Not all domain identifiers of map_tab and Map object could be matched.
                  Check map_tab")
       }
     }
     map_data <- map_data[matcher,]
-    map_data <- map_data[,!colnames(map_data) %in% c("district",
+    map_data <- map_data[,!colnames(map_data) %in% c(names(object$Indicators)[1],
                                                      map_dom_id,
                                                      names(map_tab)), drop = F]
   } else {
-    matcher <- match(map_obj@data[map_dom_id][,1], map_data[,"district"])
+    matcher <- match(map_obj@data[map_dom_id][,1], map_data[,names(object$Indicators)[1]])
 
     if (any(is.na(matcher))) {
       if (all(is.na(matcher))) {
-        stop("district of EMDI and Map object do not match. Try using map_tab")
+        stop("dName of SAEforest object and Map object do not match. Try using map_tab")
       } else {
-        warnings("Not all districts of EMDI and Map object could be matched.
+        warnings("Not all domain identifiers of EMDI and Map object could be matched.
                  Try using map_tab")
       }
     }
@@ -122,28 +186,39 @@ plot_real <- function(object,
                         by.x = "id", by.y = map_dom_id)
 
   indicator <- colnames(map_data)
-  indicator <- indicator[!(indicator %in% "district")]
+  indicator <- indicator[!(indicator %in% names(object$Indicators)[1])]
+
+  plot_list <- vector(mode="list", length = length(indicator))
+  names(plot_list) <- indicator
+
   for (ind in indicator) {
     map_obj.fort[ind][,1][!is.finite(map_obj.fort[ind][,1])] <- NA
     scale_point <- get_scale_points(map_obj.fort[ind][,1], ind, scale_points)
-    print(ggplot(map_obj.fort, aes(long, lat, group = group,
-                                   fill = map_obj.fort[ind][,1])) +
-            geom_polygon(color = "azure3") + coord_equal() +
-            labs(x = "", y = "", fill = ind) +
-            ggtitle(gsub(pattern = "_",replacement = " ",x = ind)) +
-            scale_fill_gradient(low = col[1], high = col[2],limits = scale_point,
-                                guide = guide) +
-            theme(axis.ticks = element_blank(), axis.text = element_blank(),
-                  legend.title = element_blank())
+    plot_list[[ind]] <- eval(substitute(ggplot(map_obj.fort, aes(long, lat, group = group,
+                                                 fill = map_obj.fort[ind][,1])) +
+      geom_polygon(color = "azure3") + coord_equal() +
+      labs(x = "", y = "", fill = ind) +
+      ggtitle(gsub(pattern = "_",replacement = " ",x = ind)) +
+      scale_fill_gradient(low = col[1], high = col[2],limits = scale_point,
+                          guide = guide) + gg_theme +
+      theme(axis.ticks = element_blank(), axis.text = element_blank(),
+            legend.title = element_blank()), list(ind=ind)))
 
-    )
+    print(plot_list[[ind]])
+
     if (!ind == tail(indicator,1)) {
       cat("Press [enter] to continue")
       line <- readline()
     }
   }
-  if (return_data) {
+  if(return_data == TRUE && return_plot == FALSE) {
     return(map_obj.fort)
+  }
+  if(return_data == FALSE && return_plot == TRUE){
+    return(plot_list)
+  }
+  if(return_data == TRUE && return_plot == TRUE){
+    return(list(mapObj = map_obj.fort, plotObj = plot_list))
   }
 }
 
@@ -164,7 +239,7 @@ get_polygone <- function(values) {
   )
 
   combo <- merge(poly, values, by = "id", all = TRUE, sort = FALSE)
-  melt(combo[order(combo$ordering),], id.vars = c("id","x","y","ordering"))
+  reshape2::melt(combo[order(combo$ordering),], id.vars = c("id","x","y","ordering"))
 }
 
 get_scale_points <- function(y, ind, scale_points){

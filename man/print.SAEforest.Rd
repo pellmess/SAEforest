@@ -4,7 +4,7 @@
 \alias{print.SAEforest}
 \title{Prints an SAEforestObject}
 \usage{
-\method{print}{SAEforest}(x)
+\method{print}{SAEforest}(obj)
 }
 \arguments{
 \item{x}{an x of type "SAEforest", representing point and MSE
