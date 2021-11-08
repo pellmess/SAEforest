@@ -270,7 +270,7 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
 
   # Prepare return object
 
-  return(list(Mean_Predictions = Mean_preds,
+  return(list(Indicators = Mean_preds,
               MERFmodel = unit_model, ModifiedSet = final_smp_data, ADDsamp_obs = ADDsamp_obs,
               OOsample_obs = OOsample_obs, wSet=wSet, w_min=w_min, wAreaInfo=smp_weightsNames))
 
