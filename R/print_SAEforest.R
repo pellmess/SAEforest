@@ -26,14 +26,10 @@ print.SAEforest <- function(obj) {
   smp_size <- obj$MERFmodel$data_specs$n_surv
   pop_size <- obj$MERFmodel$data_specs$n_pop
 
-  if(inherits(object, "SAEforest_meanAGG")){
-    sizedom_smp_pop <- rbind(Sample_domains = smp_size_dom)
-  }
-
   print(dom_info)
   cat("\n")
   cat("Units in sample:", smp_size, "\n")
-  if(!is.null(pop_size)){
+  if(!inherits(obj, "SAEforest_meanAGG")){
     cat("Units in population:", pop_size, "\n")
   }
   cat("\n")

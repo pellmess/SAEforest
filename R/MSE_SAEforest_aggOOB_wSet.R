@@ -9,10 +9,12 @@ MSE_SAEforest_aggOOB_wSet <- function (Y, X, dName, smp_data, mod, ADJsd, Xpop_a
   total_dom <- as.character(mod$Indicators[[dName]])
   p <- dim(X)[2]
 
-  n_i <- as.numeric(table(dom))
-  freq <- merge(popnsize, data.frame(table(dom)), by.x=dName, by.y ="dom", all=TRUE)
-  freq[,3][is.na(freq[,3])] <-0
+  Freq_n <- data.frame(table(dom))
+  colnames(Freq_n)[1] <- dName
+  n_i <- Freq_n$Freq
+  freq <- dplyr::left_join(popnsize, Freq_n, by = dName)
 
+  freq[,3][is.na(freq[,3])] <-0
   freq <- freq[match(total_dom, popnsize[[dName]]),]
 
   rd <- freq[,2] - freq[,3]
