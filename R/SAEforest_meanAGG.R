@@ -30,15 +30,25 @@
 SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
                              initialRandomEffects = 0, ErrorTolerance = 0.0001,
                              MaxIterations = 25, mse = "none", B=100, popnsize,
-                             OOsample_obs = 25, ADDsamp_obs=0, w_min=3, importance = "impurity",...){
+                             OOsample_obs = 25, ADDsamp_obs=0, w_min=3, importance = "impurity", na.rm =TRUE,...){
 
 
   # ERROR CHECKS OF INPUTS
   #________________________________________
+
+  if(na.rm == TRUE){
+    comp_smp <- complete.cases(smp_data)
+    smp_data <- smp_data[comp_smp,]
+    Y <- Y[comp_smp]
+    X <- X[comp_smp,]
+    Xpop_agg <- Xpop_agg[complete.cases(Xpop_agg),]
+  }
+
   input_checks_meanAGG(Y = Y, X = X, dName = dName, smp_data =smp_data, Xpop_agg =Xpop_agg,
                        initialRandomEffects = initialRandomEffects, ErrorTolerance =ErrorTolerance,
                        MaxIterations =MaxIterations, mse =mse, B = B, popnsize =popnsize,
-                       OOsample_obs =OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min =w_min, importance = importance)
+                       OOsample_obs =OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min =w_min,
+                       importance = importance, na.rm = na.rm)
 
   out_call <- match.call()
 

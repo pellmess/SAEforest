@@ -25,14 +25,22 @@
 #'
 SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, mse = "none", B=100, importance = "none", ...){
+                           MaxIterations = 25, mse = "none", B=100, importance = "none", na.rm =TRUE,...){
 
 # ERROR CHECKS OF INPUTS
 #________________________________________
 
+  if(na.rm == TRUE){
+    comp_smp <- complete.cases(smp_data)
+    smp_data <- smp_data[comp_smp,]
+    Y <- Y[comp_smp]
+    X <- X[comp_smp,]
+    pop_data <- pop_data[complete.cases(pop_data),]
+  }
+
   input_checks_mean(Y = Y, X = X, dName = dName, smp_data = smp_data, pop_data =pop_data,
                     initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance, MaxIterations =MaxIterations,
-                    mse=mse, B=B, importance = importance)
+                    mse=mse, B=B, importance = importance, na.rm = na.rm)
 
   out_call <- match.call()
 

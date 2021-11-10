@@ -9,7 +9,7 @@
 
 # Function called in SAEforest_mean
 input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffects,
-                              ErrorTolerance, MaxIterations, mse, B, importance) {
+                              ErrorTolerance, MaxIterations, mse, B, importance, na.rm) {
   if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_mean)")
@@ -45,10 +45,14 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
     must contain a column labelled by the same name specified under the input of "dName"'))
   }
 
+  if (!(inherits(na.rm, "logical") && length(na.rm) == 1) || na.rm == FALSE && (sum(is.na(smp_data)) != 0||
+                                                                                sum(is.na(pop_data)) != 0)) {
+    stop('The survey data or the population data contains missing values. Please set na.rm = TRUE or consider imputation methods handling missing values in your data.')
+  }
+
   if (!all(unique(as.character(smp_data[[dName]])) %in%
     unique(as.character(pop_data[[dName]])))) {
-    stop("The survey sample data contains domains that are
-         not contained in the population data.")
+    stop("The survey sample data contains domains that are not contained in the population data.")
   }
 
   if (is.null(colnames(smp_data)) || is.null(colnames(pop_data)) ||
@@ -91,7 +95,8 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
 
 # Function called in SAEforest_nonLin
 input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEffects,
-                                ErrorTolerance, MaxIterations, mse, B, threshold, importance, custom_indicator) {
+                                ErrorTolerance, MaxIterations, mse, B, threshold, importance,
+                                custom_indicator, na.rm) {
 
   if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
@@ -127,6 +132,11 @@ input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEf
   if (is.null(smp_data[[dName]]) || is.null(pop_data[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
     must contain a column labelled by the same name specified under the input of "dName"'))
+  }
+
+  if (!(inherits(na.rm, "logical") && length(na.rm) == 1) || na.rm == FALSE && (sum(is.na(smp_data)) != 0||
+                                                                                sum(is.na(pop_data)) != 0)) {
+    stop('The survey data or the population data contains missing values. Please set na.rm = TRUE or consider imputation methods handling missing values in your data.')
   }
 
   if (!all(unique(as.character(smp_data[[dName]])) %in%
@@ -213,7 +223,7 @@ input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEf
 # Function called in SAEforest_meanAGG
 input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
                                  ErrorTolerance, MaxIterations, mse, B, popnsize, OOsample_obs,
-                                 ADDsamp_obs, w_min, importance) {
+                                 ADDsamp_obs, w_min, importance, na.rm) {
   if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be contained
          in the data frame of survey sample data. See also help(SAEforest_meanAGG)")
@@ -243,6 +253,11 @@ input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomE
   if (is.null(smp_data[[dName]]) || is.null(Xpop_agg[[dName]])) {
     stop(paste('The survey sample data and the population data must contain information on domains. Both data frames
     must contain a column labelled by the same name specified under the input of "dName"'))
+  }
+
+  if (!(inherits(na.rm, "logical") && length(na.rm) == 1) || na.rm == FALSE && (sum(is.na(smp_data)) != 0||
+                                                                                sum(is.na(Xpop_agg)) != 0)) {
+    stop('The survey data or the population data contains missing values. Please set na.rm = TRUE or consider imputation methods handling missing values in your data.')
   }
 
   if (!all(unique(as.character(smp_data[[dName]])) %in%

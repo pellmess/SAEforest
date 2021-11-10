@@ -50,8 +50,8 @@
 #names(eusilcA_popAgg)[1] <- "district"
 
 #tic()
-#mod_alt_NP <- SAEforest_mean(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
-#                                                     mse ="nonparametric", B=50, importance = "impurity", mtry=7)
+#mod_alt_NP <- SAEforest_nonLin(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
+#                                                     mse ="none", B=50, importance = "impurity", mtry=7,na.rm=FALSE)
 #toc()
 
 #mod_alt2 <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, OOsample_obs = 25 ,X=eusilcA_smp[,-c(1,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
