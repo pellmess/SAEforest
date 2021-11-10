@@ -49,6 +49,8 @@
 #data("eusilcA_smp")
 #names(eusilcA_popAgg)[1] <- "district"
 
+#RangerForest_nonLin(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop)
+
 #tic()
 #mod_alt_NP <- SAEforest_nonLin(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
 #                                                     mse ="none", B=50, importance = "impurity", mtry=7,na.rm=FALSE)

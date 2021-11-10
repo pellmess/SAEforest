@@ -20,7 +20,9 @@ Imports:
     ranger,
     stats,
     tidyr,
-    vip
+    vip,
+    ggplot2,
+    reshape2
 RoxygenNote: 7.1.2
 Depends: 
     tidyverse

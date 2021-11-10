@@ -18,6 +18,7 @@ SAEforest_nonLin(
   threshold = NULL,
   importance = "none",
   custom_indicator = NULL,
+  na.rm = TRUE,
   ...
 )
 }

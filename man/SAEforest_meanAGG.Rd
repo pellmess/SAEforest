@@ -20,6 +20,7 @@ SAEforest_meanAGG(
   ADDsamp_obs = 0,
   w_min = 3,
   importance = "impurity",
+  na.rm = TRUE,
   ...
 )
 }
