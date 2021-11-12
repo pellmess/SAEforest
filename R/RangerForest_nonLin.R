@@ -25,7 +25,9 @@
 #'
 RangerForest_nonLin <- function(Y, X, dName, smp_data, pop_data,
                              threshold = NULL, importance ="none",
-                             custom_indicator =NULL, na.rm = TRUE, ...){
+                             custom_indicator =NULL, na.rm = TRUE, full_smear = TRUE,...){
+
+  # CHECK NON_FULL SMEAR ARGUMENT for adjustments!
 
   # ERROR CHECKS OF INPUTS
   #________________________________________
@@ -65,17 +67,26 @@ RangerForest_nonLin <- function(Y, X, dName, smp_data, pop_data,
   unit_preds <- predict(unit_model, pop_data)$predictions
   OOBresiduals <- Y - unit_model$predictions
 
-  tic()
   # SMEARING STEP HERE------------
   smear_list <- vector(mode="list", length = length(domains))
 
-  for (i in seq_along(domains)){
-    smear_i <- matrix(rep(OOBresiduals,popSize[i]), nrow=popSize[i],ncol=length(OOBresiduals),byrow=TRUE)
-    smear_i <- smear_i + unit_preds[pop_data[[dName]] == domains[i]]
+  if(full_smear == TRUE){
+    for (i in seq_along(domains)){
+     smear_i <- matrix(rep(OOBresiduals,popSize[i]), nrow=popSize[i],ncol=length(OOBresiduals), byrow=TRUE)
+     smear_i <- smear_i + unit_preds[pop_data[[dName]] == domains[i]]
 
-    smear_list[[i]] <-  calc_indicat(c(smear_i), threshold = thresh, custom = custom_indicator)
+     smear_list[[i]] <-  calc_indicat(c(smear_i), threshold = thresh, custom = custom_indicator)
+    }
   }
-toc()
+
+  if(full_smear == FALSE){
+    for (i in seq_along(domains)){
+      smear_i <- matrix(rep(sample(OOBresiduals,1900),popSize[i]), nrow=popSize[i], ncol=1900,byrow=TRUE)
+      smear_i <- smear_i + unit_preds[pop_data[[dName]] == domains[i]]
+
+      smear_list[[i]] <-  calc_indicat(c(smear_i), threshold = thresh, custom = custom_indicator)
+    }
+  }
 
   indicators <- do.call(rbind.data.frame, smear_list)
   indicators_out <- cbind(domains, indicators)
