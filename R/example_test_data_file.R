@@ -2,6 +2,7 @@
 # SMALL FILE TO TEST AND LOAD DATA FOR IMPROVEMENTS
 #
 
+
 # my PC:
 #load("C:/Users/Patrick/Documents/Studium/FU Berlin/Diss/Data/Simulation_Data_MERFPaper/AggForest_Data/s1_normal_250_aggForest.RData")
 #load("C:/Users/pkrennmair/Documents/MERF_aggSim_2408/s7_interaction_500_aggForestV2.RData")
