@@ -30,7 +30,8 @@
 SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
                              initialRandomEffects = 0, ErrorTolerance = 0.0001,
                              MaxIterations = 25, mse = "none", B=100, popnsize,
-                             OOsample_obs = 25, ADDsamp_obs=0, w_min=3, importance = "impurity", na.rm =TRUE,...){
+                             OOsample_obs = 25, ADDsamp_obs=0, w_min=3, importance = "impurity",
+                             na.rm =TRUE, B_adj = 100,...){
 
 
   # ERROR CHECKS OF INPUTS
@@ -60,6 +61,12 @@ SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
     popnsize[[dName]] <- factor(popnsize[[dName]], levels = unique(Xpop_agg[[dName]]))
   }
 
+  # Order Data according to factors to ease MSE-estimation
+  order_in <- order(smp_data[[dName]])
+  smp_data <- smp_data[order_in,]
+  X <- X[order_in,]
+  Y <- Y[order_in]
+
     # Point Estimation
   #________________________________________
   meanAGG_preds <- point_meanAGG(Y = Y, X = X, dName = dName, smp_data = smp_data, Xpop_agg = Xpop_agg,
@@ -84,7 +91,8 @@ SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg,
   #________________________________________
 
   if(mse != "none"){
-    adj_SD <- adjust_ErrorSD(Y=Y, X=X, smp_data = smp_data, mod = meanAGG_preds[[2]], B=100, ...)
+    print(paste("Error SD Bootstrap started:"))
+    adj_SD <- adjust_ErrorSD(Y=Y, X=X, smp_data = smp_data, mod = meanAGG_preds[[2]], B = B_adj, ...)
     print(paste("Bootstrap with", B,"rounds started"))
   }
 

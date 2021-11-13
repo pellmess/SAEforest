@@ -10,7 +10,7 @@ adjust_ErrorSD <- function(Y, X, smp_data, mod, B=100, ...){
   y_star_OOB <- pred_OOB + sample(e_ij, size = length(pred_OOB), replace = TRUE)
 
   my_estim_f2 <- function(x){ranger::ranger(y=x, x=X, data = smp_data, ...)}
-  my_f_n2 <- apply(y_star_OOB, 2, my_estim_f2)
+  my_f_n2 <- pbapply::pbapply(y_star_OOB, 2, my_estim_f2)
 
   my_pred_f <- function(x){x$predictions}
   pred_OOB_star <- sapply(my_f_n2,my_pred_f)

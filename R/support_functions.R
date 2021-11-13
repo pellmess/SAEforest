@@ -23,7 +23,7 @@ calc_indicat <- function(Y, threshold, custom){
                           "Quant90","Gini","Hcr","Pgap","Qsr")
 
   if(!is.null(custom)){
-    custom_ind <- unlist(lapply(custom_indicator, function(f) f(Y, threshold)))
+    custom_ind <- unlist(lapply(custom, function(f) f(Y, threshold)))
     indicators <- cbind(indicators,t(custom_ind))
   }
 

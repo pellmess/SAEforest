@@ -134,4 +134,48 @@
 
 # a$plotOb$Gini_CV +scale_fill_gradientn(colours = rainbow(10))
 
+###############################################################################
+# Robustness Checks
+
+#mean_test1 <- SAEforest_mean(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
+#                             mse ="nonparametric", B=50, importance = "impurity", mtry=7)
+
+#pop_shuff <- eusilcA_pop[sample(nrow(eusilcA_pop)),]
+#smp_shuff <- eusilcA_smp[sample(nrow(eusilcA_smp)),]
+
+#mean_test2_shuffle <- SAEforest_mean(Y=smp_shuff$eqIncome, X=smp_shuff[,-c(1,16,17,18)], dName = "district", smp_data =smp_shuff, pop_data=pop_shuff,
+#                                     mse ="nonparametric", B=25, importance = "impurity", mtry=7)
+
+#match_dist <- match(mean_test1$Indicators$district, mean_test2_shuffle$Indicators$district)
+
+#a <- cbind(mean_test1$MSE_Estimates, mean_test2_shuffle$MSE_Estimates[match_dist,])
+#matplot(sqrt(a[,c(2,4)]), type = "l")
+
+
+#mean_test3_shuffle <- SAEforest_nonLin(Y=smp_shuff$eqIncome, X=smp_shuff[,-c(1,16,17,18)], dName = "district", smp_data =smp_shuff, pop_data=pop_shuff,
+#                                       mse ="nonparametric", B=5, importance = "impurity", mtry=7)
+
+#match_dist <- match(mean_test1$Indicators$district, mean_test3_shuffle$Indicators$district)
+
+#a <- cbind(mean_test1$MSE_Estimates, mean_test3_shuffle$MSE_Estimates[match_dist,"Mean"])
+#matplot(sqrt(a[,c(2,3)]), type = "l")
+
+
+# POP AGG
+#mean_test1 <- SAEforest_mean(Y=eusilcA_smp$eqIncome, X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, pop_data=eusilcA_pop,
+#                             mse ="nonparametric", B=10, importance = "impurity", mtry=7)
+
+#mean_PopAGG <- SAEforest_meanAGG(Y=eusilcA_smp$eqIncome, OOsample_obs = 25 ,X=eusilcA_smp[,-c(1,16,17,18)], dName = "district", smp_data =eusilcA_smp, Xpop_agg=eusilcA_popAgg,
+#                                 mse ="nonparametric", B=10, importance = "impurity", popnsize = popnsize)
+
+#smp_shuff <- eusilcA_smp[sample(nrow(eusilcA_smp)),]
+
+#mean_PopAGG_shuff <- SAEforest_meanAGG(Y=smp_shuff$eqIncome, OOsample_obs = 25 ,X=smp_shuff[,-c(1,16,17,18)], dName = "district", smp_data =smp_shuff, Xpop_agg=eusilcA_popAgg,
+#                                       mse ="nonparametric", B=10, importance = "impurity", popnsize = popnsize)
+
+#match_dist <- match(mean_test1$MSE_Estimates$district, mean_PopAGG$MSE_Estimates$district)
+#a <- cbind(mean_test1$MSE_Estimates, mean_PopAGG$MSE_Estimates[match_dist,])
+
+#matplot(sqrt(a[,c(2,4)]), type = "l")
+
 

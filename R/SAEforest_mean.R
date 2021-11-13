@@ -25,7 +25,8 @@
 #'
 SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25, mse = "none", B=100, importance = "none", na.rm =TRUE,...){
+                           MaxIterations = 25, mse = "none", B=100, importance = "none",
+                           B_adj = 100, na.rm =TRUE,...){
 
 # ERROR CHECKS OF INPUTS
 #________________________________________
@@ -48,6 +49,12 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
   smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(smp_data[[dName]]))
   pop_data[[dName]] <- factor(pop_data[[dName]], levels=unique(pop_data[[dName]]))
 
+# Order Data according to factors to ease MSE-estimation
+  order_in <- order(smp_data[[dName]])
+  smp_data <- smp_data[order_in,]
+  X <- X[order_in,]
+  Y <- Y[order_in]
+  pop_data <- pop_data[order(pop_data[[dName]]),]
 
 
 # Point Estimation
@@ -72,8 +79,9 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
 #________________________________________
 
   if(mse != "none"){
-  adj_SD <- adjust_ErrorSD(Y=Y, X=X, smp_data = smp_data, mod = mean_preds[[2]], B=100, ...)
-  print(paste("Bootstrap with", B,"rounds started"))
+    print(paste("Error SD Bootstrap started:"))
+    adj_SD <- adjust_ErrorSD(Y=Y, X=X, smp_data = smp_data, mod = mean_preds[[2]], B = B_adj, ...)
+    print(paste("Bootstrap with", B,"rounds started"))
   }
 
   if(mse == "analytic"){
