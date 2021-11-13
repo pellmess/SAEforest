@@ -16,6 +16,7 @@ SAEforest_mean(
   mse = "none",
   B = 100,
   importance = "none",
+  B_adj = 100,
   na.rm = TRUE,
   ...
 )

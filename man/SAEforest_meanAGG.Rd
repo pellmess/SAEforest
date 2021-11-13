@@ -21,6 +21,7 @@ SAEforest_meanAGG(
   w_min = 3,
   importance = "impurity",
   na.rm = TRUE,
+  B_adj = 100,
   ...
 )
 }
