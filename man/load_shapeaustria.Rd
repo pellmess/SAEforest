@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_shapeaustria.R
 \name{load_shapeaustria}
 \alias{load_shapeaustria}
-\title{Loading the shape file for austrian districts}
+\title{Loading the shape file for Austrian districts}
 \usage{
 load_shapeaustria()
 }
@@ -10,10 +10,14 @@ load_shapeaustria()
 A shape file of class \code{SpatialPolygonsDataFrame}.
 }
 \description{
-The function simplifies to load the shape file for austrian districts.
+The function simplifies the loading of the shape file for Austrian districts.
+It is originally used for examples in package \pkg{emdi}.
 }
 \details{
-The shape file contains the borders of Austrian districts. Thus, it
-can be used for the visualization of estimation results for Austrian
-districts.
+The shape file contains the borders of Austrian districts.
+The main purpose of this function is the visualization of estimation results with the
+plotting function \code{\link{map_indicators}}.
+}
+\seealso{
+Information on the class of \code{\link[sp]{SpatialPolygonsDataFrame}} from the package \pkg{sp}.
 }

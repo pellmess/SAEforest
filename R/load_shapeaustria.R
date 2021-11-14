@@ -1,11 +1,14 @@
-#' Loading the shape file for austrian districts
+#' Loading the shape file for Austrian districts
 #'
-#' The function simplifies to load the shape file for austrian districts.
+#' The function simplifies the loading of the shape file for Austrian districts.
+#' It is originally used for examples in package \pkg{emdi}.
 #'
 #' @return A shape file of class \code{SpatialPolygonsDataFrame}.
-#' @details The shape file contains the borders of Austrian districts. Thus, it
-#' can be used for the visualization of estimation results for Austrian
-#' districts.
+#' @details The shape file contains the borders of Austrian districts.
+#' The main purpose of this function is the visualization of estimation results with the
+#' plotting function \code{\link{map_indicators}}.
+#' @seealso Information on the class of \code{\link[sp]{SpatialPolygonsDataFrame}} from the package \pkg{sp}.
+#'
 #' @export
 
 load_shapeaustria <- function(){

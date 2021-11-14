@@ -3,9 +3,9 @@
 \docType{data}
 \name{eusilcA_smp}
 \alias{eusilcA_smp}
-\title{Simulated eusilc data - sample data}
+\title{Simulated EU-SILC data - survey sample data}
 \format{
-A data frame with 1000 observations and 18 variables:
+A data frame with 1945 observations and 18 variables:
 \describe{
 \item{eqIncome}{numeric; a simplified version of the equivalized household income.}
 \item{eqsize}{numeric; the equivalized household size according to the
@@ -33,7 +33,8 @@ modified OECD scale.}
 eusilcA_smp
 }
 \description{
-The data set is a simple random sample of data set \code{\link{eusilcA_pop}}
-which is based on \code{\link[simFrame]{eusilcP}} from package \pkg{simFrame}.
+The data set comprises synthetic EU-SILC data and is taken from the package \pkg{emdi}.
+Originally, the data set is a simple random sample from \code{\link{eusilcA_pop}} based on
+\code{\link[simFrame]{eusilcP}} from package \pkg{simFrame}.
 }
 \keyword{datasets}

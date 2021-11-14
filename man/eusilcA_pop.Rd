@@ -3,7 +3,7 @@
 \docType{data}
 \name{eusilcA_pop}
 \alias{eusilcA_pop}
-\title{Simulated eusilc data - population data}
+\title{Simulated EU-SILC data - population data}
 \format{
 A data frame with 25000 observations and 17 variables:
 \describe{
@@ -32,9 +32,8 @@ modified OECD scale.}
 eusilcA_pop
 }
 \description{
-The data set is synthetic EU-SILC data based on the data set
-\code{\link[simFrame]{eusilcP}} from package \pkg{simFrame}. The data set is
-reduced to 17 variables containing three regional variables for the states
-and districts.
+The data set comprises synthetic EU-SILC data and is taken from the package \pkg{emdi}.
+The original data set \code{\link[simFrame]{eusilcP}} from package \pkg{simFrame} is
+reduced to 17 variables containing three regional variables for the states and districts.
 }
 \keyword{datasets}

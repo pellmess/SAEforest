@@ -3,7 +3,7 @@
 \docType{data}
 \name{eusilcA_popAgg}
 \alias{eusilcA_popAgg}
-\title{Simulated eusilc data - aggregated population data}
+\title{Simulated EU-SILC data - aggregated population data}
 \format{
 A data frame with 94 observations and 15 variables:
 \describe{
@@ -23,18 +23,17 @@ modified OECD scale.}
  in unincorporated business (net).}
 \item{tax_adj}{numeric; repayments/receipts for tax adjustment (net).}
 \item{ratio_n}{numeric; ratios of the population size per area and the total population size.}
-\item{Domain}{factor; Austrian districts (94 levels).}
+\item{district}{factor; Austrian districts (94 levels).}
 }
 }
 \usage{
 eusilcA_popAgg
 }
 \description{
-The data set is synthetic EU-SILC data based on the data set
-\code{\link[simFrame]{eusilcP}} from package \pkg{simFrame}. The data set is
-reduced to 15 variables including a regional variable for the districts and
-contains the household level data that is aggregated on the district level.
-Therefore, except for the variables \code{ratio_n} and \code{Domain},
+The data set comprises synthetic EU-SILC data and is taken from the package \pkg{emdi}.
+The original data set \code{\link[simFrame]{eusilcP}} from package \pkg{simFrame} is
+reduced to 15 variables including the district identifers as well as aggregated household level
+covariates. Therefore, except for the variables \code{ratio_n} and \code{district},
 the variables are the mean values per district.
 }
 \keyword{datasets}
