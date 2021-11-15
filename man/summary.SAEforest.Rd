@@ -4,21 +4,23 @@
 \alias{summary.SAEforest}
 \title{Summarizes an SAEforest Object}
 \usage{
-\method{summary}{SAEforest}(object)
+\method{summary}{SAEforest}(object, ...)
 }
 \arguments{
 \item{object}{an object of type "SAEforest" representing point
 and MSE estimates. Objects differ depending on the estimation method}
+
+\item{...}{Optional additional inputs that are ignored for this method.}
 }
 \value{
 an object of type "summary.SAEforest" including information about the sample
-and population data, the model fit and random forest specific metrics
+and population data, the model fit and random forest specific metrics.
 }
 \description{
 Additional information about the data and model in small area estimation
 methods and components of an SAEforest object are extracted. The returned object
-is suitable for printing  with the \code{print}.
+is suitable for printing with the \code{print}.
 }
 \seealso{
-\code{\link{SAEforest}}
+\code{\link{SAEforestObject}}
 }

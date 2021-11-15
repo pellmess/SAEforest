@@ -8,10 +8,14 @@ summarize_indicators(object, indicator = "all", MSE = FALSE, CV = FALSE)
 }
 \arguments{
 \item{object}{an object for which point and/or MSE estimates and/or
-calculated CV's are desired.}
+calculated CV's are desired. The object must be of class \code{SAEforest}.}
 
-\item{indicator}{optional character vector that selects which indicators
-shall be returned.}
+\item{indicator}{optional character vector specifying indicators to be mapped: (i)
+all calculated indicators ("all"); (ii) each default indicators name: "Mean",
+"Quant10", "Quant25", "Median", "Quant75", "Quant90", "Gini", "Hcr", "Pgap", "Qsr"
+or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
+If the \code{object} is estimated by \code{\link{SAEforest_mean}} or \code{\link{SAEforest_meanAGG}}
+indicator arguments are ignored and only the "Mean" is returned.}
 
 \item{MSE}{optional logical. If \code{TRUE}, MSE estimates for selected indicators
 per domain are added to the data frame of point estimates. Defaults to
@@ -22,15 +26,24 @@ indicators per domain are added to the data frame of point estimates.
 Defaults to \code{FALSE}.}
 }
 \value{
-The return of \code{estimators} depends on the class of its argument. The
-documentation of particular methods gives detailed information about the
-return of that method.
+The return of \code{summarize_indicators} is an object of type "summarize_indicators.SAEforest"
+including domain-specific point and/or MSE estimates and/or calculated CV's from a \code{SAEforest} object
+The returned object contains a data frame \code{ind} and a character naming the requested indicator(s).
 }
 \description{
-Function \code{summarize_indicators} is a generic function used to present point and
-mean squared error (MSE) estimates and calculated coefficients of variation
-(CV).
+Function \code{summarize_indicators} is a function used to present point and
+mean squared error (MSE) estimates as well as calculated coefficients of variation
+(CV) from a fitted \code{SAEforest} object.
 }
 \details{
-Some scientific details here.
+Objects of class "summarize_indicators.SAEforest" have methods for following generic
+functions: \code{head} and \code{tail} (for default documentation, see
+\code{\link[utils]{head}}),  \code{as.matrix} (for default documentation, see
+\code{\link[base]{matrix}}), \code{as.data.frame} (for default documentation,
+see \code{\link[base]{as.data.frame}}), \code{subset} (for default
+documentation, see \code{\link[base]{subset}}).
+}
+\seealso{
+\code{\link{SAEforestObject}}, \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}},
+\code{\link{SAEforest_meanAGG}}
 }

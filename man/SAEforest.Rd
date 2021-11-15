@@ -3,20 +3,29 @@
 \docType{package}
 \name{SAEforest}
 \alias{SAEforest}
-\title{A package for estimating and mapping disaggregated indicators using Mixed Effects Random Forests}
+\title{SAEforest - Estimating disaggregated indicators using Mixed Effects Random Forests}
 \description{
-The package \pkg{SAEforest} supports estimating and mapping regional
-disaggregated indicators. Some Text compareable to emndi here...What can this package do?
+The package \pkg{SAEforest} promotes the use of Mixed Effects Random Forests (MERFs) for
+applications of Small Area Estimation (SAE). The package effectively combines functions for
+the estimation of regionally disaggregated linear and non-linear economic and inequality
+indicators using survey sample data. Increasing the precision of direct estimates from
+survey data, model-based MERF estimates using unit-level and aggregated population level
+covariate information are proposed. Apart from point estimates, MSE estimates for requested
+indicators can be easily obtained. The package provides procedures to facilitate the analysis
+of model performance of MERFs and visualizes predictive relations between covariates and variable
+importance. Additionally, indicators and corresponding measures of uncertainty are summarized and mapped.
 }
 \details{
 This package has a main function called \code{\link{MERFranger}}. It is used in three wrapper functions
 \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}} and \code{\link{SAEforest_meanAGG}}.
-Each function produces an object inheriting requested results as well as other information accessible
+Each function produces an object inheriting requested results of regionally disaggregated point and uncertainty
+estimates. Additionally, statistical information on model fit and variable importance is accessible
 through functions such as a summary \code{\link{summary_SAEforest}} or a class specific plot function
-\code{\link{plot_SAEforest}}. For a full list, please see \code{\link{SAEforestObject}}.
-An overview of all currently provided functions can be requested by
-\code{library(help=SAEforest)}.
+\code{\link{plot_SAEforest}}. For a full documentation of objects of class "SAEforest" see \code{\link{SAEforestObject}}.
+An overview of all currently provided functions within this package can be be seen with \code{library(help=SAEforest)}.
 }
 \references{
-Battese, G.E., Harter, R.M. and Fuller, W.A. (1988). An Error-Components
+Krennmair, P. and Schmid, T. (202X). WP 1
+Krennmair, P. Würz, N. and Schmid, T. (202X). WP 2
+Krennmair, P., Schmid, T. and Tzavidis N. (202X). WP 3
 }

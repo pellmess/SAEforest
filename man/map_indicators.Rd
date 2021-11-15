@@ -21,7 +21,7 @@ map_indicators(
 )
 }
 \arguments{
-\item{object}{an object of class SAEforest, containing estimates to be visualized}
+\item{object}{an object of class \code{SAEforest}, containing estimates to be visualized}
 
 \item{indicator}{optional character vector specifying indicators to be mapped: (i)
 all calculated indicators ("all"); (ii) each default indicators name: "Mean",
@@ -70,9 +70,10 @@ Creates required plots and if selected, a fortified data.frame and a list of plo
 }
 \description{
 Function \code{map_indicators} visualizes estimates from a
-\code{\link{SAEforestObject}} on a specified map.
+\code{\link{SAEforestObject}} on a specified map. The function can be seen as a modified
+wrapper of \code{\link[emdi]{map_plot}} from the package \pkg{emdi}.
 }
 \seealso{
 \code{\link{SAEforest}}, \code{\link[maptools]{readShapePoly}},
-\code{\link[sp]{SpatialPolygonsDataFrame}}, \code{\link[ggplot2]}.
+\code{\link[sp]{SpatialPolygonsDataFrame}}, \code{\link[ggplot2]{ggplot}}.
 }

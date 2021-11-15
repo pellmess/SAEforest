@@ -2,10 +2,10 @@
 % Please edit documentation in R/plot_SAEforest.R
 \name{plot.SAEforest}
 \alias{plot.SAEforest}
-\title{Plot function for SAEforest Object}
+\title{Plot function for an SAEforest object}
 \usage{
 \method{plot}{SAEforest}(
-  obj,
+  x,
   num_features = 5,
   col = "darkgreen",
   fill = "darkgreen",
@@ -17,47 +17,75 @@
   lty = "solid",
   grid_row = 2,
   out_list = FALSE,
-  pdp_plot = TRUE
+  pdp_plot = TRUE,
+  ...
 )
 }
 \arguments{
-\item{obj}{An object of type "SAEforest" representing point and MSE estimates.}
+\item{x}{An object of type "SAEforest" including a random forest model of class "ranger".}
 
-\item{num_features}{Number of features you want to see in plots}
+\item{num_features}{Number of features for which a partial dependence plot is required.}
 
-\item{col}{Color of plots}
+\item{col}{Parameter specifying the color of selected plots. The argument must be specified
+such that it can be process by \code{\link[ggplot2]{aes}}. Default is to a character name of the
+color "darkgreen".}
 
-\item{fill}{Fill color of plots}
+\item{fill}{Parameter specifying the fill of selected plots. The argument must be specified
+such that it can be process by \code{\link[ggplot2]{aes}}. Default is to a character name of the
+color "darkgreen".}
 
-\item{alpha}{Density of plots}
+\item{alpha}{Parameter specifying the transperancy of \code{fill} for vip plots.
+The argument must a number in \code{[0,1]}.}
 
-\item{include_type}{Include the importance type in the vip plot. Default is TRUE}
+\item{include_type}{if set to \code{TRUE}, the type of importance specified in the fitting process
+of the model is included in the vip plot. Defaults to \code{TRUE}.}
 
-\item{horizontal}{Plot the vip horizontally. Default is TRUE}
+\item{horizontal}{if set to \code{TRUE}, the importance scores are plot on the x-axis. If parameter is
+set to \code{FALSE}, the importance scores are plot on the y-axis. Defaults to \code{TRUE}.}
 
-\item{gg_theme}{Specify an individual theme from \pkg{ggplot2}}
+\item{gg_theme}{Specify a predefined theme from \pkg{ggplot2}. Default is set to \code{theme_minimal}.}
 
-\item{lsize}{The line size for the pdp-plots}
+\item{lsize}{Parameter specifying the line size of pdp plots. The argument must be specified
+such that it can be process by \code{\link[ggplot2]{aes}}. Defaults to 1.5.}
 
-\item{lty}{The line type for the pdp plots}
+\item{lty}{Parameter specifying the line size of pdp plots. The argument must be specified
+such that it can be process by \code{\link[ggplot2]{aes}}. Defaults to "solid".}
 
-\item{grid_row}{How many rows the pdp plots should display. Default is set to 2}
+\item{grid_row}{Parameter specifying the amount of rows for the joint pdp plot. Default is set to 2}
 
-\item{out_list}{Whether the user wants the plots as additioanl list object to perform further
-modifications via \pkg{ggplot2} modifications. Default is FALSE}
+\item{out_list}{if set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
+is returned for further individual customization and processing. Defaults to \code{FALSE}.}
 
-\item{pdp_plot}{Whether the user wants to see a pdp-plot for selected features.}
+\item{pdp_plot}{if set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
+from the package \pkg{pdp} are included. Defaults to \code{TRUE}.}
+
+\item{...}{Optional additional inputs that are ignored for this method.}
 }
 \value{
-Plots of objects
+Plots of variable importance and/or partial dependence of covariates ranked by corresponding
+importance. Additionally, a list of individual plots can be returned facilitating individual
+customization and exporting. See the following examples for details.
 }
 \description{
-Write some scientific information here
+Plots model-specific characteristics of the fixed effects random forest component of
+the MERF from object “SAEforest”. In general, a variable importance plot is produced to
+visualize the importance of covariate data for the model. For the variable importance plot,
+arguments are passed internally to the function \code{\link[vip]{vip}}. If requested, the
+plot function additionally provides a partial dependence plot (pdp) to visualize the impact
+of a given number of influential covariates on the target variable. The pdp plot is produced
+using \code{\link[pdp]{partial}} from the package \pkg{pdp}. The plot-engine for both plots
+is \pkg{ggplot2}.
 }
 \details{
-Some scientific or function specific details. What are pdp and vip plots?
-How can one modify them best with ggplot?
+For the production of importance plots, be sure to specify the parameter of
+\code{importance != 'none'} before producing estimates with functions \code{\link{SAEforest_mean}},
+\code{\link{SAEforest_meanAGG}} or \code{\link{SAEforest_nonLin}}.
+
+For pdp plots, note that despite
+their potential importance, covariates of type factor or character cannot be used for partial dependence
+plots. Dummy-variables can be used, however, their pdp plots are always lines connecting two effect
+points for 0 and 1. Most informative pdp plots can be produced for metric covariates.
 }
 \seealso{
-\code{\link{SAEforest}}
+\code{\link{SAEforestObject}}
 }

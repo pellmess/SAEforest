@@ -1,24 +1,36 @@
 #' Presents point, MSE and CV estimates
 #'
-#' Function \code{summarize_indicators} is a generic function used to present point and
-#' mean squared error (MSE) estimates and calculated coefficients of variation
-#' (CV).
+#' Function \code{summarize_indicators} is a function used to present point and
+#' mean squared error (MSE) estimates as well as calculated coefficients of variation
+#' (CV) from a fitted \code{SAEforest} object.
+#'
 #' @param object an object for which point and/or MSE estimates and/or
-#' calculated CV's are desired.
-#' @param indicator optional character vector that selects which indicators
-#' shall be returned.
+#' calculated CV's are desired. The object must be of class \code{SAEforest}.
+#' @param indicator optional character vector specifying indicators to be mapped: (i)
+#' all calculated indicators ("all"); (ii) each default indicators name: "Mean",
+#' "Quant10", "Quant25", "Median", "Quant75", "Quant90", "Gini", "Hcr", "Pgap", "Qsr"
+#' or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
+#' If the \code{object} is estimated by \code{\link{SAEforest_mean}} or \code{\link{SAEforest_meanAGG}}
+#' indicator arguments are ignored and only the "Mean" is returned.
 #' @param MSE optional logical. If \code{TRUE}, MSE estimates for selected indicators
 #' per domain are added to the data frame of point estimates. Defaults to
 #' \code{FALSE}.
 #' @param CV optional logical. If \code{TRUE}, coefficients of variation for selected
 #' indicators per domain are added to the data frame of point estimates.
 #' Defaults to \code{FALSE}.
-#' @return
-#' The return of \code{estimators} depends on the class of its argument. The
-#' documentation of particular methods gives detailed information about the
-#' return of that method.
+#' @return The return of \code{summarize_indicators} is an object of type "summarize_indicators.SAEforest"
+#' including domain-specific point and/or MSE estimates and/or calculated CV's from a \code{SAEforest} object
+#' The returned object contains a data frame \code{ind} and a character naming the requested indicator(s).
 #'
-#' @details Some scientific details here.
+#' @details Objects of class "summarize_indicators.SAEforest" have methods for following generic
+#' functions: \code{head} and \code{tail} (for default documentation, see
+#' \code{\link[utils]{head}}),  \code{as.matrix} (for default documentation, see
+#' \code{\link[base]{matrix}}), \code{as.data.frame} (for default documentation,
+#' see \code{\link[base]{as.data.frame}}), \code{subset} (for default
+#' documentation, see \code{\link[base]{subset}}).
+#'
+#' @seealso \code{\link{SAEforestObject}}, \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}},
+#' \code{\link{SAEforest_meanAGG}}
 #'
 #' @export
 
@@ -61,11 +73,52 @@ summarize_indicators <- function(object, indicator = "all", MSE = FALSE, CV = FA
 }
 
 
-# Prints estimators.emdi objects
+# Tail/head functions ----------------------------------------------------------
+
+# Prints summarize_indicators.SAEforest objects
 #' @export
 
-print.summarize_indicators.SAEforest <- function(x) {
+print.summarize_indicators.SAEforest <- function(x, ...) {
   cat(paste0("Indicator/s: ", x$ind_name, "\n"))
   print(x$ind)
+}
+
+
+#' @importFrom utils head
+#' @export
+# CV estimators
+
+head.summarize_indicators.SAEforest <- function(x, n = 6L, addrownums = NULL, ...) {
+  head(x$ind, n = n, addrownums = addrownums, ...)
+}
+
+#' @importFrom utils tail
+#' @export
+
+tail.summarize_indicators.SAEforest <- function(x, n = 6L, keepnums = TRUE, addrownums = NULL, ...) {
+  tail(x$ind, n = n, keepnums = keepnums, ...)
+}
+
+
+# Transforms summarize_indicators.SAEforest objects into a matrix object
+#' @export
+
+as.matrix.summarize_indicators.SAEforest <- function(x,...) {
+  as.matrix(x$ind[,-1])
+}
+
+# Transforms summarize_indicators.SAEforest objects into a dataframe object
+#' @export
+
+as.data.frame.summarize_indicators.SAEforest <- function(x,...) {
+  as.data.frame(x$ind, ...)
+}
+
+# Subsets an summarize_indicators.SAEforest object
+#' @export
+
+subset.summarize_indicators.SAEforest <- function(x, ...) {
+  x <- as.data.frame(x)
+  subset(x = x,  ...)
 }
 

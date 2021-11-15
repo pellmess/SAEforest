@@ -1,35 +1,35 @@
-#' Prints an SAEforestObject
+#' Prints an SAEforest Object
 #'
 #' Basic information of an SAEforest object is printed.
-#' @param x an x of type "SAEforest", representing point and MSE
-#' estimates obtained by Mean (see also \code{\link{SAEforest_mean}}),
-#' nonLin (see also \code{\link{SAEforest_nonLin}}),
-#' or meanAGG (see also \code{\link{SAEforest_meanAGG}}).
-#' @seealso \code{\link{SAEforest}}
-
+#' @param x an object of type "SAEforest", representing point and MSE
+#' estimates obtained by functions: \code{\link{SAEforest_mean}}), \code{\link{SAEforest_nonLin}}),
+#' or \code{\link{SAEforest_meanAGG}}.
+#' @seealso \code{\link{SAEforestObject}}
+#' @param ... Optional additional inputs that are ignored for this method.
+#'
 #' @export
-print.SAEforest <- function(obj) {
-  class_error(obj)
+print.SAEforest <- function(x, ...) {
+  class_error(x)
   cat("________________________________________________________________\n")
   cat("Mixed Effects Random Forest for Small Area Estimation\n")
   cat("________________________________________________________________\n")
   cat("\n")
   cat("Information on Domains\n")
-  total_dom <- obj$MERFmodel$data_specs$n_total
-  in_dom <- obj$MERFmodel$data_specs$n_in
-  oos_dom <- obj$MERFmodel$data_specs$n_out
+  total_dom <- x$MERFmodel$data_specs$n_total
+  in_dom <- x$MERFmodel$data_specs$n_in
+  oos_dom <- x$MERFmodel$data_specs$n_out
 
   dom_info <- data.frame(in_dom, oos_dom, total_dom)
   rownames(dom_info) <- c("")
   colnames(dom_info) <- c("In-sample", "Out-of-sample", "Total")
 
-  smp_size <- obj$MERFmodel$data_specs$n_surv
-  pop_size <- obj$MERFmodel$data_specs$n_pop
+  smp_size <- x$MERFmodel$data_specs$n_surv
+  pop_size <- x$MERFmodel$data_specs$n_pop
 
   print(dom_info)
   cat("\n")
   cat("Units in sample:", smp_size, "\n")
-  if(!inherits(obj, "SAEforest_meanAGG")){
+  if(!inherits(x, "SAEforest_meanAGG")){
     cat("Units in population:", pop_size, "\n")
   }
   cat("\n")

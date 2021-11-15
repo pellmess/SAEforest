@@ -2,19 +2,20 @@
 % Please edit documentation in R/print_SAEforest.R
 \name{print.SAEforest}
 \alias{print.SAEforest}
-\title{Prints an SAEforestObject}
+\title{Prints an SAEforest Object}
 \usage{
-\method{print}{SAEforest}(obj)
+\method{print}{SAEforest}(x, ...)
 }
 \arguments{
-\item{x}{an x of type "SAEforest", representing point and MSE
-estimates obtained by Mean (see also \code{\link{SAEforest_mean}}),
-nonLin (see also \code{\link{SAEforest_nonLin}}),
-or meanAGG (see also \code{\link{SAEforest_meanAGG}}).}
+\item{x}{an object of type "SAEforest", representing point and MSE
+estimates obtained by functions: \code{\link{SAEforest_mean}}), \code{\link{SAEforest_nonLin}}),
+or \code{\link{SAEforest_meanAGG}}.}
+
+\item{...}{Optional additional inputs that are ignored for this method.}
 }
 \description{
 Basic information of an SAEforest object is printed.
 }
 \seealso{
-\code{\link{SAEforest}}
+\code{\link{SAEforestObject}}
 }

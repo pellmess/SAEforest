@@ -2,18 +2,19 @@
 #'
 #' Additional information about the data and model in small area estimation
 #' methods and components of an SAEforest object are extracted. The returned object
-#' is suitable for printing  with the \code{print}.
+#' is suitable for printing with the \code{print}.
 
 #' @param object an object of type "SAEforest" representing point
 #' and MSE estimates. Objects differ depending on the estimation method
+#' @param ... Optional additional inputs that are ignored for this method.
 #'
 #' @return an object of type "summary.SAEforest" including information about the sample
-#' and population data, the model fit and random forest specific metrics
-#' @seealso \code{\link{SAEforest}}
+#' and population data, the model fit and random forest specific metrics.
+#' @seealso \code{\link{SAEforestObject}}
 #'
 #' @export
 
-summary.SAEforest <- function(object) {
+summary.SAEforest <- function(object, ...) {
   class_error(object=object)
 
   call_SAE <- object$MERFmodel$call
@@ -86,7 +87,7 @@ summary.SAEforest <- function(object) {
 
 
 #' @export
-print.summary.SAEforest <- function(x) {
+print.summary.SAEforest <- function(x, ...) {
   class_error(object=x)
   cat("________________________________________________________________\n")
   cat("Mixed Effects Random Forest for Small Area Estimation\n")
