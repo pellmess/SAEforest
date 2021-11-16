@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{SAEforest}(
   x,
-  num_features = 5,
+  num_features = 6,
   col = "darkgreen",
   fill = "darkgreen",
   alpha = 0.8,

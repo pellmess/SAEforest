@@ -395,6 +395,42 @@ map_indicators_check <- function(object, indicator, MSE, CV, map_obj, map_dom_id
 }
 
 
+# Function called in SAEforest_mean
+input_checks_MERF <- function(Y, X, data, initialRandomEffects,
+                              ErrorTolerance, MaxIterations, importance, na.rm) {
+  if (!is.numeric(Y) || !data.frame(Y) %in% data) {
+    stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(SAEforest_mean)")
+  }
+
+  if (sum(!(X %in% data)) != 0) {
+    stop("X specifies the explanatory variabels from the sample data set and must be included in the survey sample set. See also help(SAEforest_mean)")
+  }
+
+  if (!is.data.frame(data)) {
+    stop("smp_data must be a data frame containing the survey sample data. See also help(SAEforest_mean).")
+  }
+
+  if (!(inherits(na.rm, "logical") && length(na.rm) == 1) || na.rm == FALSE && (sum(is.na(data)) != 0)) {
+    stop('The survey data contains missing values. Please set na.rm = TRUE or consider imputation methods handling missing values in your data.')
+  }
+
+  if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))) {
+    stop(paste("initialRandomEffects specify initional values of random effects for the MERF. Acceptable inputs are single values such as the default of 0 or numeric vectors of length: ", length(Y)))
+  }
+
+  if (!is.numeric(MaxIterations) || length(MaxIterations) != 1 || MaxIterations < 2) {
+    stop("MaxIterations needs to be a single integer value, determining the number of maximum iterations for the convergence of the MERF algorithm. The value must be at least 2. See also help(MERFranger).")
+  }
+
+  if (!is.numeric(ErrorTolerance) || length(ErrorTolerance) != 1 || ErrorTolerance <= 0) {
+    stop("ErrorTolerance needs to be a single integer value, determining the tolerance to monitor the convergence of the MERF algorithm. The value must be greater than 0. See also help(MERFranger).")
+  }
+
+  if (is.null(importance) || !(importance == "none" || importance == "impurity" || importance == "impurity_corrected" || importance == "permutation")) {
+    stop('Variable importance is needed for vip plots. To reduce runtime, importance can be set to "none". Furhter options are "impurity", "impurity_corrected" or "permutation". See details on the variable importance mode with help(ranger).')
+  }
+}
+
 
 
 

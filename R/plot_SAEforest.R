@@ -50,7 +50,7 @@
 #' @seealso \code{\link{SAEforestObject}}
 #' @export
 
-plot.SAEforest <- function(x, num_features = 5, col = "darkgreen", fill = "darkgreen", alpha = 0.8,
+plot.SAEforest <- function(x, num_features = 6, col = "darkgreen", fill = "darkgreen", alpha = 0.8,
                            include_type = TRUE, horizontal = TRUE, gg_theme = theme_minimal(),
                            lsize = 1.5, lty = "solid", grid_row = 2, out_list = FALSE, pdp_plot = TRUE, ...){
 

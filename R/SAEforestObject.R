@@ -1,60 +1,65 @@
 #' Fitted SAEforest object
 #'
-#' An object of class SAEforest includes several components: Most importantly, point
-#' estimates of regionally disaggregated economic and inequality indicators and a MERF model
-#' object including information on the model fit for fixed effects as well as random effects. Optionally
-#' an SAEforest object includes corresponding MSE estimates. Depending on the method
-#' used for the estimation (\code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}}
-#' or \code{\link{SAEforest_meanAGG}}), the SAEforest object additionally includes an additional element,
-#' capturing the number of variables used for the weighting process. Most of the components of a
-#' SAEforest object have methods for various generic functions. See Details for more information.
+#' An object of class SAEforest always includes point estimates of regionally disaggregated economic
+#' and inequality indicators and a \code{MERFmodel} object including information on the model fit for fixed
+#' effects as well as random effects. Optionally an SAEforest object includes corresponding MSE estimates.
+#' If the method used for estimation is \code{\link{SAEforest_meanAGG}}, the SAEforest object additionally
+#' includes an element, capturing the number of variables used in the weighting process from aggregated
+#' covariate information.For an object of class SAEforest, the following generic functions are applicable:
+#' \code{\link{print}}, \code{\link{plot}}, \code{\link{summary}} and \code{\link{summarize_indicators}}.
+#' Additional generic functions are applicable to the \code{MERFmodel} object. See Details for more information.
 #'
 #' @return
-#' The following components are always included in an SAEforest object but not
-#' always filled and with different components depending on the estimation
-#' approach:
-#' \item{\code{MERFmodel}}{........}
-#' \item{\code{Indicators}}{........}
+#' Four components are always included in an SAEforest object. \code{MSE_estimates} and \code{AdjustedSD} are
+#' \code{NULL} except MSE results are requested. An element of \code{NrCovar} only exists for SAEforest objects
+#' produced by \code{\link{SAEforest_meanAGG}}:
 #'
-#' If MSE was not none, than also:
-#' \item{\code{MSE_estimates}}{...}
+#' \item{\code{MERFmodel}}{The included \code{MERFmodel} object comprises information on the model fit, details
+#' on the performed MERF algorithm as well as details on variance components. See below for an exact description
+#' of components}
+#' \item{\code{Indicators}}{a dataframe where the first column is the area-level identifier and additional columns
+#' are the indicators of interest. Note that objects from \code{\link{SAEforest_meanAGG}} and \code{\link{SAEforest_mean}}
+#' only report the "Mean".}
+#' \item{\code{MSE_estimates}}{only if mse results requested. A dataframe where the first column is the area-level identifier and additional columns
+#' are the MSE estimates for indicators of interest. Note that objects from \code{\link{SAEforest_meanAGG}} and \code{\link{SAEforest_mean}}
+#' only report MSE values for the "Mean".}
+#' \item{\code{NrCovar}}{only for objects of method \code{\link{SAEforest_meanAGG}}. A list comprising variable
+#' names of covariates used for the calculation of needed calibration weights for point estimates. see vignette for
+#' explanation}
 #'
-#' For SAEforest object produced with SAEforest_meanAGG:
-#' \item{\code{NrCovar}}{........}
+#' Details on object of \code{MERFmodel}:
+#'
+#' \item{\code{Forest}}{a random forest of type 'ranger' modelling fixed effects
+#' of the model.}
+#' \item{\code{EffectModel}}{a model of random effects of type 'lmer' capturing
+#' tructural component of MERFs and modeling random components.}
+#' \item{\code{RandomEffects}}{list element containing the values of random intercepts from \code{EffectModel}.}
+#' \item{\code{RanEffSD}}{numeric value of the standard deviation of random intercepts.}
+#' \item{\code{ErrorSD}}{numeric value of standard devition of unit-level errors.}
+#' \item{\code{VarianceCovariance}}{VarCor matrix from \code{EffectModel}.}
+#' \item{\code{LogLik}}{vector with numerical entries showing the loglikelihood of the MERF algorithm.}
+#' \item{\code{IterationsUsed}}{numeric number of interatirons used until covergence of the MERF algorithm.}
+#' \item{\code{OOBresiduals}}{vector of OOB-residuals.}
+#' \item{\code{Random}}{character specifying the random intercept in the random effects model.}
+#' \item{\code{ErrorTolerance}}{numerical value to monitor the MERF algorithm's convergence.}
+#' \item{\code{initialRandomEffects}}{numeric value or vector of intial specification of random effects.}
+#' \item{\code{MaxIterations}}{numeric value specifying the maximal amount of iterations for the
+#' MERF algorithm.}
+#' \item{\code{call}}{the summarized function call producing the object.}
+#' \item{\code{data_specs}}{data characteristics such as domain specific sample sizes or number of
+#' out-of-sample areas.}
+#' \item{\code{data}}{the used survey sample data.}
 #'
 #' @details
-#' Objects of class "emdi" have following methods: \code{\link[emdi]{compare_pred}},
-#' \code{\link[emdi]{estimators}}, \code{\link[emdi]{plot.emdi}},
-#' \code{\link[emdi]{predict.emdi}}, \code{\link[emdi]{qqnorm.emdi}}\cr \cr
-#' Objects of class "direct", "ebp" and "fh" have methods for following generic
-#' functions: \code{\link[emdi]{compare_plot}}, \code{\link[emdi]{getData}},
-#' \code{\link[emdi]{getGroups}}, \code{\link[emdi]{getGroupsFormula}},
-#' \code{\link[emdi]{getResponse}},
-#' \code{plot} (for documentation, see \code{\link[emdi]{plot.emdi}}), \code{print},
-#' \code{qqnorm} (for documentation, see \code{\link[emdi]{qqnorm.emdi}}) and
-#' \code{summary} (for documentation, see \code{\link[emdi]{emdi_summaries}}).\cr \cr
-#' Objects of class "ebp" and "fh" additionally have methods for following generic functions:
-#' \code{coef} (for default documentation, see \code{\link[stats]{coef}}),
-#' \code{confint} (for default documentation, see \code{\link[stats]{confint}}),
-#' \code{family} (for default
-#' documentation, see \code{\link[stats]{family}}), \code{fitted} (for default
-#' documentation, see \code{\link[stats]{fitted.values}}), \code{\link[emdi]{fixef}},
-#' \code{formula} (for default documentation, see \code{\link[stats]{formula}}),
-#' \code{\link[emdi]{getVarCov}}, \code{\link[emdi]{intervals}}, \code{logLik} (for
-#' default documentation, see \code{\link[stats]{logLik}}), \code{nobs} (for
-#' default documentation, see \code{\link[stats]{nobs}}), \code{\link[emdi]{ranef}},
-#' \code{residuals} (for default documentation, see \code{\link[stats]{residuals}}),
-#' \code{terms} (for default documentation, see \code{\link[stats]{terms}}),
-#' \code{vcov} (for default documentation, see \code{\link[stats]{vcov}}) \cr \cr
-#' Objects of class "ebp" have additionally methods for following generic
-#' functions: \code{sigma} (for default documentation, see \code{\link[stats]{sigma}})\cr \cr
-#' Objects of class "fh" have additionally methods for following generic functions:
-#' \code{\link[emdi]{compare}}, \code{extractAIC} (for default documentation,
-#' see \code{\link[stats]{extractAIC}}) and \code{\link[emdi]{step}}.
+#' Among other elements, the included \code{MERFmodel} object contains a random forest of class 'ranger'
+#' modelling fixed effects and a random effects model of class 'lmerMod'.  Thus, all generic functions
+#' applicable to objects of classes 'ranger' and 'lmerMod' can be used on these elements. For details on
+#' generic functions see \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
+#'
 #' @references
 #' Krennmair, P. and Schmid, T. (202X). WP 1
 #'
-#' Krennmair, P. Würz, N. and Schmid, T. (202X). WP 2
+#' Krennmair, P. Wuerz, N. and Schmid, T. (202X). WP 2
 #'
 #' Krennmair, P., Schmid, T. and Tzavidis N. (202X). WP 3
 #'

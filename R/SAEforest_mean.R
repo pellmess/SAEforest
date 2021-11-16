@@ -69,7 +69,9 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data,
   if(mse == "none"){
   result <- list(
     Indicators = mean_preds[[1]],
-    MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)))
+    MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
+    MSE_Estimates = NULL,
+    AdjustedSD = NULL)
 
   class(result) <- c("SAEforest_mean", "SAEforest")
   return(result)
