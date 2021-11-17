@@ -24,7 +24,8 @@
 #'
 #' @return returns object including Mean predictions and model details
 #' @export
-#' @details Some scientific or function specific details
+#' @details The set of predefined indicators includes the mean, median, four further quantiles
+#' (10%, 25%, 75% and 90%), head count ratio, poverty gap, Gini coefficient and the quintile share ratio.
 #' @seealso \code{\link{SAEforest}}
 #'
 #'

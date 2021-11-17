@@ -9,10 +9,10 @@ MERFranger(
   X,
   random,
   data,
+  importance = "none",
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
-  importance = "none",
   na.rm = T,
   ...
 )
@@ -29,6 +29,10 @@ from grouping factors. For further details see \link[lme4]{lmer} and the example
 \item{data}{data.frame of sample data including the specified elements of \code{Y} and
 \code{X}.}
 
+\item{importance}{variable importance mode processed by the
+random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+'permutation'. For further details see \link[ranger]{ranger}.}
+
 \item{initialRandomEffects}{numeric value or vector of initial estimate of random effects.
 Defaults to 0.}
 
@@ -37,14 +41,10 @@ Defaults to 0.}
 \item{MaxIterations}{numeric value specifying the maximal amount of iterations for the
 MERF algorithm. Defaults to 25.}
 
-\item{importance}{variable importance mode processed by the
-random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
-'permutation'. For further details see \link[ranger]{ranger}.}
-
 \item{na.rm}{logical. Whether missing values should be removed. Defaults to TRUE.}
 
 \item{...}{additional parameters are directly passed to the random forest \link[ranger]{ranger}.
-Most importanc parameters are for instance mtry (number of variables to possibly split at
+Most important parameters are for instance mtry (number of variables to possibly split at
 in each node), or num.tree (number of trees). For further details on possible parameters
 see \link[ranger]{ranger} and the example below.}
 }

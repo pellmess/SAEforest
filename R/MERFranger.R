@@ -26,7 +26,7 @@
 #' 'permutation'. For further details see \link[ranger]{ranger}.
 #' @param na.rm logical. Whether missing values should be removed. Defaults to TRUE.
 #' @param ... additional parameters are directly passed to the random forest \link[ranger]{ranger}.
-#' Most importanc parameters are for instance mtry (number of variables to possibly split at
+#' Most important parameters are for instance mtry (number of variables to possibly split at
 #' in each node), or num.tree (number of trees). For further details on possible parameters
 #' see \link[ranger]{ranger} and the example below.
 #'
@@ -74,8 +74,8 @@
 #' @export
 
 #'
-MERFranger <- function(Y, X, random, data, initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                        MaxIterations = 25, importance = "none", na.rm = T, ...) {
+MERFranger <- function(Y, X, random, data, importance = "none", initialRandomEffects = 0, ErrorTolerance = 0.0001,
+                        MaxIterations = 25, na.rm = T, ...) {
 
   if(na.rm == TRUE){
     comp_smp <- complete.cases(data)
