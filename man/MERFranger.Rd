@@ -83,7 +83,7 @@ or spatial correlations and should only be used for applications exceeding the s
 existing wrapper functions or for further research.
 }
 \details{
-The MERF algorithm iteratively optimizes two seperate steps: a) the random forest
+The MERF algorithm iteratively optimizes two separate steps: a) the random forest
 function, assuming the random effects term to be correct and b) estimates the random
 effects part, assuming the OOB-predictions from the forest to be correct. Overall convergence
 of the algorithm is monitored by log-likelihood of a joint model of both components. For

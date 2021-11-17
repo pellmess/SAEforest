@@ -2,7 +2,7 @@
 % Please edit documentation in R/SAEforest_nonLin.R
 \name{SAEforest_nonLin}
 \alias{SAEforest_nonLin}
-\title{Main function for nonlinear indicators of MERF with unit-level data}
+\title{Main function for nonlinear indicators using MERFs with unit-level data}
 \usage{
 SAEforest_nonLin(
   Y,
@@ -10,63 +10,122 @@ SAEforest_nonLin(
   dName,
   smp_data,
   pop_data,
+  mse = "none",
+  importance = "none",
   initialRandomEffects = 0,
   ErrorTolerance = 1e-04,
   MaxIterations = 25,
-  mse = "none",
   B = 100,
+  B_adj = 100,
   threshold = NULL,
-  importance = "none",
   custom_indicator = NULL,
   na.rm = TRUE,
-  B_adj = 100,
   ...
 )
 }
 \arguments{
-\item{Y}{metric target variable}
+\item{Y}{metric input value of target variable.}
 
-\item{X}{data.frame of covariates}
+\item{X}{matrix or data.frame of predictive covariates.}
 
-\item{dName}{name of group-identifier}
+\item{dName}{character specifying the name of domain identifier, for which random intercepts
+are modeled.}
 
-\item{smp_data}{sample data set}
+\item{smp_data}{data.frame of survey sample data including the specified elements of \code{Y} and
+\code{X}.}
 
-\item{pop_data}{aggregated census level covariates}
+\item{pop_data}{data.frame of unit-level population or census level covariate data for
+covariates \code{X}. Please note that the column names of predictive covariates must match
+column names of \code{smp_data}. This holds especially for the name of the domain identifier.}
 
-\item{initialRandomEffects}{default set to 0}
-
-\item{ErrorTolerance}{default set to 1e-04}
-
-\item{MaxIterations}{default set to 0}
-
-\item{mse}{Choose between "none, "wild" and "nonparametric"}
-
-\item{B}{number of bootstrap replications for the MSE}
-
-\item{threshold}{Set a custom threshold for indicators. Threshold can be a value or function of \code{Y}
-Default set to NULL}
+\item{mse}{character input specifying the type of uncertainty estimates. Available options are:
+(i) "nonparametric" following the mse boostrap procedure proposed by Krennmair & Schmid (202X)
+(ii) "wild" following the mse boostrap procedure proposed by Krennmair & Schmid (202X) or
+(iii) "none" if only point estimates are requested. Defaults to "none".}
 
 \item{importance}{variable importance mode processed by the
 random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
-'permutation'}
+'permutation'. Defaults to "none". If you wish to produce informative plot with the generic function
+\code{\link{plot}}, set \code{importance} not to 'none'. For further details see \link[ranger]{ranger}.}
 
-\item{custom_indicator}{a list of functions containing the indicators to be
-calculated additionally. Such functions must and must only depend on the
-target variable \code{Y} and the \code{threshold}. Defaults to \code{NULL}}
+\item{initialRandomEffects}{numeric value or vector of initial estimate of random effects.
+Defaults to 0.}
 
-\item{...}{variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}}
+\item{ErrorTolerance}{numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.}
+
+\item{MaxIterations}{numeric value specifying the maximal amount of iterations for the
+MERF algorithm. Defaults to 25.}
+
+\item{B}{numeric number of bootstrap replications for mse estimation procedure proposed by
+Krennmair et al. (202X). Defaults to 100.}
+
+\item{B_adj}{numeric number of bootstrap replications for the adjustment of residual variance proposed
+by Mendez and Lohr (2001). Defaults to 100.}
+
+\item{threshold}{Set a custom threshold for indicators, such as the head count ratio. The threshold
+can be a known numeric value or function of \code{Y}. If the threshold is \code{NULL}, 60 \% of the
+median of \code{Y} are taken as threshold. Defaults to NULL.}
+
+\item{custom_indicator}{a list of additional functions containing the indicators to be
+calculated. These functions must only depend on the target variable \code{Y} and optionally the
+\code{threshold}. Defaults to \code{NULL}}
+
+\item{na.rm}{logical. Whether missing values should be removed. Defaults to TRUE.}
+
+\item{...}{additional parameters are directly passed to the random forest \link[ranger]{ranger}.
+Most important parameters are for instance mtry (number of variables to possibly split at
+in each node), or num.tree (number of trees). For further details on possible parameters
+see \link[ranger]{ranger} and the example below.}
 }
 \value{
-returns object including Mean predictions and model details
+An object of class "SAEforest" always includes point estimates for disaggregated indicators
+as well as information on the MERF-model. Optionally corresponding MSE estimates are returned.
+Several generic functions have methods for the returned object of class "SAEforest". Additionally,
+the included \code{MERFmodel} object allows the use of generic functions for classes "ranger" and
+"merMod". For a full list and explanation of components and possibilities for objects of class "SAEforest",
+see \code{\link{SAEforestObject}}.
 }
 \description{
-Some detailed description and scientific references here
+This function facilitates the use of Mixed Effects Random Forests (MERFs)
+for applications of Small Area Estimation (SAE). Unit-level survey-sample and unit-level
+covariate data on predictive covariates is required to produce reliable estimates of various
+disaggregated economic and inequality indicators. The set of predefined indicators includes
+the mean, median,  quantiles (10%, 25%, 75% and 90%), the head count ratio, the poverty gap,
+the Gini coefficient and the quintile share ratio. The MERF algorithm is an algorithmic procedure
+reminiscent of an EM-algorithm (see Details). Overall, the function serves as a coherent framework
+for the estimation of point-estimates and if requested for assessing the uncertainty of the
+estimates. Methodological details are provided by Krennmair & Schmid (202X) and following
+examples showcase potential applications.
 }
 \details{
-The set of predefined indicators includes the mean, median, four further quantiles
-(10%, 25%, 75% and 90%), head count ratio, poverty gap, Gini coefficient and the quintile share ratio.
+Mixed effects random forests combine advantages of regression forests (such as implicit model-selection
+and robustness properties) with the ability to model hierarchical dependencies.
+
+The MERF algorithm iteratively optimizes two separate steps: a) the random forest function, assuming the
+random effects term to be correct and b) estimates the random effects part, assuming the OOB-predictions
+from the forest to be correct. Overall convergence of the algorithm is monitored by log-likelihood of a
+joint model of both components. For further details see Krennmair and Schmid or Hajem et. al. (2014).
+
+For the estimation of (nonlinear) porverty estimators and/or quantiles, we need information on the
+area-specific CDF of Y. We follow a smearing approach originating from Duan (1983) and analyzed within
+a general unit-level framework for the estimation of SAE means and quantiles by Tzavidis et al. (2010).
+For further details please see Krennmair et al. (202X).
+
+For the estimation of the MSE, the bootstrap population is built based on a bias-corrected residual
+variance as proposed Krennmair and Schmid (202X). The bootstrap bias correction follows Mendez and Lohr (2011).
+
+Note that the \code{MERFmodel} object is a composition of elements from a random forest of class 'ranger'
+and a random effects model of class 'lmerMod'.  Thus, all generic functions applicable to objects of classes
+'ranger' and 'lmerMod' can be used on these elements. For furhter details on generic functions see
+\code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
+}
+\references{
+Krennmair, P. and Schmid, T. (202X). WP 1
+
+Krennmair, P. et al. (202X). WP 2
+
+Mendez, G. and Lohr, S. (2011) Paper
 }
 \seealso{
-\code{\link{SAEforest}}
+\code{\link{SAEforestObject}}, \code{\link[ranger]{ranger}}, \code{\link[lme4]{lmer}}
 }

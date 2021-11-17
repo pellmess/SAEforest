@@ -2,7 +2,7 @@
 % Please edit documentation in R/SAEforest_meanAGG.R
 \name{SAEforest_meanAGG}
 \alias{SAEforest_meanAGG}
-\title{Main function for means of MERF with aggregated-level data}
+\title{Main function for means using MERFs with aggregated population data}
 \usage{
 SAEforest_meanAGG(
   Y,
@@ -10,65 +10,123 @@ SAEforest_meanAGG(
   dName,
   smp_data,
   Xpop_agg,
-  initialRandomEffects = 0,
-  ErrorTolerance = 1e-04,
-  MaxIterations = 25,
   mse = "none",
-  B = 100,
-  popnsize,
+  importance = "impurity",
   OOsample_obs = 25,
   ADDsamp_obs = 0,
   w_min = 3,
-  importance = "impurity",
-  na.rm = TRUE,
+  initialRandomEffects = 0,
+  ErrorTolerance = 1e-04,
+  MaxIterations = 25,
+  B = 100,
   B_adj = 100,
+  popnsize,
+  na.rm = TRUE,
   ...
 )
 }
 \arguments{
-\item{Y}{metric target variable}
+\item{Y}{metric input value of target variable.}
 
-\item{X}{data.frame of covariates}
+\item{X}{matrix or data.frame of predictive covariates.}
 
-\item{dName}{name of group-identifier}
+\item{dName}{character specifying the name of domain identifier, for which random intercepts
+are modeled.}
 
-\item{smp_data}{sample data set}
+\item{smp_data}{data.frame of survey sample data including the specified elements of \code{Y} and
+\code{X}.}
 
-\item{Xpop_agg}{aggregated population level covariates}
+\item{Xpop_agg}{data.frame of aggregated population or census level covariate data for
+covariates \code{X}. Please note that the column names of predictive covariates must match
+column names of \code{smp_data}. This holds especially for the name of the domain identifier.}
 
-\item{initialRandomEffects}{default set to 0}
-
-\item{ErrorTolerance}{default set to 1e-04}
-
-\item{MaxIterations}{default set to 0}
-
-\item{mse}{Choose between "none and "nonparametric"}
-
-\item{B}{number of bootstrap replications for the MSE}
-
-\item{popnsize}{population size of domains}
-
-\item{OOsample_obs}{Number of Out-of-sample observations taken from the closest area. Default set to 25}
-
-\item{ADDsamp_obs}{Number of Out-of-sample observations taken from the closest area if first iteration fails. Default is set to 0}
-
-\item{w_min}{Minimal number of covariates from which informative weights are calculated. Default set to 3}
+\item{mse}{character input specifying the type of uncertainty estimates. Available options are:
+(i) "nonparametric" following the mse boostrap procedure proposed by Krennmair et al. (202X) or
+(ii) "none" if only point estimates are requested. Defaults to "none".}
 
 \item{importance}{variable importance mode processed by the
-random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
-'permutation'}
+random forest from the \pkg{ranger}. Must be one of the following option: (i)'impurity', (ii) 'impurity_corrected'
+or (iii) 'permutation'. Defaults to 'impurity'. variable importance is used to rank covariate information
+in the process of finding suitable calibration weights (see details). For further information regarding
+the measures of importance see \link[ranger]{ranger}.}
 
-\item{...}{variables such as mtry, num.tree essentially anything that can be passed to \pkg{ranger}}
+\item{OOsample_obs}{Number of Out-of-sample observations taken from the closest area for potentially unsampled
+areas. Default set to 25.}
+
+\item{ADDsamp_obs}{Number of Out-of-sample observations taken from the closest area if first iteration for the
+calculation of calibration weights fails. Default is set to 0.}
+
+\item{w_min}{Minimal number of covariates from which informative weights are calculated. Defaults to 3.}
+
+\item{initialRandomEffects}{numeric value or vector of initial estimate of random effects.
+Defaults to 0.}
+
+\item{ErrorTolerance}{numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.}
+
+\item{MaxIterations}{numeric value specifying the maximal amount of iterations for the
+MERF algorithm. Defaults to 25.}
+
+\item{B}{numeric number of bootstrap replications for mse estimation procedure proposed by
+Krennmair et al. (202X). Defaults to 100.}
+
+\item{B_adj}{numeric number of bootstrap replications for the adjustment of residual variance. Defaults to 100.}
+
+\item{popnsize}{data.frame, which is only needed if an mse is requested. comprising information of
+population size of domains. Please note that the name of the domain identifier must match the column
+name of \code{smp_data}.}
+
+\item{na.rm}{logical. Whether missing values should be removed. Defaults to TRUE.}
+
+\item{...}{additional parameters are directly passed to the random forest \link[ranger]{ranger}.
+Most important parameters are for instance mtry (number of variables to possibly split at
+in each node), or num.tree (number of trees). For further details on possible parameters
+see \link[ranger]{ranger} and the example below.}
 }
 \value{
-returns object including Mean predictions and model details
+An object of class "SAEforest" always includes point estimates for disaggregated indicators
+as well as information on the MERF-model. Optionally corresponding MSE estimates are returned.
+Several generic functions have methods for the returned object of class "SAEforest". Additionally,
+the included \code{MERFmodel} object allows the use of generic functions for classes "ranger" and
+"merMod". For a full list and explanation of components and possibilities for objects of class "SAEforest",
+see \code{\link{SAEforestObject}}.
 }
 \description{
-Some detailed description and scientific references here
+This function facilitates the use of Mixed Effects Random Forests (MERFs)
+for applications of Small Area Estimation (SAE). Unit-level survey-sample and
+aggregated covariate data on predictive covariates is required to produce reliable
+estimates of domain-specific means. The MERF algorithm is an algorithmic procedure
+reminiscent of an EM-algorithm (see Details). Overall, the function serves as a coherent
+framework for the estimation of point-estimates and if requested for assessing the uncertainty
+of the estimates. Methodological details are provided by Krennmair et al. (202X) and following
+examples showcase potential applications.
 }
 \details{
-Some scientific or function specific details
+Mixed effects random forests combine advantages of regression forests (such as implicit
+model-selection and robustness properties) with the ability to model hierarchical dependencies.
+
+The MERF algorithm iteratively optimizes two separate steps: a) the random forest function, assuming
+the random effects term to be correct and b) estimates the random effects part, assuming the
+OOB-predictions from the forest to be correct. Overall convergence of the algorithm is monitored
+by log-likelihood of a joint model of both components. For further details see Krennmair and Schmid
+or Hajem et. al. (2014).
+
+In contrast to \code{\link{SAEforest_mean}} which requires covariate micro-data, this function adaptively
+incorporates auxiliary information through calibration-weights based on empirical likelihood for the
+estimation of area-level means. See methodlogical details in Krennmair et al. (202X).
+
+For the estimation of the MSE, a bias-corrected residual variance as proposed Krennmair and Schmid
+(202X) is required. The bootstrap bias correction follows Mendez and Lohr (2011).
+Note that the \code{MERFmodel} object is a composition of elements from a random forest of class
+'ranger' and a random effects model of class 'lmerMod'.  Thus, all generic functions applicable
+to objects of classes 'ranger' and 'lmerMod' can be used on these elements. For furhter details
+on generic functions see \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as
+the examples below.
+}
+\references{
+Krennmair, P. and Schmid, T. (202X). WP 1
+
+Mendez, G. and Lohr, S. (2011) Paper
 }
 \seealso{
-\code{\link{SAEforest}}
+\code{\link{SAEforestObject}}, \code{\link[ranger]{ranger}}, \code{\link[lme4]{lmer}}
 }
