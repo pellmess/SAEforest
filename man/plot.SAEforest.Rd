@@ -68,7 +68,7 @@ customization and exporting. See the following examples for details.
 }
 \description{
 Plots model-specific characteristics of the fixed effects random forest component of
-the MERF from object “SAEforest”. In general, a variable importance plot is produced to
+the MERF from object "SAEforest". In general, a variable importance plot is produced to
 visualize the importance of covariate data for the model. For the variable importance plot,
 arguments are passed internally to the function \code{\link[vip]{vip}}. If requested, the
 plot function additionally provides a partial dependence plot (pdp) to visualize the impact
@@ -85,6 +85,46 @@ For pdp plots, note that despite
 their potential importance, covariates of type factor or character cannot be used for partial dependence
 plots. Dummy-variables can be used, however, their pdp plots are always lines connecting two effect
 points for 0 and 1. Most informative pdp plots can be produced for metric covariates.
+}
+\examples{
+\dontrun{#Loading data
+data("eusilcA_pop")
+data("eusilcA_smp")
+
+income <- eusilcA_smp$eqIncome
+X_covar <- eusilcA_smp[,-c(1,16,17,18)]
+
+#Example 1:
+#Calculating point-estimates and discussing basic generic functions
+
+model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
+                       smp_data = eusilcA_smp, pop_data = eusilcA_pop)
+
+# Load shape file
+load_shapeaustria()
+
+# Create map plot for mean indicator - point and MSE estimates but no CV
+map_indicators(object = model1, MSE = FALSE, CV = FALSE,
+         map_obj = shape_austria_dis, indicator = c("Mean"),
+         map_dom_id = "PB")
+
+# Create a suitable mapping table to use numerical identifiers of the shape
+# file
+
+# First find the right order
+dom_ord <- match(shape_austria_dis@data$PB, model1$Indicators$district)
+
+# Create the mapping table based on the order obtained above
+map_tab <- data.frame(pop_data_id = model1$Indicators$district[dom_ord],
+                    shape_id = shape_austria_dis@data$BKZ)
+
+# Create map plot for mean indicator - using the numerical domain
+identifiers of the shape file. Additionally save the figure in as a list element.
+
+map_obj <- map_indicators(object = model1, MSE = FALSE, CV = FALSE,
+           map_obj = shape_austria_dis, indicator = c("Mean"),
+          map_dom_id = "BKZ", map_tab = map_tab, return_plot = TRUE)
+}
 }
 \seealso{
 \code{\link{SAEforestObject}}

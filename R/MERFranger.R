@@ -76,7 +76,28 @@
 #' \code{\link{SAEforest_mean}}, \code{\link{SAEforest_meanAGG}}, \code{\link{SAEforest_nonLin}}
 #'
 #' @export
-
+#' @examples \dontrun{
+#'
+#'#Load Data
+#'data("eusilcA_pop")
+#'data("eusilcA_smp")
+#'
+#'income <- eusilcA_smp$eqIncome
+#'
+#'#Example 1:
+#'#Calculating general model used in wrapper functions
+#'model1 <- MERFranger(Y = income, X = X_covar, random = "(1|district)",
+#'                     data = eusilcA_smp, mtry=5)
+#'
+#'#Example 2:
+#'#Calculating a model using 2-level nested design
+#'model2 <- MERFranger(Y = income, X = X_covar, random = "(1|state/district)",
+#'                     data = eusilcA_smp, mtry=5)
+#'
+#'#get individual predictions:
+#'ind_pred <- predict(model2$Forest, eusilcA_pop)$predictions +
+#'  predict(model2$EffectModel, eusilcA_pop, allow.new.levels=TRUE)
+#'}
 #'
 MERFranger <- function(Y, X, random, data, importance = "none", initialRandomEffects = 0, ErrorTolerance = 0.0001,
                         MaxIterations = 25, na.rm = T, ...) {

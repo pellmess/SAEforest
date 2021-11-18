@@ -5,7 +5,7 @@
 #' effects as well as random effects. Optionally an SAEforest object includes corresponding MSE estimates.
 #' If the method used for estimation is \code{\link{SAEforest_meanAGG}}, the SAEforest object additionally
 #' includes an element, capturing the number of variables used in the weighting process from aggregated
-#' covariate information.For an object of class SAEforest, the following generic functions are applicable:
+#' covariate information. For an object of class SAEforest, the following generic functions are applicable:
 #' \code{\link{print}}, \code{\link{plot}}, \code{\link{summary}} and \code{\link{summarize_indicators}}.
 #' Additional generic functions are applicable to the \code{MERFmodel} object. See Details for more information.
 #'
@@ -66,5 +66,24 @@
 #' @seealso \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}}, \code{\link{SAEforest_meanAGG}},
 #' \code{ \link[ranger]{ranger}}, \code{ \link[lme4]{lmer}}
 #'
+#' @examples
+#' \dontrun{
+#'#Loading data
+#'data("eusilcA_pop")
+#'data("eusilcA_smp")
+#'
+#'income <- eusilcA_smp$eqIncome
+#'X_covar <- eusilcA_smp[,-c(1,16,17,18)]
+#'
+#'#Example 1:
+#'#Calculating point-estimates and discussing basic generic functions
+#'
+#'model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
+#'                        smp_data = eusilcA_smp, pop_data = eusilcA_pop)
+#'
+#'#SAEforest generics:
+#'summary(model1)
+#'summarize_indicators(model1)
+#'}
 #' @name SAEforestObject
 NULL
