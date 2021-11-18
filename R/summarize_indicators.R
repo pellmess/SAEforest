@@ -32,6 +32,33 @@
 #' @seealso \code{\link{SAEforestObject}}, \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}},
 #' \code{\link{SAEforest_meanAGG}}
 #'
+#' @examples
+#' \dontrun{#Loading data
+#' data("eusilcA_pop")
+#' data("eusilcA_smp")
+#'
+#' income <- eusilcA_smp$eqIncome
+#' X_covar <- eusilcA_smp[,-c(1,16,17,18)]
+#'
+#'#Calculating point + MSE estimates and passing arguments to the forest.
+#'#Additionally, two additional indicators and functions as threshold are added.
+#'#Note that B and num.trees are low to speed up estimation time and must be changed for
+#'#practical applications.
+#'
+#'model1 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+#'                           pop_data = eusilcA_pop, mse = "nonparametric", B = 2, mtry=5, num.trees = 50,
+#'                           threshold = function(Y){0.5 * median(Y)},
+#'                           custom_indicator = list(my_max = function(Y, threshold){max(Y)},
+#'                           my_quant = function(Y, threshold){quantile(Y, probs=c(0.05,0.95))}))
+#'
+#'#Extract indicator and try generics:
+#'Hcr1 <- summarize_indicators(model1, MSE = TRUE, CV =TRUE, indicator = "Hcr")
+#'head(Hcr1)
+#'tail(Hcr1)
+#'as.data.frame(Hcr1)
+#'as.matrix(Hcr1)
+#'subset(Hcr1, district == "Wien")
+#'}
 #' @export
 
 

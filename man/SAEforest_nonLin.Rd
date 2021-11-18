@@ -119,6 +119,42 @@ and a random effects model of class 'lmerMod'.  Thus, all generic functions appl
 'ranger' and 'lmerMod' can be used on these elements. For furhter details on generic functions see
 \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
 }
+\examples{
+\dontrun{#Loading data
+data("eusilcA_pop")
+data("eusilcA_smp")
+
+income <- eusilcA_smp$eqIncome
+X_covar <- eusilcA_smp[,-c(1,16,17,18)]
+
+#Example 1:
+#Calculating point-estimates and discussing basic generic functions
+
+model1 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+                           pop_data = eusilcA_pop)
+
+#example of SAEforest generic
+summary(model1)
+
+model1_merf <- model1$MERFmodel
+
+
+#Example 2:
+#Calculating point + MSE estimates and passing arguments to the forest.
+#Additionally, two additional indicators and function as threshold are added
+
+model2 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+                          pop_data = eusilcA_pop, mse = "nonparametric", B = 25, mtry=5, num.trees = 100,
+                          threshold = function(Y){0.5 * median(Y)},
+                          custom_indicator = list(my_max = function(Y, threshold){max(Y)},
+                          my_quant = function(Y, threshold){quantile(Y, probs=c(0.05,0.95))}))
+
+#example of SAEforest generic:
+summary(model2)
+summarize_indicators(model2, MSE = FALSE, CV =TRUE, indicator = c("Gini", "my_max", "my_quant.5\%","my_quant.95\%"))
+}
+
+}
 \references{
 Krennmair, P. and Schmid, T. (202X). WP 1
 

@@ -3,11 +3,13 @@
 #' This function enables the use of Mixed Effects Random Forests (MERFs) by effectively
 #' combining a random forest from \pkg{ranger} with a model capturing random effects from
 #' \pkg{lme4}. The MERF algorithm is an algorithmic procedure reminiscent of an EM-algorithm
-#' (see Details).  The function is the base-function for the three wrapping functions
-#' (\code{\link{SAEforest_mean}}, \code{\link{SAEforest_meanAGG}}, \code{\link{SAEforest_nonLin}}).
-#' The function \code{MERFranger} allows to model complex patterns of structural relations
-#' or spatial correlations and should only be used for applications exceeding the scope of
-#' existing wrapper functions or for further research.
+#' (see Details). The function is the base-function for the three wrapping functions
+#' (\code{\link{SAEforest_mean}}, \code{\link{SAEforest_meanAGG}}, \code{\link{SAEforest_nonLin}})
+#' and should not be directly used by the user. Recommended exceptions are applications exceeding
+#' the scope of existing wrapper functions or further research. The function \code{MERFranger}
+#' allows to model complex patterns of structural relations (see Examples). The function returns
+#' an object of class MERFmodel, which can be used to produce unit-level predictions. In contrast to
+#' the wrapping functions, this function does not directly provide SAE estimates.
 #'
 #' @param Y metric input value of target variable
 #' @param X matrix of predictive covariates
@@ -70,7 +72,9 @@
 #'
 #' Hajjem et al. 2014. MERF paper
 #'
-#' @seealso \code{\link{SAEforest}}
+#' @seealso \code{\link{SAEforest}},\code{\link[ranger]{ranger}},\code{\link[lme4]{lmer}},
+#' \code{\link{SAEforest_mean}}, \code{\link{SAEforest_meanAGG}}, \code{\link{SAEforest_nonLin}}
+#'
 #' @export
 
 #'

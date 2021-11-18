@@ -99,6 +99,38 @@ and a random effects model of class 'lmerMod'.  Thus, all generic functions appl
 'ranger' and 'lmerMod' can be used on these elements. For furhter details on generic functions see
 \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
 }
+\examples{
+\dontrun{#Loading data
+data("eusilcA_pop")
+data("eusilcA_smp")
+
+income <- eusilcA_smp$eqIncome
+X_covar <- eusilcA_smp[,-c(1,16,17,18)]
+
+#Example 1:
+#Calculating point-estimates and discussing basic generic functions
+
+model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
+                         smp_data = eusilcA_smp, pop_data = eusilcA_pop)
+
+#SAEforest generics:
+summary(model1)
+
+
+#Example 2:
+#Calculating point + MSE estimates and passing arguments to the forest
+
+model2 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
+                         smp_data = eusilcA_smp, pop_data = eusilcA_pop,
+                         mse = "nonparametric", B = 25, mtry=5,
+                         num.trees = 100)
+
+#SAEforest generics:
+summary(model2)
+summarize_indicators(model2, MSE = TRUE, CV =TRUE)
+}
+
+}
 \references{
 Krennmair, P. and Schmid, T. (202X). WP 1
 

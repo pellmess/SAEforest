@@ -148,7 +148,7 @@ input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEf
     stop("If MSE-estimation is specified, B needs to be a single integer value, determining the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_nonLin).")
   }
 
-  if (!is.null(threshold) && !(is.numeric(threshold) && length(threshold) == 1)) {
+  if (!is.null(threshold) && !(is.numeric(threshold) && length(threshold) == 1)&& !inherits(threshold, "function")) {
     stop("threshold needs to be a single numeric value or a function of Y. If it is NULL 60% of the median of Y is selected as threshold. See also help(SAEforest_nonLin).")
   }
 
@@ -398,16 +398,16 @@ map_indicators_check <- function(object, indicator, MSE, CV, map_obj, map_dom_id
 # Function called in SAEforest_mean
 input_checks_MERF <- function(Y, X, data, initialRandomEffects,
                               ErrorTolerance, MaxIterations, importance, na.rm) {
-  if (!is.numeric(Y) || !data.frame(Y) %in% data) {
-    stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(SAEforest_mean)")
+  if (!is.numeric(Y) || !length(Y)==dim(data)[1]) {
+    stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(MERFranger)")
   }
 
   if (sum(!(X %in% data)) != 0) {
-    stop("X specifies the explanatory variabels from the sample data set and must be included in the survey sample set. See also help(SAEforest_mean)")
+    stop("X specifies the explanatory variabels from the sample data set and must be included in the survey sample set. See also help(MERFranger)")
   }
 
   if (!is.data.frame(data)) {
-    stop("smp_data must be a data frame containing the survey sample data. See also help(SAEforest_mean).")
+    stop("smp_data must be a data frame containing the survey sample data. See also help(MERFranger).")
   }
 
   if (!(inherits(na.rm, "logical") && length(na.rm) == 1) || na.rm == FALSE && (sum(is.na(data)) != 0)) {

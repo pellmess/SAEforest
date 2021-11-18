@@ -83,7 +83,41 @@
 #' Krennmair, P. and Schmid, T. (202X). WP 1
 #'
 #' Mendez, G. and Lohr, S. (2011) Paper
+#'
+#' @examples
+#' \dontrun{#Loading data
+#' data("eusilcA_popAgg")
+#' data("eusilcA_smp")
+#' data("popNsize")
+#'
+#' income <- eusilcA_smp$eqIncome
+#' X_covar <- eusilcA_smp[,-c(1,16,17,18)]
+#'
+#'#Example 1:
+#'#Calculating point-estimates and discussing basic generic functions
+#'
+#' model1 <- SAEforest_meanAGG(Y = income, X = X_covar, dName = "district",
+#'                             smp_data = eusilcA_smp, Xpop_agg = eusilcA_popAgg)
+#'
+#'#SAEforest generics:
+#' summary(model1)
+#'
+#'
+#' #Example 2:
+#' #Calculating point + MSE estimates and passing arguments to the forest
+#'
+#' model2 <- SAEforest_meanAGG(Y = income, X = X_covar, dName = "district",
+#'                             smp_data = eusilcA_smp, Xpop_agg = eusilcA_popAgg,
+#'                             mse = "nonparametric", popnsize = popNsize,
+#'                             B = 25, mtry=5, num.trees = 100)
+#'
+#'#SAEforest generics:
+#'summary(model2)
+#'summarize_indicators(model2, MSE = TRUE, CV =TRUE)
+#'}
+#'
 #' @export
+
 SAEforest_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, mse = "none", importance = "impurity",
                               OOsample_obs = 25, ADDsamp_obs=0, w_min=3, initialRandomEffects = 0,
                               ErrorTolerance = 0.0001, MaxIterations = 25, B=100, B_adj = 100, popnsize,
