@@ -67,3 +67,9 @@ sae_specs <- function(dName,cns,smp){
 
 #  return(list(smp_data, pop_data, X, Y))
 #}
+
+
+#' @useDynLib SAEforest R_rfweights
+.rfweights <- function(fdata, fnewdata, rw, scale)
+  w <- .Call(R_rfweights, fdata, fnewdata, rw, scale)
+
