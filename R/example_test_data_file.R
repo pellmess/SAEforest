@@ -179,3 +179,29 @@
 #matplot(sqrt(a[,c(2,4)]), type = "l")
 
 
+
+
+
+# NEW FUNCTION MC BASED
+#mse = "none"
+#importance ="none"
+#initialRandomEffects = 0
+#ErrorTolerance = 0.0001
+#MaxIterations = 25
+#B=100
+#B_adj =100
+#B_point=100
+#threshold = NULL
+#custom_indicator =NULL
+#na.rm = TRUE
+
+#model1 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+#                           pop_data = eusilcA_pop, mse="nonparametric", B=10)
+
+#model2 <- MC_MERF_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+#                         pop_data = eusilcA_pop, mse="nonparametric", B=10)
+
+
+#a <- cbind(model1$Indicators$Gini, model2$Indicators$Gini)
+#matplot(sqrt(a), type="l")
+
