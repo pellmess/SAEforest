@@ -157,3 +157,14 @@ MERFranger <- function(Y, X, random, data, importance = "none", initialRandomEff
 
   return(result)
 }
+
+
+#' @export
+predict.MERFmodel <- function(modelFit, newdata, ...){
+  retval <- predict(modelFit$Forest, newdata)$predictions+
+    predict(modelFit$EffectModel,newdata, allow.new.levels=TRUE)
+
+  return(retval)
+}
+
+
