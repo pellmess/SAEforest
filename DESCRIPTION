@@ -23,7 +23,8 @@ Imports:
     vip,
     ggplot2,
     reshape2,
-    tidyverse
+    tidyverse,
+    caret
 RoxygenNote: 7.1.2
 Depends: 
     R (>= 2.10),
