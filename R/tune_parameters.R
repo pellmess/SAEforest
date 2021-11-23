@@ -64,6 +64,9 @@ tune_parameters <- function(Y, X, data, dName, trControl, tuneGrid,
                              seed = 11235, gg_theme = theme_minimal(),
                              plot_res =TRUE, return_plot = FALSE, ...){
 
+  input_checks_tune(Y = Y, X = X, data = data, seed = seed, gg_theme = gg_theme,
+                    plot_res = plot_res, return_plot = return_plot)
+
   MERF <- define_method(X = X, dName = dName, ...)
 
   set.seed(seed)

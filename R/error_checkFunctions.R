@@ -432,5 +432,32 @@ input_checks_MERF <- function(Y, X, data, initialRandomEffects,
 }
 
 
+# Function called in tune_parameters
+input_checks_tune <- function(Y, X, data, seed,
+                              gg_theme, plot_res, return_plot) {
+  if (!is.numeric(Y) || !length(Y)==dim(data)[1]) {
+    stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(tune_parameters)")
+  }
 
+  if (sum(!(X %in% data)) != 0) {
+    stop("X specifies the explanatory variabels from the sample data set and must be included in the survey sample set. See also help(tune_parameters)")
+  }
+
+  if (!is.data.frame(data)) {
+    stop("smp_data must be a data frame containing the survey sample data. See also help(tune_parameters).")
+  }
+
+  if (!inherits(gg_theme, "gg")) {
+    stop("gg_theme must be a single function of type 'gg' determining the theme of plots.")
+  }
+  if (!(inherits(return_plot, "logical") && length(return_plot) == 1)) {
+    stop("return_plot must be a logical value. Set return_plot to TRUE or FALSE.")
+  }
+  if (!(inherits(plot_res, "logical") && length(plot_res) == 1)) {
+    stop("plot_res must be a logical value. Set plot_res to TRUE or FALSE.")
+  }
+  if (!is.numeric(seed) || length(seed) != 1 ) {
+    stop("seed needs to be a single integer value, determining a seed to be set for reproduceability.")
+  }
+}
 
