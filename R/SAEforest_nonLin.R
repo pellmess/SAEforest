@@ -21,8 +21,8 @@
 #' covariates \code{X}. Please note that the column names of predictive covariates must match
 #' column names of \code{smp_data}. This holds especially for the name of the domain identifier.
 #' @param mse character input specifying the type of uncertainty estimates. Available options are:
-#' (i) "nonparametric" following the mse boostrap procedure proposed by Krennmair & Schmid (202X)
-#' (ii) "wild" following the mse boostrap procedure proposed by Krennmair & Schmid (202X) or
+#' (i) "nonparametric" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X)
+#' (ii) "wild" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X) or
 #' (iii) "none" if only point estimates are requested. Defaults to "none".
 #' @param importance variable importance mode processed by the
 #' random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
@@ -48,6 +48,11 @@
 #' @param custom_indicator a list of additional functions containing the indicators to be
 #' calculated. These functions must only depend on the target variable \code{Y} and optionally the
 #' \code{threshold}. Defaults to \code{NULL}
+#' @param smearing Logical input indicating whether a smearing based approach or a MC-based version for
+#' point-estimates should be obtained. MC should be used if computational constraints do not allow for a
+#' smearing based approach. For theoretical details see (WP). Defaults to \code{TRUE}.
+#' @param B_MC numeric number of bootstrap populations to be generated for the MC version for estimating
+#' point estimates. Defaults to 100.
 #'
 #' @return An object of class "SAEforest" always includes point estimates for disaggregated indicators
 #' as well as information on the MERF-model. Optionally corresponding MSE estimates are returned.
@@ -65,10 +70,12 @@
 #' from the forest to be correct. Overall convergence of the algorithm is monitored by log-likelihood of a
 #' joint model of both components. For further details see Krennmair and Schmid or Hajem et. al. (2014).
 #'
-#' For the estimation of (nonlinear) porverty estimators and/or quantiles, we need information on the
+#' For the estimation of (nonlinear) poverty estimators and/or quantiles, we need information on the
 #' area-specific CDF of Y. We follow a smearing approach originating from Duan (1983) and analyzed within
 #' a general unit-level framework for the estimation of SAE means and quantiles by Tzavidis et al. (2010).
-#' For further details please see Krennmair et al. (202X).
+#' For further details please see Krennmair et al. (202X). Alternatively to the smearing approach, it is
+#' possible to simulate population values of Y using Monte-Carlo methods. This option is discussed as well
+#' and should be used for cases where smearing is not possible due to computational constraints.
 #'
 #' For the estimation of the MSE, the bootstrap population is built based on a bias-corrected residual
 #' variance as proposed Krennmair and Schmid (202X). The bootstrap bias correction follows Mendez and Lohr (2011).
@@ -104,30 +111,37 @@
 #'#example of SAEforest generic
 #'summary(model1)
 #'
-#' model1_merf <- model1$MERFmodel
-#'
-#'
 #'#Example 2:
+#'#Calculating point-estimates and discussing basic generic functions
+#'
+#' model2 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+#'                            pop_data = eusilcA_pop, smearing = FALSE)
+#'
+#'#example of SAEforest generic
+#'summary(model2)
+#'
+#'
+#'#Example 3:
 #'#Calculating point + MSE estimates and passing arguments to the forest.
 #'#Additionally, two additional indicators and function as threshold are added
 #'
-#'model2 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+#'model3 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
 #'                           pop_data = eusilcA_pop, mse = "nonparametric", B = 25, mtry=5, num.trees = 100,
 #'                           threshold = function(Y){0.5 * median(Y)},
 #'                           custom_indicator = list(my_max = function(Y, threshold){max(Y)},
 #'                           my_quant = function(Y, threshold){quantile(Y, probs=c(0.05,0.95))}))
 #'
 #'#example of SAEforest generic:
-#'summary(model2)
-#'summarize_indicators(model2, MSE = FALSE, CV =TRUE, indicator = c("Gini", "my_max", "my_quant.5%","my_quant.95%"))
+#'summary(model3)
+#'summarize_indicators(model3, MSE = FALSE, CV =TRUE, indicator = c("Gini", "my_max", "my_quant.5%","my_quant.95%"))
 #'}
 #'
 #' @export
 
-SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data,  mse = "none", importance ="none",
+SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data, smearing = TRUE, mse = "none", importance ="none",
                            initialRandomEffects = 0, ErrorTolerance = 0.0001,
-                           MaxIterations = 25,B=100, B_adj =100, threshold = NULL,
-                           custom_indicator =NULL, na.rm = TRUE,...){
+                           MaxIterations = 25, B=100, B_adj=100, B_MC=100, threshold = NULL,
+                           custom_indicator =NULL, na.rm = TRUE, ...){
 
   # ERROR CHECKS OF INPUTS
   #________________________________________
@@ -140,9 +154,9 @@ SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data,  mse = "none", imp
     pop_data <- pop_data[complete.cases(pop_data),]
   }
 
-  input_checks_nonLin(Y = Y, X = X, dName = dName, smp_data = smp_data, pop_data =pop_data,
+  input_checks_nonLin(Y = Y, X = X, dName = dName, smp_data = smp_data, pop_data =pop_data, smearing =smearing,
                       initialRandomEffects =initialRandomEffects, ErrorTolerance =ErrorTolerance,
-                      MaxIterations =MaxIterations, mse=mse, B=B, threshold = threshold,
+                      MaxIterations =MaxIterations, mse=mse, B=B, B_adj=B_adj,B_MC=B_MC, threshold = threshold,
                       importance = importance, custom_indicator = custom_indicator, na.rm =na.rm)
 
   out_call <- match.call()
@@ -158,6 +172,9 @@ SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data,  mse = "none", imp
   Y <- Y[order_in]
   pop_data <- pop_data[order(pop_data[[dName]]),]
 
+
+  # SMEARING
+if(smearing == TRUE){
   # Point Estimation
   #________________________________________
 
@@ -223,3 +240,79 @@ SAEforest_nonLin <- function(Y, X, dName, smp_data, pop_data,  mse = "none", imp
   }
 
 }
+
+
+if(smearing == FALSE){
+
+  nonLin_preds <- point_MC_nonLin(Y = Y, X = X, dName = dName, threshold = threshold, smp_data = smp_data,
+                                  pop_data = pop_data, initialRandomEffects = initialRandomEffects,
+                                  ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, importance = importance,
+                                  custom_indicator=custom_indicator, B_point = B_MC,...)
+
+  data_specs <- sae_specs(dName = dName,cns = pop_data,smp = smp_data)
+
+  if(mse == "none"){
+    result <- list(
+    Indicators = nonLin_preds[[1]],
+    MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
+    MSE_Estimates = NULL,
+    AdjustedSD = NULL)
+
+    class(result) <- c("MC_MERF_nonLin", "SAEforest")
+    return(result)
+  }
+
+# MSE Estimation
+#________________________________________
+
+if(mse != "none"){
+  print(paste("Error SD Bootstrap started:"))
+  adj_SD <- adjust_ErrorSD(Y=Y, X=X, smp_data = smp_data, mod = nonLin_preds[[2]], B = B_adj, ...)
+  print(paste("MSE Bootstrap with", B,"rounds started:"))
+}
+
+if(mse == "wild"){
+  mse_estims <- MSE_MC_MERF_nonLin_wild(Y=Y, X = X, mod=nonLin_preds[[2]], smp_data = smp_data,
+                                        pop_data = pop_data, dName = dName, ADJsd = adj_SD , B=B, B_point =B_MC,
+                                        threshold = threshold, initialRandomEffects = initialRandomEffects,
+                                        ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
+                                        custom_indicator =custom_indicator, ...)
+
+  result <- list(
+    MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
+    Indicators = nonLin_preds[[1]],
+    MSE_Estimates = mse_estims,
+    AdjustedSD = adj_SD)
+
+  class(result) <- c("MC_MERF_nonLin", "SAEforest")
+  return(result)
+}
+
+if(mse == "nonparametric"){
+  mse_estims <- MSE_MC_MERF_nonLin_REB(Y=Y, X = X, mod=nonLin_preds[[2]], smp_data = smp_data,
+                                       pop_data = pop_data, dName = dName, ADJsd = adj_SD , B=B, B_point =B_MC,
+                                       threshold = threshold, initialRandomEffects = initialRandomEffects,
+                                       ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
+                                       custom_indicator =custom_indicator, ...)
+
+  result <- list(
+    MERFmodel = c(nonLin_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
+    Indicators = nonLin_preds[[1]],
+    MSE_Estimates = mse_estims,
+    AdjustedSD = adj_SD)
+
+  class(result) <- c("MC_MERF_nonLin", "SAEforest")
+  return(result)
+}
+}
+}
+
+
+
+
+
+
+
+
+
+

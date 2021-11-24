@@ -82,7 +82,7 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
 # Function called in SAEforest_nonLin
 input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEffects,
                                 ErrorTolerance, MaxIterations, mse, B, threshold, importance,
-                                custom_indicator, na.rm) {
+                                custom_indicator, na.rm, B_adj, B_MC, smearing) {
 
   if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
     stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(SAEforest_nonLin)")
@@ -125,7 +125,7 @@ input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEf
 
   if (is.null(colnames(smp_data)) || is.null(colnames(pop_data)) ||
       sum((colnames(smp_data) %in% colnames(pop_data))) == 0){
-    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage of covariate data from the survey sample and the population level information. See also help(SAEforest_mean)")
+    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage of covariate data from the survey sample and the population level information. See also help(SAEforest_nonLin)")
   }
 
   if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))) {
@@ -144,8 +144,20 @@ input_checks_nonLin <- function(Y, X, dName, smp_data, pop_data, initialRandomEf
     stop("The options for mse are ''none'', ''nonparametric'' and ''wild''.")
   }
 
+  if (!(inherits(smearing, "logical") && length(smearing) == 1)) {
+    stop("The option smearing is logical. Insert a value TRUE for smearing based estimation and the value FALSE for MC-based estimation. See also help(SAEforest_nonLin)")
+  }
+
   if (mse != "none" && !(is.numeric(B) && length(B) == 1 && B > 1)) {
     stop("If MSE-estimation is specified, B needs to be a single integer value, determining the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_nonLin).")
+  }
+
+  if (mse != "none" && !(is.numeric(B_adj) && length(B_adj) == 1 && B_adj > 1)) {
+    stop("If MSE-estimation is specified, B_adj needs to be a single integer value, determining the number of bootstrap replications for the adjustemt of residual variance. The value must be larger than 1. See also help(SAEforest_nonLin).")
+  }
+
+  if (smearing != TRUE && !(is.numeric(B_MC) && length(B_MC) == 1 && B_MC > 1)) {
+    stop("If MC-based estimation is specified, B_MC needs to be a single integer value, determining the number of generated bootstrap populations. The value must be larger than 1. See also help(SAEforest_nonLin).")
   }
 
   if (!is.null(threshold) && !(is.numeric(threshold) && length(threshold) == 1)&& !inherits(threshold, "function")) {

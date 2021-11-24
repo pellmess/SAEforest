@@ -10,6 +10,7 @@ SAEforest_nonLin(
   dName,
   smp_data,
   pop_data,
+  smearing = TRUE,
   mse = "none",
   importance = "none",
   initialRandomEffects = 0,
@@ -17,6 +18,7 @@ SAEforest_nonLin(
   MaxIterations = 25,
   B = 100,
   B_adj = 100,
+  B_MC = 100,
   threshold = NULL,
   custom_indicator = NULL,
   na.rm = TRUE,
@@ -38,9 +40,13 @@ are modeled.}
 covariates \code{X}. Please note that the column names of predictive covariates must match
 column names of \code{smp_data}. This holds especially for the name of the domain identifier.}
 
+\item{smearing}{Logical input indicating whether a smearing based approach or a MC-based version for
+point-estimates should be obtained. MC should be used if computational constraints do not allow for a
+smearing based approach. For theoretical details see (WP). Defaults to \code{TRUE}.}
+
 \item{mse}{character input specifying the type of uncertainty estimates. Available options are:
-(i) "nonparametric" following the mse boostrap procedure proposed by Krennmair & Schmid (202X)
-(ii) "wild" following the mse boostrap procedure proposed by Krennmair & Schmid (202X) or
+(i) "nonparametric" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X)
+(ii) "wild" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X) or
 (iii) "none" if only point estimates are requested. Defaults to "none".}
 
 \item{importance}{variable importance mode processed by the
@@ -61,6 +67,9 @@ Krennmair et al. (202X). Defaults to 100.}
 
 \item{B_adj}{numeric number of bootstrap replications for the adjustment of residual variance proposed
 by Mendez and Lohr (2001). Defaults to 100.}
+
+\item{B_MC}{numeric number of bootstrap populations to be generated for the MC version for estimating
+point estimates. Defaults to 100.}
 
 \item{threshold}{Set a custom threshold for indicators, such as the head count ratio. The threshold
 can be a known numeric value or function of \code{Y}. If the threshold is \code{NULL}, 60 \% of the
@@ -106,10 +115,12 @@ random effects term to be correct and b) estimates the random effects part, assu
 from the forest to be correct. Overall convergence of the algorithm is monitored by log-likelihood of a
 joint model of both components. For further details see Krennmair and Schmid or Hajem et. al. (2014).
 
-For the estimation of (nonlinear) porverty estimators and/or quantiles, we need information on the
+For the estimation of (nonlinear) poverty estimators and/or quantiles, we need information on the
 area-specific CDF of Y. We follow a smearing approach originating from Duan (1983) and analyzed within
 a general unit-level framework for the estimation of SAE means and quantiles by Tzavidis et al. (2010).
-For further details please see Krennmair et al. (202X).
+For further details please see Krennmair et al. (202X). Alternatively to the smearing approach, it is
+possible to simulate population values of Y using Monte-Carlo methods. This option is discussed as well
+and should be used for cases where smearing is not possible due to computational constraints.
 
 For the estimation of the MSE, the bootstrap population is built based on a bias-corrected residual
 variance as proposed Krennmair and Schmid (202X). The bootstrap bias correction follows Mendez and Lohr (2011).
@@ -136,22 +147,29 @@ model1 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data
 #example of SAEforest generic
 summary(model1)
 
-model1_merf <- model1$MERFmodel
-
-
 #Example 2:
+#Calculating point-estimates and discussing basic generic functions
+
+model2 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+                           pop_data = eusilcA_pop, smearing = FALSE)
+
+#example of SAEforest generic
+summary(model2)
+
+
+#Example 3:
 #Calculating point + MSE estimates and passing arguments to the forest.
 #Additionally, two additional indicators and function as threshold are added
 
-model2 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
+model3 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
                           pop_data = eusilcA_pop, mse = "nonparametric", B = 25, mtry=5, num.trees = 100,
                           threshold = function(Y){0.5 * median(Y)},
                           custom_indicator = list(my_max = function(Y, threshold){max(Y)},
                           my_quant = function(Y, threshold){quantile(Y, probs=c(0.05,0.95))}))
 
 #example of SAEforest generic:
-summary(model2)
-summarize_indicators(model2, MSE = FALSE, CV =TRUE, indicator = c("Gini", "my_max", "my_quant.5\%","my_quant.95\%"))
+summary(model3)
+summarize_indicators(model3, MSE = FALSE, CV =TRUE, indicator = c("Gini", "my_max", "my_quant.5\%","my_quant.95\%"))
 }
 
 }
