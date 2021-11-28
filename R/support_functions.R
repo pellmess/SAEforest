@@ -1,4 +1,5 @@
-calc_indicat <- function(Y, threshold, custom){
+
+calc_indicatR <- function(Y, threshold, custom){
 
   hcr_function <- function(y,threshold){
     mean(y < threshold, na.rm = TRUE)
@@ -67,9 +68,4 @@ sae_specs <- function(dName,cns,smp){
 
 #  return(list(smp_data, pop_data, X, Y))
 #}
-
-
-#' @useDynLib SAEforest R_rfweights
-.rfweights <- function(fdata, fnewdata, rw, scale)
-  w <- .Call(R_rfweights, fdata, fnewdata, rw, scale)
 
