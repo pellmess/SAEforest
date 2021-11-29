@@ -5,6 +5,10 @@ MSE_MC_MERF_nonLin_wild <- function(Y, X, dName, threshold, smp_data, mod, ADJsd
   forest_m1 <- mod
   rand_struc = paste0(paste0("(1|",dName),")")
 
+  ifelse(is.null(custom_indicator),
+         calc_indicat <- calc_indicatC,
+         calc_indicat <- calc_indicatR)
+
   n_i <- as.numeric(table(pop_data[[dName]]))
 
   boots_pop <- vector(mode="list",length = B)

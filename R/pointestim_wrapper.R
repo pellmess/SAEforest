@@ -42,7 +42,6 @@ point_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialRand
   domains = names(table(pop_data[[dName]]))
   popSize <- as.numeric(table(pop_data[[dName]]))
 
-
   if(is.null(threshold)){
     thresh = 0.6*median(Y, na.rm=TRUE)
   }
@@ -65,21 +64,30 @@ point_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialRand
     predict(unit_model$EffectModel,pop_data, allow.new.levels=TRUE)
 
 
-  # SMEARING STEP HERE------------
+#  if(is.null(custom_indicator)){
+#  unit_list <- split(unit_preds, pop_data[dName])
+
+#  indicators <- smear_fun(popSize = popSize, unit_preds=unit_list, oob_res =
+#              unit_model$OOBresiduals, threshold = thresh)
+
+#  indicators_out <- data.frame(domains, indicators)
+#}
+
+# SMEARING STEP HERE------------
   smear_list <- vector(mode="list", length = length(domains))
 
   for (i in seq_along(domains)){
     smear_i <- matrix(rep(unit_model$OOBresiduals,popSize[i]), nrow=popSize[i],ncol=length(unit_model$OOBresiduals),byrow=TRUE)
     smear_i <- smear_i + unit_preds[pop_data[[dName]] == domains[i]]
 
-    smear_list[[i]] <-  calc_indicat(c(smear_i), threshold = thresh, custom = custom_indicator)
+    smear_list[[i]] <-  calc_indicatR(c(smear_i), threshold = thresh, custom = custom_indicator)
   }
 
   indicators <- do.call(rbind.data.frame, smear_list)
   indicators_out <- cbind(domains, indicators)
   names(indicators_out)[1] <- dName
+# __________________________________
 
-  # __________________________________
 
   out_ob <- vector(mode="list", length = 2)
 
@@ -286,6 +294,10 @@ point_MC_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialR
 
   domains = names(table(pop_data[[dName]]))
   random = paste0(paste0("(1|",dName),")")
+
+  ifelse(is.null(custom_indicator),
+         calc_indicat <- calc_indicatC,
+         calc_indicat <- calc_indicatR)
 
   popSize_N <- data.frame(table(pop_data[[dName]]))
   popSize_n <- data.frame(table(smp_data[[dName]]))

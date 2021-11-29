@@ -11,14 +11,15 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // calc_indicatC
-NumericVector calc_indicatC(NumericVector Y, double threshold);
-RcppExport SEXP _SAEforest_calc_indicatC(SEXP YSEXP, SEXP thresholdSEXP) {
+NumericVector calc_indicatC(NumericVector Y, double threshold, Rcpp::Nullable<Rcpp::IntegerVector> custom);
+RcppExport SEXP _SAEforest_calc_indicatC(SEXP YSEXP, SEXP thresholdSEXP, SEXP customSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
     Rcpp::traits::input_parameter< double >::type threshold(thresholdSEXP);
-    rcpp_result_gen = Rcpp::wrap(calc_indicatC(Y, threshold));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::IntegerVector> >::type custom(customSEXP);
+    rcpp_result_gen = Rcpp::wrap(calc_indicatC(Y, threshold, custom));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -38,7 +39,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_SAEforest_calc_indicatC", (DL_FUNC) &_SAEforest_calc_indicatC, 2},
+    {"_SAEforest_calc_indicatC", (DL_FUNC) &_SAEforest_calc_indicatC, 3},
     {"_SAEforest_smear_fun", (DL_FUNC) &_SAEforest_smear_fun, 4},
     {NULL, NULL, 0}
 };

@@ -43,7 +43,7 @@ NumericVector Gini(NumericVector x) {
 
 
 // [[Rcpp::export]]
-NumericVector calc_indicatC(NumericVector Y, double threshold) {
+NumericVector calc_indicatC(NumericVector Y, double threshold, Rcpp::Nullable<Rcpp::IntegerVector> custom = R_NilValue) {
   double hcr = 0;
   NumericVector pgap = 0, pgap2 = 0, qsr1 = 0, qsr2 = 0, gini=0;
 
@@ -85,7 +85,8 @@ NumericVector rep_v( NumericVector x, int n){
 NumericVector smear_fun(NumericVector popSize, List unit_preds, NumericVector oob_res, double threshold){
 
   int nd = unit_preds.size(), res_d = oob_res.size();
-  NumericMatrix smear_mat(nd , 13 );
+  NumericMatrix smear_mat(nd , 10 );
+  CharacterVector namesex = {"Mean","Quant10","Quant25","Median","Quant75","Quant90","Gini","Hcr","Pgap","Qsr"};
 
   for (int i=0; i < nd; ++i) {
     NumericVector loop_v = rep_v(oob_res, popSize[i]);
@@ -93,6 +94,8 @@ NumericVector smear_fun(NumericVector popSize, List unit_preds, NumericVector oo
 
     loop_v = loop_v + pred_v;
     smear_mat(i,_) = calc_indicatC(loop_v, threshold); }
+
+  colnames(smear_mat) = namesex;
 
   return smear_mat;
 }
