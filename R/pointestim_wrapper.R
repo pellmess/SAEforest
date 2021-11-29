@@ -79,8 +79,8 @@ point_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialRand
   for (i in seq_along(domains)){
     smear_i <- matrix(rep(unit_model$OOBresiduals,popSize[i]), nrow=popSize[i],ncol=length(unit_model$OOBresiduals),byrow=TRUE)
     smear_i <- smear_i + unit_preds[pop_data[[dName]] == domains[i]]
-
-    smear_list[[i]] <-  calc_indicatR(c(smear_i), threshold = thresh, custom = custom_indicator)
+    val_i <- c(smear_i)
+    smear_list[[i]] <-  calc_indicatR(val_i, threshold = thresh, custom = custom_indicator)
   }
 
   indicators <- do.call(rbind.data.frame, smear_list)
