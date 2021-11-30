@@ -45,11 +45,11 @@
 #' #Specifc characteristics of Cross-validation
 #' fitControl <- trainControl(method = "repeatedcv",
 #'                           number = 5,
-#'                           repeats = 2)
+#'                           repeats = 1)
 #'
 #'# Define a tuning-grid
-#' merfGrid <- expand.grid(num.trees = c(500),
-#'                        mtry = c(3,7,9,11), min.node.size = c(5,10), splitrule =
+#' merfGrid <- expand.grid(num.trees = c(100),
+#'                        mtry = c(3,7,9), min.node.size = c(5), splitrule =
 #'                          c("variance"))
 #'
 #' tune_parameters(Y = income, X = X_covar, data = eusilcA_smp, dName ="district",
