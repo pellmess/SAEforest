@@ -4,6 +4,7 @@ MSE_MC_MERF_nonLin_REB <- function(Y, X, dName, threshold, smp_data, mod, ADJsd,
 
   forest_m1 <- mod
   rand_struc = paste0(paste0("(1|",dName),")")
+  domains <- t(unique(pop_data[dName]))
 
   ifelse(is.null(custom_indicator),
          calc_indicat <- calc_indicatC,
@@ -15,31 +16,10 @@ MSE_MC_MERF_nonLin_REB <- function(Y, X, dName, threshold, smp_data, mod, ADJsd,
   boots_pop <- sapply(boots_pop,function(x){pop_data},simplify =FALSE)
 
   # DATA PREP ________________________________________________
-  forest_res1 <- Y - predict(forest_m1$Forest, smp_data)$predictions
-
-  smp_data$forest_res <- forest_res1
-
-  # Random Effects
-  formRF <- formula(paste("forest_res ~", paste0(dName)))
-  ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
-  colnames(ran_effs1) <- c(dName,"r_bar")
-
-  smp_data <- dplyr::left_join(smp_data,ran_effs1,by = dName)
-  smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
-
-  # prepare for sampling
-  forest_res <- smp_data$forest_eij
-  forest_res<-(forest_res/sd(forest_res))*ADJsd
-
-  # CENTER
-  forest_res <- forest_res-mean(forest_res)
-
-  # prepare for sampling
-  ran_effs <- ran_effs1$r_bar
-  ran_effs <- (ran_effs/sd(ran_effs))*forest_m1$RanEffSD
-
-  # CENTER
-  ran_effs <- ran_effs-mean(ran_effs)
+  ran_obj <- ran_comp(Y=Y, smp_data = smp_data, mod=forest_m1, ADJsd = ADJsd, dName = dName)
+  ran_effs <- ran_obj$ran_effs
+  forest_res <- ran_obj$forest_res
+  smp_data <- ran_obj$smp_data
 
   pred_vals<- predict(forest_m1$Forest, pop_data)$predictions
   my_pred_f <- function(x){pred_vals}
@@ -48,27 +28,8 @@ MSE_MC_MERF_nonLin_REB <- function(Y, X, dName, threshold, smp_data, mod, ADJsd,
 
 
   # Errors
-  block_sample <- function(x){
-
-    in_samp <- t(unique(pop_data[dName]))  %in% t(unique(smp_data[dName]))
-    domains <- t(unique(pop_data[dName]))
-
-    block_err <- vector(mode="list",length = length(domains))
-
-    for (idd in which(in_samp)){
-      block_err[[idd]] <- sample(forest_res,size = sum(pop_data[dName] == domains[idd]),replace=TRUE)
-    }
-
-    if (sum(in_samp)!= length(domains)){
-      for (idd in which(!in_samp)){
-        block_err[[idd]] <- sample(forest_res, size = sum(pop_data[dName] == domains[idd]), replace=TRUE)
-      }
-    }
-
-    return(unlist(block_err))
-  }
-
-  e_ij <- sapply(boots_pop, block_sample, simplify = FALSE)
+  samp_e <- function(x){sample(forest_res, size=sum(n_i), replace = TRUE)}
+  e_ij <- sapply(boots_pop, samp_e, simplify = FALSE)
 
   smp_data$forest_res <- NULL
 

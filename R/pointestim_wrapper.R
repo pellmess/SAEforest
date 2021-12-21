@@ -270,8 +270,6 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
   final_smp_data <- do.call(dplyr::bind_rows, smp_weightsIncluded)
 
   # ESTIMATE MEANS
-  #work here
-  #____________________--
 
   final_smp_data$W_mean <- with(final_smp_data, forest_preds  * weights)
   f0 <- as.formula(paste("W_mean", paste(dName), sep=" ~ "))
@@ -328,31 +326,10 @@ point_MC_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialR
     predict(unit_model$EffectModel, pop_data, allow.new.levels=TRUE)
 
   # DATA PREP ________________________________________________
-  forest_res1 <- Y - predict(unit_model$Forest, smp_data)$predictions
-  smp_data$forest_res <- forest_res1
-
-  # Random Effects
-  formRF <- formula(paste("forest_res ~", paste0(dName)))
-  ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
-  colnames(ran_effs1) <- c(dName,"r_bar")
-
-  smp_data <- dplyr::left_join(smp_data,ran_effs1,by = dName)
-  smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
-
-  # prepare for sampling
-  forest_res <- smp_data$forest_eij
-  forest_res<-(forest_res/sd(forest_res))*unit_model$ErrorSD
-
-  # CENTER
-  forest_res <- forest_res-mean(forest_res)
-
-  # prepare for sampling
-  ran_effs <- ran_effs1$r_bar
-  ran_effs <- (ran_effs/sd(ran_effs))*unit_model$RanEffSD
-
-  # CENTER
-  ran_effs <- ran_effs-mean(ran_effs)
-  # DATA PREP ________________________________________________
+  ran_obj <- ran_comp(Y=Y, smp_data = smp_data, mod=unit_model, ADJsd = unit_model$ErrorSD, dName = dName)
+  ran_effs <- ran_obj$ran_effs
+  forest_res <- ran_obj$forest_res
+  smp_data <- ran_obj$smp_data
 
   pred_val <- matrix(unit_preds, ncol =B_point,
                      nrow = length(unit_preds), byrow = FALSE)
@@ -369,7 +346,8 @@ point_MC_nonLin <- function(Y, X, dName, threshold, smp_data, pop_data, initialR
   indi_agg <- rep(1:length(popSize$N_i), popSize$N_i)
   my_agg <-  function(x){tapply(x, indi_agg, calc_indicat, threshold = thresh, custom = custom_indicator)}
   tau_star <- apply(y_star, my_agg, MARGIN = 2, simplify = FALSE)
-  col_names <- colnames(tau_star[[1]]$`1`)
+
+  col_names <- names(tau_star[[1]]$`1`)
 
   comb <- function(x){matrix(unlist(x), nrow = length(popSize$N_i), byrow = TRUE)}
   tau_star <- sapply(tau_star, comb, simplify = FALSE)

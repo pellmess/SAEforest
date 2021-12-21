@@ -104,6 +104,37 @@ sample_select <- function(pop, smp, dName, times=100, set_seed = 1234){
   return(samples)
 }
 
+ran_comp <- function(mod, smp_data, Y, dName, ADJsd){
+
+  forest_res1 <- Y - predict(mod$Forest, smp_data)$predictions
+  smp_data$forest_res <- forest_res1
+
+  # Random Effects
+  formRF <- formula(paste("forest_res ~", paste0(dName)))
+  ran_effs1 <- aggregate(data=smp_data, formRF, FUN=mean)
+  colnames(ran_effs1) <- c(dName,"r_bar")
+
+  smp_data <- dplyr::left_join(smp_data,ran_effs1,by = dName)
+  smp_data$forest_eij <- smp_data$forest_res-smp_data$r_bar
+
+  # prepare for sampling
+  forest_res <- smp_data$forest_eij
+  forest_res<-(forest_res/sd(forest_res))*ADJsd
+
+  # CENTER
+  forest_res <- forest_res-mean(forest_res)
+
+  # prepare for sampling
+  ran_effs <- ran_effs1$r_bar
+  ran_effs <- (ran_effs/sd(ran_effs))*mod$RanEffSD
+
+  # CENTER
+  ran_effs <- ran_effs-mean(ran_effs)
+
+  return(list(forest_res = forest_res,
+              ran_effs = ran_effs,
+              smp_data = smp_data))
+}
 
 
 # EMPIRICAL LIKELIHOOD SUPPORT FUNS ----
