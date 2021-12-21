@@ -40,6 +40,44 @@
 #' @seealso \code{\link{SAEforest}}, \code{\link[maptools]{readShapePoly}},
 #' \code{\link[sp]{SpatialPolygonsDataFrame}}, \code{\link[ggplot2]{ggplot}}.
 #'
+#' @examples
+#' \dontrun{
+#' data("eusilcA_pop")
+#' data("eusilcA_smp")
+#'
+#' # Generate emdi object with additional indicators; here via function ebp()
+#' emdi_model <- ebp(fixed = eqIncome ~ gender + eqsize + cash +
+#'                     self_empl + unempl_ben + age_ben + surv_ben + sick_ben + dis_ben + rent +
+#'                     fam_allow + house_allow + cap_inv + tax_adj, pop_data = eusilcA_pop,
+#'                   pop_domains = "district", smp_data = eusilcA_smp, smp_domains = "district",
+#'                   threshold = 11064.82, transformation = "box.cox", L= 50, MSE = TRUE, B = 50)
+#'
+#' # Load shape file
+#' load_shapeaustria()
+#'
+#' # Create map plot for mean indicator - point and MSE estimates but no CV
+#' map_plot(object = emdi_model, MSE = TRUE, CV = FALSE,
+#'          map_obj = shape_austria_dis, indicator = c("Mean"),
+#'          map_dom_id = "PB")
+#'
+#' # Create a suitable mapping table to use numerical identifiers of the shape
+#' # file
+#'
+#' # First find the right order
+#' dom_ord <- match(shape_austria_dis@data$PB, emdi_model$ind$Domain)
+#'
+#' # Create the mapping table based on the order obtained above
+#' map_tab <- data.frame(pop_data_id = emdi_model$ind$Domain[dom_ord],
+#'                       shape_id = shape_austria_dis@data$BKZ)
+#'
+#' # Create map plot for mean indicator - point and CV estimates but no MSE
+#' # using the numerical domain identifiers of the shape file
+#'
+#' map_plot(object = emdi_model, MSE = FALSE, CV = TRUE,
+#'          map_obj = shape_austria_dis, indicator = c("Mean"),
+#'          map_dom_id = "BKZ", map_tab = map_tab)
+#'
+#'  }
 #'
 #' @export
 #' @importFrom reshape2 melt
@@ -137,8 +175,6 @@ plot_real <- function(object,
   }
   long <- lat <- group <- NULL
 
-
-
   map_data <- summarize_indicators(object = object, indicator = indicator,
                          MSE = MSE, CV = CV)$ind
 
@@ -217,6 +253,7 @@ plot_real <- function(object,
   }
 }
 
+# from emdi
 get_polygone <- function(values) {
   if (is.null(dim(values))) {
     values = as.data.frame(values)
@@ -237,6 +274,7 @@ get_polygone <- function(values) {
   reshape2::melt(combo[order(combo$ordering),], id.vars = c("id","x","y","ordering"))
 }
 
+# from emdi
 get_scale_points <- function(y, ind, scale_points){
   result <- NULL
   if (!is.null(scale_points)) {

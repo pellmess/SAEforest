@@ -46,10 +46,8 @@
 #'#practical applications.
 #'
 #'model1 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
-#'                           pop_data = eusilcA_pop, mse = "nonparametric", B = 2, mtry=5, num.trees = 50,
-#'                           threshold = function(Y){0.5 * median(Y)},
-#'                           custom_indicator = list(my_max = function(Y, threshold){max(Y)},
-#'                           my_quant = function(Y, threshold){quantile(Y, probs=c(0.05,0.95))}))
+#'                           pop_data = eusilcA_pop, mse = "nonparametric", B = 2, mtry=5,
+#'                           num.trees = 50, smearing = FALSE)
 #'
 #'#Extract indicator and try generics:
 #'Hcr1 <- summarize_indicators(model1, MSE = TRUE, CV =TRUE, indicator = "Hcr")

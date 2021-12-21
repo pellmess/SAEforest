@@ -15,8 +15,8 @@
 #' \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}} and \code{\link{SAEforest_meanAGG}}.
 #' Each function produces an object inheriting requested results of regionally disaggregated point and uncertainty
 #' estimates. Additionally, statistical information on model fit and variable importance is accessible
-#' through functions such as a summary \code{\link{summary_SAEforest}} or a class specific plot function
-#' \code{\link{plot_SAEforest}}. For a full documentation of objects of class "SAEforest" see \code{\link{SAEforestObject}}.
+#' through functions such as a summary \code{\link{summary.SAEforest}} or a class specific plot function
+#' \code{\link{plot.SAEforest}}. For a full documentation of objects of class "SAEforest" see \code{\link{SAEforestObject}}.
 #' An overview of all currently provided functions within this package can be be seen with \code{library(help=SAEforest)}.
 #'
 #' @references

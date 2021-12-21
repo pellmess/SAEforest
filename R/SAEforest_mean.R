@@ -1,8 +1,8 @@
-#' Main function for means using MERFs with unit-level data
+#' Main function for means using MERFs with unit-level and aggregated data
 #'
 #' This function facilitates the use of Mixed Effects Random Forests (MERFs) for applications
-#' of Small Area Estimation (SAE). Unit-level survey-sample and unit-level covariate data on
-#' predictive covariates is required to produce reliable estimates of domain-specific means.
+#' of Small Area Estimation (SAE). Unit-level sample data and additonal unit-level or aggregated
+#' data on predictive covariates is required to produce reliable estimates of domain-specific means.
 #' The MERF algorithm is an algorithmic procedure reminiscent of an EM-algorithm (see Details).
 #' Overall, the function serves as a coherent framework for the estimation of point-estimates
 #' and if requested for assessing the uncertainty of the estimates. Methodological details are
@@ -14,16 +14,20 @@
 #' are modeled.
 #' @param smp_data data.frame of survey sample data including the specified elements of \code{Y} and
 #' \code{X}.
-#' @param pop_data data.frame of unit-level population or census level covariate data for
-#' covariates \code{X}. Please note that the column names of predictive covariates must match
-#' column names of \code{smp_data}. This holds especially for the name of the domain identifier.
-#' @param mse character input specifying the type of uncertainty estimates. Available options are:
-#' (i) "analytic" following Mendez (2008) (ii) "nonparametric" following the mse boostrap procedure
-#' proposed by Krennmair & Schmid (202X) or (iii) "none" if only point estimates are requested. Defaults to "none".
+#' @param pop_data data.frame of unit-level or aggregated population level data for
+#' covariates \code{X}. Please note that the column names of predictive covariates and the domain-level
+#' identifier must match the column names of \code{smp_data}. Also note, that if aggregated covariate data
+#' is used, the function parameter \code{aggData} must be set to \code{TRUE}.
+#' @param mse character input specifying the type of uncertainty estimates. Currently available options are:
+#' (i) "none" if only point estimates are requested or (ii) "nonparametric" following the mse boostrap procedure
+#' proposed by Krennmair & Schmid (202X) and by Krennmair et al (202X) if \code{aggData = TRUE}.
 #' @param importance variable importance mode processed by the
-#' random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
-#' 'permutation'. Defaults to "none". If you wish to produce informative plot with the generic function
-#' \code{\link{plot}}, set \code{importance} not to 'none'. For further details see \link[ranger]{ranger}.
+#' random forest from the \pkg{ranger}. Must be one of the following option: (i)'impurity', (ii) 'impurity_corrected'
+#' or (iii) 'permutation'. Defaults to 'impurity'. In general, a concept of variable importance is needed
+#' for the production of informative plots with the generic function \code{\link{plot}}. In the case of
+#' aggregated covariate data, variable importance is needed to rank covariate information in the
+#' process of finding suitable calibration weights (see details). For further information regarding
+#' the measures of importance see \link[ranger]{ranger}.
 #' @param initialRandomEffects numeric value or vector of initial estimate of random effects.
 #' Defaults to 0.
 #' @param ErrorTolerance numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.
@@ -37,8 +41,19 @@
 #' Most important parameters are for instance mtry (number of variables to possibly split at
 #' in each node), or num.tree (number of trees). For further details on possible parameters
 #' see \link[ranger]{ranger} and the example below.
+#' @param aggData Logical input indicating whether aggregated covariate information or unit-level covariate information
+#' is used. Defaults to \code{FALSE} assuming unit-level covariate data.
+#' @param popnsize data.frame, omprising information of population size of domains.
+#' only needed if \code{aggData = TRUE} and a MSE is requested. Please note that the name
+#' of the domain identifier must match the column name of \code{smp_data}.
+#' @param OOsample_obs Number of Out-of-sample observations taken from the closest area for potentially unsampled
+#' areas. Only needed if \code{aggData = TRUE} with default set to 25.
+#' @param ADDsamp_obs Number of Out-of-sample observations taken from the closest area if first iteration for the
+#' calculation of calibration weights fails. Only needed if \code{aggData = TRUE} with default set to 0.
+#' @param w_min Minimal number of covariates from which informative weights are calculated.
+#' Only needed if \code{aggData = TRUE} and a MSE is requested with defaults to 3.
 #'
-#' @return An object of class "SAEforest" always includes point estimates for disaggregated indicators
+#' @return An object of class "SAEforest" always includes point estimates for disaggregated mean estimates
 #' as well as information on the MERF-model. Optionally corresponding MSE estimates are returned.
 #' Several generic functions have methods for the returned object of class "SAEforest". Additionally,
 #' the included \code{MERFmodel} object allows the use of generic functions for classes "ranger" and
@@ -54,7 +69,12 @@
 #' forest to be correct. Overall convergence of the algorithm is monitored by log-likelihood of a joint model
 #' of both components. For further details see Krennmair and Schmid or Hajem et. al. (2014).
 #'
-#' For the estimation of the MSE, the bootstrap population is built based on a bias-corrected residual variance as
+#' Generally, the MERF requires covariate micro-data. This function, however also allows for the use of aggregated
+#' covariate information, by setting \code{aggData = TRUE}. Aggregated covariate information is adaptively
+#' incorporated through calibration-weights based on empirical likelihood for the
+#' estimation of area-level means. See methodological details in Krennmair et al. (202X).
+#'
+#' For the estimation of the MSE, residuals are scaled by a bias-corrected residual variance as
 #' proposed Krennmair and Schmid (202X). The bootstrap bias correction follows Mendez and Lohr (2011).
 #'
 #' Note that the \code{MERFmodel} object is a composition of elements from a random forest of class 'ranger'
@@ -70,8 +90,10 @@
 #' @seealso \code{\link{SAEforestObject}}, \code{\link[ranger]{ranger}}, \code{\link[lme4]{lmer}}
 #' @examples
 #' \dontrun{#Loading data
+#' data("eusilcA_popAgg")
 #' data("eusilcA_pop")
 #' data("eusilcA_smp")
+#' data("popNsize")
 #'
 #' income <- eusilcA_smp$eqIncome
 #' X_covar <- eusilcA_smp[,-c(1,16,17,18)]
@@ -86,8 +108,8 @@
 #' summary(model1)
 #'
 #'
-#' #Example 2:
-#' #Calculating point + MSE estimates and passing arguments to the forest
+#'#Example 2:
+#'#Calculating point + MSE estimates and passing arguments to the forest
 #'
 #' model2 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
 #'                          smp_data = eusilcA_smp, pop_data = eusilcA_pop,
@@ -97,16 +119,33 @@
 #'#SAEforest generics:
 #'summary(model2)
 #'summarize_indicators(model2, MSE = TRUE, CV =TRUE)
+#'
+#'#Example 3:
+#'#Calculating point + MSE estimates and passing arguments to the forest
+#'
+#' model3 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
+#'                             smp_data = eusilcA_smp, pop_data = eusilcA_popAgg,
+#'                             mse = "nonparametric", popnsize = popNsize,
+#'                             B = 25, mtry=5, num.trees = 100, aggData = TRUE)
+#'
+#'#SAEforest generics:
+#'summary(model3)
+#'summarize_indicators(model3, MSE = TRUE, CV =TRUE)
+#'
 #'}
 #'
 #' @export
 
-SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none",importance = "none",
-                           initialRandomEffects = 0, ErrorTolerance = 0.0001, MaxIterations = 25,  B=100,
+SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none", aggData =FALSE,
+                           popnsize = NULL, OOsample_obs = 25, ADDsamp_obs=0, w_min=3,
+                           importance = "impurity", initialRandomEffects = 0,
+                           ErrorTolerance = 0.0001, MaxIterations = 25,  B=100,
                            B_adj = 100, na.rm =TRUE,...){
 
-# ERROR CHECKS OF INPUTS
-#________________________________________
+  if(aggData == FALSE){
+
+  # ERROR CHECKS OF INPUTS
+  #________________________________________
 
   if(na.rm == TRUE){
     comp_smp <- complete.cases(smp_data)
@@ -122,11 +161,11 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none",importa
 
   out_call <- match.call()
 
-# Make domain variable to character and sort data-sets
+  # Make domain variable to character and sort data-sets
   smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(smp_data[[dName]]))
   pop_data[[dName]] <- factor(pop_data[[dName]], levels=unique(pop_data[[dName]]))
 
-# Order Data according to factors to ease MSE-estimation
+  # Order Data according to factors to ease MSE-estimation
   order_in <- order(smp_data[[dName]])
   smp_data <- smp_data[order_in,]
   X <- X[order_in,]
@@ -134,28 +173,28 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none",importa
   pop_data <- pop_data[order(pop_data[[dName]]),]
 
 
-# Point Estimation
-#________________________________________
+  # Point Estimation
+  #________________________________________
   mean_preds <- point_mean(Y = Y, X = X, dName = dName, smp_data = smp_data, pop_data = pop_data,
-             initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
-             MaxIterations = MaxIterations,importance = importance,...)
+                           initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
+                           MaxIterations = MaxIterations,importance = importance,...)
 
   data_specs <- sae_specs(dName = dName,cns = pop_data,smp = smp_data)
 
 
   if(mse == "none"){
-  result <- list(
-    Indicators = mean_preds[[1]],
-    MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
-    MSE_Estimates = NULL,
-    AdjustedSD = NULL)
+    result <- list(
+      Indicators = mean_preds[[1]],
+      MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
+      MSE_Estimates = NULL,
+      AdjustedSD = NULL)
 
-  class(result) <- c("SAEforest_mean", "SAEforest")
-  return(result)
-}
+    class(result) <- c("SAEforest_mean", "SAEforest")
+    return(result)
+  }
 
-# MSE Estimation
-#________________________________________
+  # MSE Estimation
+  #________________________________________
 
   if(mse != "none"){
     print(paste("Error SD Bootstrap started:"))
@@ -165,15 +204,15 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none",importa
 
   if(mse == "analytic"){
     mse_estims <- MSE_MERFanalytical(mod=mean_preds[[2]], smp_data = smp_data, X = X,
-                                   dName = dName, err_sd = adj_SD , B=B,
-                                   initialRandomEffects = initialRandomEffects,
-                                   ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
+                                     dName = dName, err_sd = adj_SD , B=B,
+                                     initialRandomEffects = initialRandomEffects,
+                                     ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
 
     result <- list(
-     MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
-     Indicators = mean_preds[[1]],
-     MSE_Estimates = mse_estims,
-     AdjustedSD = adj_SD)
+      MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
+      Indicators = mean_preds[[1]],
+      MSE_Estimates = mse_estims,
+      AdjustedSD = adj_SD)
 
     class(result) <- c("SAEforest_mean", "SAEforest")
     return(result)
@@ -195,3 +234,95 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none",importa
     return(result)
   }
 }
+
+  if(aggData == TRUE){
+    # ERROR CHECKS OF INPUTS
+    #________________________________________
+
+    if(na.rm == TRUE){
+      comp_smp <- complete.cases(smp_data)
+      smp_data <- smp_data[comp_smp,]
+      Y <- Y[comp_smp]
+      X <- X[comp_smp,]
+      pop_data <- pop_data[complete.cases(pop_data),]
+    }
+
+    input_checks_meanAGG(Y = Y, X = X, dName = dName, smp_data =smp_data, Xpop_agg =pop_data,
+                         initialRandomEffects = initialRandomEffects, ErrorTolerance =ErrorTolerance,
+                         MaxIterations =MaxIterations, mse =mse, B = B, popnsize =popnsize,
+                         OOsample_obs =OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min =w_min,
+                         importance = importance, na.rm = na.rm)
+
+    out_call <- match.call()
+
+
+    # Make domain variable to character and sort data-sets
+    smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(smp_data[[dName]]))
+    pop_data[[dName]] <- factor(pop_data[[dName]], levels = unique(pop_data[[dName]]))
+    if(mse != "none"){
+      popnsize[[dName]] <- factor(popnsize[[dName]], levels = unique(pop_data[[dName]]))
+    }
+
+    # Order Data according to factors to ease MSE-estimation
+    order_in <- order(smp_data[[dName]])
+    smp_data <- smp_data[order_in,]
+    X <- X[order_in,]
+    Y <- Y[order_in]
+
+    # Point Estimation
+    #________________________________________
+    meanAGG_preds <- point_meanAGG(Y = Y, X = X, dName = dName, smp_data = smp_data, Xpop_agg = pop_data,
+                                   initialRandomEffects = initialRandomEffects, ErrorTolerance = ErrorTolerance,
+                                   MaxIterations = MaxIterations, OOsample_obs = OOsample_obs, ADDsamp_obs = ADDsamp_obs, w_min = w_min,
+                                   importance = importance, ...)
+
+    data_specs <- sae_specs(dName = dName,cns = pop_data, smp = smp_data)
+
+
+    if(mse == "none"){
+      result <- list(
+        MERFmodel =  c(meanAGG_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
+        Indicators = meanAGG_preds[[1]],
+        MSE_Estimates = NULL,
+        AdjustedSD = NULL,
+        NrCovar = meanAGG_preds$wAreaInfo)
+
+      class(result) <- c("SAEforest_meanAGG", "SAEforest")
+      return(result)
+    }
+
+    # MSE Estimation
+    #________________________________________
+
+    if(mse != "none"){
+      print(paste("Error SD Bootstrap started:"))
+      adj_SD <- adjust_ErrorSD(Y=Y, X=X, smp_data = smp_data, mod = meanAGG_preds[[2]], B = B_adj, ...)
+      print(paste("Bootstrap with", B,"rounds started"))
+    }
+
+    if(mse == "nonparametric"){
+
+      mse_estims <- MSE_SAEforest_aggOOB_wSet(Y=Y, X = X, mod = meanAGG_preds, smp_data = smp_data,
+                                              Xpop_agg = pop_data, dName = dName, ADJsd = adj_SD , B=B,
+                                              initialRandomEffects = initialRandomEffects,
+                                              ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations,
+                                              popnsize = popnsize, ...)
+
+      result <- list(
+        MERFmodel =  c(meanAGG_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
+        Indicators = meanAGG_preds[[1]],
+        MSE_Estimates = mse_estims,
+        AdjustedSD = adj_SD,
+        NrCovar = meanAGG_preds$wAreaInfo)
+
+      class(result) <- c("SAEforest_meanAGG", "SAEforest")
+      return(result)
+    }
+  }
+}
+
+
+
+
+
+
