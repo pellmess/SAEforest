@@ -14,24 +14,23 @@ calculated CV's are desired. The object must be of class \code{SAEforest}.}
 all calculated indicators ("all"); (ii) each default indicators name: "Mean",
 "Quant10", "Quant25", "Median", "Quant75", "Quant90", "Gini", "Hcr", "Pgap", "Qsr"
 or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
-If the \code{object} is estimated by \code{\link{SAEforest_mean}} or \code{\link{SAEforest_meanAGG}}
-indicator arguments are ignored and only the "Mean" is returned.}
+If the \code{object} is estimated by \code{\link{SAEforest_mean}} indicator arguments
+are ignored and only the "Mean" is returned.}
 
 \item{MSE}{optional logical. If \code{TRUE}, MSE estimates for selected indicators
-per domain are added to the data frame of point estimates. Defaults to
-\code{FALSE}.}
+per domain are added to the data frame of point estimates. Defaults to \code{FALSE}.}
 
 \item{CV}{optional logical. If \code{TRUE}, coefficients of variation for selected
-indicators per domain are added to the data frame of point estimates.
-Defaults to \code{FALSE}.}
+indicators per domain are added to the data frame of point estimates. Defaults to \code{FALSE}.}
 }
 \value{
 The return of \code{summarize_indicators} is an object of type "summarize_indicators.SAEforest"
 including domain-specific point and/or MSE estimates and/or calculated CV's from a \code{SAEforest} object
-The returned object contains a data frame \code{ind} and a character naming the requested indicator(s).
+The returned object contains a data frame \code{ind} and a character including the names
+the requested indicator(s).
 }
 \description{
-Function \code{summarize_indicators} is a function used to present point and
+Function \code{summarize_indicators} is a function used to summarize point and
 mean squared error (MSE) estimates as well as calculated coefficients of variation
 (CV) from a fitted \code{SAEforest} object.
 }

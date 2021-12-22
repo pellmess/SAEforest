@@ -18,9 +18,9 @@ MERFranger(
 )
 }
 \arguments{
-\item{Y}{metric input value of target variable}
+\item{Y}{Metric input value of target variable}
 
-\item{X}{matrix of predictive covariates}
+\item{X}{Matrix of predictive covariates}
 
 \item{random}{Specification of random effects terms following the syntax of \link[lme4]{lmer}.
 Random-effect terms are specified by vertical bars (|) separating expressions for design matrices
@@ -29,62 +29,64 @@ from grouping factors. For further details see \link[lme4]{lmer} and the example
 \item{data}{data.frame of sample data including the specified elements of \code{Y} and
 \code{X}.}
 
-\item{importance}{variable importance mode processed by the
+\item{importance}{Variable importance mode processed by the
 random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
 'permutation'. For further details see \link[ranger]{ranger}.}
 
-\item{initialRandomEffects}{numeric value or vector of initial estimate of random effects.
+\item{initialRandomEffects}{Numeric value or vector of initial estimate of random effects.
 Defaults to 0.}
 
-\item{ErrorTolerance}{numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04}
+\item{ErrorTolerance}{Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04}
 
-\item{MaxIterations}{numeric value specifying the maximal amount of iterations for the
+\item{MaxIterations}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm. Defaults to 25.}
 
-\item{na.rm}{logical. Whether missing values should be removed. Defaults to TRUE.}
+\item{na.rm}{Logical. Whether missing values should be removed. Defaults to TRUE.}
 
-\item{...}{additional parameters are directly passed to the random forest \link[ranger]{ranger}.
+\item{...}{Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
 Most important parameters are for instance mtry (number of variables to possibly split at
-in each node), or num.tree (number of trees). For further details on possible parameters
+in each node), or num.trees (number of trees). For further details on possible parameters
 see \link[ranger]{ranger} and the example below.}
 }
 \value{
 object of class MERFmodel includes the following elements:
 
-\item{\code{Forest}}{a random forest of type 'ranger' modelling fixed effects
+\item{\code{Forest}}{A random forest of type 'ranger' modelling fixed effects
 of the model.}
-\item{\code{EffectModel}}{a model of random effects of type 'lmer' capturing
+\item{\code{EffectModel}}{A model of random effects of type 'lmer' capturing
 tructural component of MERFs and modeling random components.}
-\item{\code{RandomEffects}}{list element containing the values of random intercepts from \code{EffectModel}.}
-\item{\code{RanEffSD}}{numeric value of the standard deviation of random intercepts.}
-\item{\code{ErrorSD}}{numeric value of standard devition of unit-level errors.}
+\item{\code{RandomEffects}}{List element containing the values of random intercepts from \code{EffectModel}.}
+\item{\code{RanEffSD}}{Numeric value of the standard deviation of random intercepts.}
+\item{\code{ErrorSD}}{Numeric value of standard devition of unit-level errors.}
 \item{\code{VarianceCovariance}}{VarCor matrix from \code{EffectModel}.}
-\item{\code{LogLik}}{vector with numerical entries showing the loglikelihood of the MERF algorithm.}
-\item{\code{IterationsUsed}}{numeric number of interatirons used until covergence of the MERF algorithm.}
-\item{\code{OOBresiduals}}{vector of OOB-residuals.}
-\item{\code{Random}}{character specifying the random intercept in the random effects model.}
-\item{\code{ErrorTolerance}}{numerical value to monitor the MERF algorithm's convergence.}
-\item{\code{initialRandomEffects}}{numeric value or vector of intial specification of random effects.}
-\item{\code{MaxIterations}}{numeric value specifying the maximal amount of iterations for the
+\item{\code{LogLik}}{Vector with numerical entries showing the loglikelihood of the MERF algorithm.}
+\item{\code{IterationsUsed}}{Numeric number of interatirons used until covergence of the MERF algorithm.}
+\item{\code{OOBresiduals}}{Vector of OOB-residuals.}
+\item{\code{Random}}{Character specifying the random intercept in the random effects model.}
+\item{\code{ErrorTolerance}}{Numerical value to monitor the MERF algorithm's convergence.}
+\item{\code{initialRandomEffects}}{Numeric value or vector of intial specification of random effects.}
+\item{\code{MaxIterations}}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm.}
-\item{\code{call}}{the summarized function call producing the object.}
-\item{\code{data_specs}}{data characteristics such as domain specific sample sizes or number of
+\item{\code{call}}{The summarized function call producing the object.}
+\item{\code{data_specs}}{Data characteristics such as domain specific sample sizes or number of
 out-of-sample areas.}
-\item{\code{data}}{the used survey sample data.}
+\item{\code{data}}{The used survey sample data.}
 }
 \description{
 This function enables the use of Mixed Effects Random Forests (MERFs) by effectively
 combining a random forest from \pkg{ranger} with a model capturing random effects from
 \pkg{lme4}. The MERF algorithm is an algorithmic procedure reminiscent of an EM-algorithm
-(see Details). The function is the base-function for the three wrapping functions
-(\code{\link{SAEforest_mean}}, \code{\link{SAEforest_meanAGG}}, \code{\link{SAEforest_nonLin}})
-and should not be directly used by the user. Recommended exceptions are applications exceeding
+(see Details). The function is the base-function for the two wrapping functions
+(\code{\link{SAEforest_mean}} and \code{\link{SAEforest_nonLin}})
+and should not be directly used by the reguluar user. Recommended exceptions are applications exceeding
 the scope of existing wrapper functions or further research. The function \code{MERFranger}
 allows to model complex patterns of structural relations (see Examples). The function returns
 an object of class MERFmodel, which can be used to produce unit-level predictions. In contrast to
-the wrapping functions, this function does not directly provide SAE estimates.
+the wrapping functions, this function does not directly provide SAE estimates on domain-specific indicators.
 }
 \details{
+There exists a generic function for \code{predict} for objects obtained by \code{MERFranger}.
+
 The MERF algorithm iteratively optimizes two separate steps: a) the random forest
 function, assuming the random effects term to be correct and b) estimates the random
 effects part, assuming the OOB-predictions from the forest to be correct. Overall convergence
@@ -93,7 +95,7 @@ further details see Krennmair and Schmid or Hajem et. al. (2014).
 
 Note that the \code{MERFmodel} object is a composition of elements from a random forest of class
 'ranger' and a random effects model of class 'lmerMod'.  Thus, all generic functions applicable
-to objects of classes 'ranger' and 'lmerMod' can be used on these elements. For furhter details
+to objects of classes 'ranger' and 'lmerMod' can be used on these elements. For further details
 on generic functions see \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as
 the examples below.
 }
@@ -113,12 +115,11 @@ model1 <- MERFranger(Y = income, X = X_covar, random = "(1|district)",
 
 #Example 2:
 #Calculating a model using 2-level nested design
-model2 <- MERFranger(Y = income, X = X_covar, random = "(1|state/district)",
-                    data = eusilcA_smp, mtry=5)
+model2 <- MERFranger(Y = income, X = X_covar, random = "(1|district)+(1|state:gender)",
+                    data = eusilcA_smp, mtry=3)
 
 #get individual predictions:
-ind_pred <- predict(model2$Forest, eusilcA_pop)$predictions +
- predict(model2$EffectModel, eusilcA_pop, allow.new.levels=TRUE)
+ind_pred <- predict(model2, eusilcA_pop)
 }
 
 }

@@ -1,12 +1,13 @@
 #' Tuning and cross-validation of MERF parameters
 #'
-#' Function \code{tune_parameters} allows to easily tune parameters for the implemented MERF method. Essentially,
+#' Function \code{tune_parameters} allows to tune parameters for the implemented MERF method. Essentially,
 #' this function can be understood as a modified wrapper for \link[caret]{train} from the package \pkg{caret}, treating
 #' MERFs as a custom method.
 #'
-#' @details Tuning can be performed on the following four parameters: \code{num.trees}(the number of trees for a forest),
-#' \code{mtry} (number of variables as split candidates at in each node), \code{min.node.size} (minimal individual node size)
-#' and \code{splitrule} (general splitting rule). For details see \link[ranger]{ranger}.
+#' @details Tuning can be performed on the following four parameters: \code{num.trees}(the number of trees
+#' for a forest), \code{mtry} (number of variables as split candidates at in each node), \code{min.node.size}
+#' (minimal individual node size) and \code{splitrule} (general splitting rule). For details see
+#' \link[ranger]{ranger}.
 #'
 #' @param Y metric input value of target variable.
 #' @param X matrix or data.frame of predictive covariates.
@@ -27,7 +28,7 @@
 #' is shown. Defaults to TRUE.
 #' @param return_plot if set to \code{TRUE}, a list of the comparative plot produced by \pkg{ggplot2}
 #' is returned for further individual customization and processing.
-#' @param ... ... additional parameters are directly passed to the random forest \link[ranger]{ranger} and/or
+#' @param ... Additional parameters are directly passed to the random forest \link[ranger]{ranger} and/or
 #' the training function \link[caret]{train}. For further details on possible parameters and examples
 #' see \link[ranger]{ranger} or \link[caret]{train}.
 #'
@@ -42,13 +43,13 @@
 #' income <- eusilcA_smp$eqIncome
 #' X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 #'
-#' #Specifc characteristics of Cross-validation
+#'#Specifc characteristics of Cross-validation
 #' fitControl <- trainControl(method = "repeatedcv",
 #'                           number = 5,
 #'                           repeats = 1)
 #'
 #'# Define a tuning-grid
-#' merfGrid <- expand.grid(num.trees = c(100),
+#' merfGrid <- expand.grid(num.trees = c(50),
 #'                        mtry = c(3,7,9), min.node.size = c(5), splitrule =
 #'                          c("variance"))
 #'

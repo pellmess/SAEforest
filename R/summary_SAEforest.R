@@ -1,7 +1,7 @@
 #' Summarizes an SAEforest Object
 #'
-#' Additional information about the data and model in small area estimation
-#' methods and components of an SAEforest object are extracted. The returned object
+#' Shows additional information about the data, the SAE model its components.
+#' Information is extracted from a "SAEforest" object. The returned object
 #' is suitable for printing with the \code{print}.
 
 #' @param object an object of type "SAEforest" representing point
@@ -119,7 +119,7 @@ print.summary.SAEforest <- function(x, ...) {
   cat("\n")
   cat("Convergence of MERF-algorithm: \n")
   cat("________________________________________________________________\n")
-  cat("Convergence achieved after", x$iter,"iterations.\nA maximum of", x$maxIter,"iterations was used and tolerance set to:", x$Tol,"\n")
+  cat("Convergence achieved after", x$iter,"iterations.\nA maximum of", x$maxIter,"iterations used and tolerance set to:", x$Tol,"\n")
   cat("\n")
   cat("Monitored Log-Likelihood:")
   print(x$LogLik)

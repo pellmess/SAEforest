@@ -34,10 +34,10 @@ color "darkgreen".}
 such that it can be process by \code{\link[ggplot2]{aes}}. Default is to a character name of the
 color "darkgreen".}
 
-\item{alpha}{Parameter specifying the transperancy of \code{fill} for vip plots.
-The argument must a number in \code{[0,1]}.}
+\item{alpha}{Parameter specifying the transparency of \code{fill} for vip plots.
+The argument must be a number in \code{[0,1]}.}
 
-\item{include_type}{if set to \code{TRUE}, the type of importance specified in the fitting process
+\item{include_type}{If set to \code{TRUE}, the type of importance specified in the fitting process
 of the model is included in the vip plot. Defaults to \code{TRUE}.}
 
 \item{horizontal}{if set to \code{TRUE}, the importance scores are plot on the x-axis. If parameter is
@@ -53,10 +53,10 @@ such that it can be process by \code{\link[ggplot2]{aes}}. Defaults to "solid".}
 
 \item{grid_row}{Parameter specifying the amount of rows for the joint pdp plot. Default is set to 2}
 
-\item{out_list}{if set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
+\item{out_list}{If set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
 is returned for further individual customization and processing. Defaults to \code{FALSE}.}
 
-\item{pdp_plot}{if set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
+\item{pdp_plot}{If set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
 from the package \pkg{pdp} are included. Defaults to \code{TRUE}.}
 
 \item{...}{Optional additional inputs that are ignored for this method.}
@@ -68,21 +68,20 @@ customization and exporting. See the following examples for details.
 }
 \description{
 Plots model-specific characteristics of the fixed effects random forest component of
-the MERF from object "SAEforest". In general, a variable importance plot is produced to
-visualize the importance of covariate data for the model. For the variable importance plot,
-arguments are passed internally to the function \code{\link[vip]{vip}}. If requested, the
-plot function additionally provides a partial dependence plot (pdp) to visualize the impact
-of a given number of influential covariates on the target variable. The pdp plot is produced
-using \code{\link[pdp]{partial}} from the package \pkg{pdp}. The plot-engine for both plots
-is \pkg{ggplot2}.
+the MERF from object "SAEforest". A variable importance plot is produced to visualize
+the importance of individual covariates for the predictive performance of the model.
+For the variable importance plot, arguments are passed internally to the function
+\code{\link[vip]{vip}}. If requested, the plot function additionally provides a partial
+dependence plot (pdp) to visualize the impact of a given number of influential covariates
+on the target variable. The pdp plot is produced using \code{\link[pdp]{partial}} from
+the package \pkg{pdp}. The plot-engine for both plots is \pkg{ggplot2}.
 }
 \details{
 For the production of importance plots, be sure to specify the parameter of
 \code{importance != 'none'} before producing estimates with functions \code{\link{SAEforest_mean}},
-\code{\link{SAEforest_meanAGG}} or \code{\link{SAEforest_nonLin}}.
+or \code{\link{SAEforest_nonLin}}.
 
-For pdp plots, note that despite
-their potential importance, covariates of type factor or character cannot be used for partial dependence
+For pdp plots, note that covariates of type factor or character cannot be used for partial dependence
 plots. Dummy-variables can be used, however, their pdp plots are always lines connecting two effect
 points for 0 and 1. Most informative pdp plots can be produced for metric covariates.
 }
@@ -98,7 +97,7 @@ X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 #Calculating point-estimates and discussing basic generic functions
 
 model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
-                       smp_data = eusilcA_smp, pop_data = eusilcA_pop)
+                       smp_data = eusilcA_smp, pop_data = eusilcA_pop, num.trees = 50)
 
 plot(model1)
 }

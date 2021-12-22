@@ -1,8 +1,8 @@
 #' Simulated EU-SILC data - population data
 #'
-#' The data set comprises synthetic EU-SILC data and is taken from the package \pkg{emdi}.
-#' The original data set \code{\link[simFrame]{eusilcP}} from package \pkg{simFrame} is
-#' reduced to 17 variables containing three regional variables for the states and districts.
+#' The data set includes synthetic EU-SILC data and is taken from the package \pkg{emdi}.
+#' Originally, the data builds on \code{\link[simFrame]{eusilcP}} from package \pkg{simFrame}
+#' and was reduced to 17 variables containing regional variables for the states and districts.
 #'
 #' @format A data frame with 25000 observations and 17 variables:
 #' \describe{

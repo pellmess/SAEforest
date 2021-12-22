@@ -30,10 +30,10 @@ modified OECD scale.}
 eusilcA_popAgg
 }
 \description{
-The data set comprises synthetic EU-SILC data and is taken from the package \pkg{emdi}.
-The original data set \code{\link[simFrame]{eusilcP}} from package \pkg{simFrame} is
-reduced to 15 variables including the district identifers as well as aggregated household level
-covariates. Therefore, except for the variables \code{ratio_n} and \code{district},
-the variables are the mean values per district.
+The data set includes synthetic EU-SILC data and is taken from the package \pkg{emdi}.
+Originally, the data builds on \code{\link[simFrame]{eusilcP}} from package \pkg{simFrame}
+and is reduced to 15 variables including the district identifiers as well as aggregated
+household level covariates. Therefore, except for the variables \code{ratio_n} and
+\code{district}, the variables are the mean values per district.
 }
 \keyword{datasets}

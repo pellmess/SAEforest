@@ -14,7 +14,7 @@ The function simplifies the loading of the shape file for Austrian districts.
 It is originally used for examples in package \pkg{emdi}.
 }
 \details{
-The shape file contains the borders of Austrian districts.
+The shape file contains the borders of 94 Austrian districts.
 The main purpose of this function is the visualization of estimation results with the
 plotting function \code{\link{map_indicators}}.
 }

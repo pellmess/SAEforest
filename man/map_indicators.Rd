@@ -21,46 +21,46 @@ map_indicators(
 )
 }
 \arguments{
-\item{object}{an object of class \code{SAEforest}, containing estimates to be visualized}
+\item{object}{An object of class \code{SAEforest}, containing estimates to be visualized}
 
-\item{indicator}{optional character vector specifying indicators to be mapped: (i)
+\item{indicator}{Optional character vector specifying indicators to be mapped: (i)
 all calculated indicators ("all"); (ii) each default indicators name: "Mean",
 "Quant10", "Quant25", "Median", "Quant75", "Quant90", "Gini", "Hcr", "Pgap", "Qsr"
 or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
-If the \code{object} is estimated by \code{\link{SAEforest_mean}} or \code{\link{SAEforest_meanAGG}}
-indicator arguments are ignored and only the "Mean" is visualized.}
+If the \code{object} is estimated by \code{\link{SAEforest_mean}}
+indicator arguments are ignored and only "Mean" is visualized.}
 
-\item{MSE}{optional logical. If \code{TRUE}, the MSE is also visualized.
+\item{MSE}{Optional logical. If \code{TRUE}, the MSE is also visualized.
 Defaults to \code{FALSE}.}
 
-\item{CV}{optional logical. If \code{TRUE}, the CV is also visualized.
+\item{CV}{Optional logical. If \code{TRUE}, the CV is also visualized.
 Defaults to \code{FALSE}.}
 
-\item{map_obj}{an \code{SpatialPolygonsDataFrame} object as defined by the
+\item{map_obj}{An \code{SpatialPolygonsDataFrame} object as defined by the
 \pkg{sp} package on which the data should be visualized.}
 
-\item{map_dom_id}{character string containing the name of a variable in
+\item{map_dom_id}{Character string containing the name of a variable in
 \code{map_obj} that indicates the domains.}
 
-\item{map_tab}{a \code{data.frame} object with two columns that matches the
+\item{map_tab}{A \code{data.frame} object with two columns that matches the
 domain variable from the population data set (first column) with the domain
 variable in the map_obj (second column). This should only be used if domain level identifiers
 are different in both objects.}
 
-\item{color}{a \code{vector} of length 2 defining the lowest and highest color in the map.}
+\item{color}{A \code{vector} of length 2 defining the lowest and highest color in the map.}
 
-\item{scale_points}{a structure defining the lowest, the mid and the highest
+\item{scale_points}{A structure defining the lowest, the mid and the highest
 value of the colorscale. If a numeric vector of length two is given, this scale
 will be used for every plot. Alternatively, a list defining colors for each plot separately may be given.}
 
-\item{guide}{character passed to \code{scale_colour_gradient} from \pkg{ggplot2}.
+\item{guide}{Character passed to \code{scale_colour_gradient} from \pkg{ggplot2}.
 Possible values are "none", "colourbar", and "legend".}
 
-\item{return_data}{if set to \code{TRUE}, a fortified data frame including the
+\item{return_data}{If set to \code{TRUE}, a fortified data frame including the
 map data as well as the chosen indicators is returned. Customized maps can
 easily be obtained from this data frame via the package \pkg{ggplot2}. Defaults to \code{FALSE}.}
 
-\item{return_plot}{if set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
+\item{return_plot}{If set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
 is returned for further individual customization and processing}
 
 \item{gg_theme}{Specify a predefined theme from \pkg{ggplot2}. Default is set to \code{theme_minimal}.}
@@ -85,7 +85,7 @@ X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 #Calculating point-estimates and discussing basic generic functions
 
 model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
-                       smp_data = eusilcA_smp, pop_data = eusilcA_pop)
+                       smp_data = eusilcA_smp, pop_data = eusilcA_pop, num.trees=50)
 
 # Load shape file
 load_shapeaustria()

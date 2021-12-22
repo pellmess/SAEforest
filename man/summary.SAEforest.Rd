@@ -17,8 +17,8 @@ an object of type "summary.SAEforest" including information about the sample
 and population data, the model fit and random forest specific metrics.
 }
 \description{
-Additional information about the data and model in small area estimation
-methods and components of an SAEforest object are extracted. The returned object
+Shows additional information about the data, the SAE model its components.
+Information is extracted from a "SAEforest" object. The returned object
 is suitable for printing with the \code{print}.
 }
 \seealso{

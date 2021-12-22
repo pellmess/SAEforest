@@ -11,19 +11,19 @@
 input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffects,
                               ErrorTolerance, MaxIterations, mse, B, importance, na.rm) {
   if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
-    stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(SAEforest_meanV2)")
+    stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(SAEforest_mean)")
   }
 
   if (sum(!(X %in% smp_data)) != 0) {
-    stop("X specifies the explanatory variabels from the sample data set and must be included in the survey sample set. See also help(SAEforest_meanV2)")
+    stop("X specifies the explanatory variabels from the sample data set and must be included in the survey sample set. See also help(SAEforest_mean)")
   }
 
   if (!is.data.frame(smp_data) || !is.data.frame(pop_data)) {
-    stop("smp_data must be a data frame containing the survey sample data. pop_data must be a data frame containing the population data. See also help(SAEforest_meanV2).")
+    stop("smp_data must be a data frame containing the survey sample data. pop_data must be a data frame containing the population data. See also help(SAEforest_mean).")
   }
 
   if (!is.character(dName) || length(dName) != 1) {
-    stop("dName must be an input of class character determining the variable name of the domain of interest provided in the survey as well as the population data. See also help(SAEforest_meanV2).")
+    stop("dName must be an input of class character determining the variable name of the domain of interest provided in the survey as well as the population data. See also help(SAEforest_mean).")
   }
 
   if (data.frame(smp_data[[dName]]) %in% X) {
@@ -50,7 +50,7 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
 
   if (is.null(colnames(smp_data)) || is.null(colnames(pop_data)) ||
       sum((colnames(smp_data) %in% colnames(pop_data))) == 0){
-    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage of covariate data from the survey sample and the population level information. See also help(SAEforest_meanV2)")
+    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage of covariate data from the survey sample and the population level information. See also help(SAEforest_mean)")
   }
 
   if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))) {
@@ -70,7 +70,7 @@ input_checks_mean <- function(Y, X, dName, smp_data, pop_data, initialRandomEffe
   }
 
   if (mse != "none" && !(is.numeric(B) && length(B) == 1 && B > 1)) {
-    stop("If MSE-estimation is specified, B needs to be a single integer value, determining the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_meanV2).")
+    stop("If MSE-estimation is specified, B needs to be a single integer value, determining the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_mean).")
   }
 
   if (is.null(importance) || !(importance == "none" || importance == "impurity" || importance == "impurity_corrected" || importance == "permutation")) {
@@ -197,19 +197,19 @@ input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomE
                                  ErrorTolerance, MaxIterations, mse, B, popnsize, OOsample_obs,
                                  ADDsamp_obs, w_min, importance, na.rm) {
   if (!is.numeric(Y) || !data.frame(Y) %in% smp_data) {
-    stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(SAEforest_meanV2)")
+    stop("Y must be a metric vector containing the target variable. Additionally Y must be included in the data frame of survey sample data. See also help(SAEforest_mean)")
   }
 
   if (sum(!(X %in% smp_data)) != 0) {
-    stop("X specifies the explanatory variabels from the sample data set and must be included in the survey sample set. See also help(SAEforest_meanV2)")
+    stop("X specifies the explanatory variabels from the sample data set and must be included in the survey sample set. See also help(SAEforest_mean)")
   }
 
   if (!is.data.frame(smp_data) || !is.data.frame(Xpop_agg)) {
-    stop("smp_data must be a data frame containing the survey sample data. Xpop_agg must be a data frame containing the population data. See also help(SAEforest_meanV2).")
+    stop("smp_data must be a data frame containing the survey sample data. Xpop_agg must be a data frame containing the population data. See also help(SAEforest_mean).")
   }
 
   if (!is.character(dName) || length(dName) != 1) {
-    stop("dName must be an input of class character determining the variable name of the domain of interest provided in the survey as well as the population data. See also help(SAEforest_meanV2).")
+    stop("dName must be an input of class character determining the variable name of the domain of interest provided in the survey as well as the population data. See also help(SAEforest_mean).")
   }
 
 
@@ -233,12 +233,12 @@ input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomE
 
   if (is.null(colnames(smp_data)) || is.null(colnames(Xpop_agg)) ||
       sum((colnames(smp_data) %in% colnames(Xpop_agg))) == 0){
-    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage of covariate data from the survey sample and the population level information. See also help(SAEforest_meanV2)")
+    stop("smp_data and pop_data must contain columnames for covariates that allow for a clear linkage of covariate data from the survey sample and the population level information. See also help(SAEforest_mean)")
   }
 
   if (mse != "none" && (!is.data.frame(popnsize) || is.null(popnsize[[dName]]) || dim(popnsize)[1] != dim(Xpop_agg)[1] ||
     dim(popnsize)[2] > 2 || !is.numeric(popnsize[, !colnames(popnsize) %in% dName]) || !all.equal(as.character(popnsize[[dName]]), as.character(Xpop_agg[[dName]])))) {
-    stop(paste("popnsize must be a data frame with two columns: One column named ", dName, "must contain the domains specifiers. The other column must contain information on the population size of domains. See also help(SAEforest_meanV2)."))
+    stop(paste("popnsize must be a data frame with two columns: One column named ", dName, "must contain the domains specifiers. The other column must contain information on the population size of domains. See also help(SAEforest_mean)."))
   }
 
   if (!is.numeric(initialRandomEffects) || (length(initialRandomEffects) != 1 && length(initialRandomEffects) != length(Y))) {
@@ -255,15 +255,15 @@ input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomE
   }
 
   if (!is.numeric(OOsample_obs) || length(OOsample_obs) != 1 || OOsample_obs < 0) {
-    stop('OOsample_obs needs to be a single integer value, determining the amount of observations sampled from the "closest" area for out-of-sample areas. See also help(SAEforest_meanV2).')
+    stop('OOsample_obs needs to be a single integer value, determining the amount of observations sampled from the "closest" area for out-of-sample areas. See also help(SAEforest_mean).')
   }
 
   if (!is.numeric(ADDsamp_obs) || length(ADDsamp_obs) != 1 || ADDsamp_obs < 0) {
-    stop('ADDsamp_obs needs to be a single integer value, determining the amount of observations sampled from the "closest" area in the case of failure of calculation of calibration weights. See also help(SAEforest_meanV2).')
+    stop('ADDsamp_obs needs to be a single integer value, determining the amount of observations sampled from the "closest" area in the case of failure of calculation of calibration weights. See also help(SAEforest_mean).')
   }
 
   if (!is.numeric(w_min) || length(w_min) != 1 || w_min < 2 || w_min > dim(Xpop_agg)[2]) {
-    stop("w_min needs to be a single integer value, determining the minimum amount of covariates incorporating auxilliary information for the assessment of calibration weights. Thus, w_min must be smaller or equal to the number of existing covariates. See also help(SAEforest_meanV2).")
+    stop("w_min needs to be a single integer value, determining the minimum amount of covariates incorporating auxilliary information for the assessment of calibration weights. Thus, w_min must be smaller or equal to the number of existing covariates. See also help(SAEforest_mean).")
   }
 
   if (is.null(mse) || !(mse == "none" || mse == "nonparametric")) {
@@ -271,11 +271,11 @@ input_checks_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomE
   }
 
   if (mse != "none" && !(is.numeric(B) && length(B) == 1 && B > 1)) {
-    stop("If MSE-estimation is specified, B needs to be a single integer value, determining the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_meanV2).")
+    stop("If MSE-estimation is specified, B needs to be a single integer value, determining the number of MSE-bootstrap replications. The value must be larger than 1. See also help(SAEforest_mean).")
   }
 
   if (is.null(importance) || !(importance == "impurity" || importance == "impurity_corrected" || importance == "permutation")) {
-    stop('The calculation of calibration weights requires a concept of variable importance. The options are passed to the MERF and must be "impurity", "impurity_corrected" or "permutation". See details on the variable importance mode with help(ranger). See details on the caluclation of calibration weights help(SAEforest_meanV2).')
+    stop('The calculation of calibration weights requires a concept of variable importance. The options are passed to the MERF and must be "impurity", "impurity_corrected" or "permutation". See details on the variable importance mode with help(ranger). See details on the caluclation of calibration weights help(SAEforest_mean).')
   }
 }
 

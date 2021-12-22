@@ -1,13 +1,13 @@
 #' Plot function for an SAEforest object
 #'
 #' Plots model-specific characteristics of the fixed effects random forest component of
-#' the MERF from object "SAEforest". In general, a variable importance plot is produced to
-#' visualize the importance of covariate data for the model. For the variable importance plot,
-#' arguments are passed internally to the function \code{\link[vip]{vip}}. If requested, the
-#' plot function additionally provides a partial dependence plot (pdp) to visualize the impact
-#' of a given number of influential covariates on the target variable. The pdp plot is produced
-#' using \code{\link[pdp]{partial}} from the package \pkg{pdp}. The plot-engine for both plots
-#' is \pkg{ggplot2}.
+#' the MERF from object "SAEforest". A variable importance plot is produced to visualize
+#' the importance of individual covariates for the predictive performance of the model.
+#' For the variable importance plot, arguments are passed internally to the function
+#' \code{\link[vip]{vip}}. If requested, the plot function additionally provides a partial
+#' dependence plot (pdp) to visualize the impact of a given number of influential covariates
+#' on the target variable. The pdp plot is produced using \code{\link[pdp]{partial}} from
+#' the package \pkg{pdp}. The plot-engine for both plots is \pkg{ggplot2}.
 #'
 #' @param x An object of type "SAEforest" including a random forest model of class "ranger".
 #' @param num_features Number of features for which a partial dependence plot is required.
@@ -17,9 +17,9 @@
 #' @param fill Parameter specifying the fill of selected plots. The argument must be specified
 #' such that it can be process by \code{\link[ggplot2]{aes}}. Default is to a character name of the
 #' color "darkgreen".
-#' @param alpha Parameter specifying the transperancy of \code{fill} for vip plots.
-#' The argument must a number in \code{[0,1]}.
-#' @param include_type if set to \code{TRUE}, the type of importance specified in the fitting process
+#' @param alpha Parameter specifying the transparency of \code{fill} for vip plots.
+#' The argument must be a number in \code{[0,1]}.
+#' @param include_type If set to \code{TRUE}, the type of importance specified in the fitting process
 #' of the model is included in the vip plot. Defaults to \code{TRUE}.
 #' @param horizontal if set to \code{TRUE}, the importance scores are plot on the x-axis. If parameter is
 #' set to \code{FALSE}, the importance scores are plot on the y-axis. Defaults to \code{TRUE}.
@@ -29,9 +29,9 @@
 #' @param lty Parameter specifying the line size of pdp plots. The argument must be specified
 #' such that it can be process by \code{\link[ggplot2]{aes}}. Defaults to "solid".
 #' @param grid_row Parameter specifying the amount of rows for the joint pdp plot. Default is set to 2
-#' @param out_list if set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
+#' @param out_list If set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
 #' is returned for further individual customization and processing. Defaults to \code{FALSE}.
-#' @param pdp_plot if set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
+#' @param pdp_plot If set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
 #' from the package \pkg{pdp} are included. Defaults to \code{TRUE}.
 #' @param ... Optional additional inputs that are ignored for this method.
 #' @return Plots of variable importance and/or partial dependence of covariates ranked by corresponding
@@ -40,10 +40,9 @@
 #'
 #' @details For the production of importance plots, be sure to specify the parameter of
 #' \code{importance != 'none'} before producing estimates with functions \code{\link{SAEforest_mean}},
-#' \code{\link{SAEforest_meanAGG}} or \code{\link{SAEforest_nonLin}}.
+#' or \code{\link{SAEforest_nonLin}}.
 #'
-#' For pdp plots, note that despite
-#' their potential importance, covariates of type factor or character cannot be used for partial dependence
+#' For pdp plots, note that covariates of type factor or character cannot be used for partial dependence
 #' plots. Dummy-variables can be used, however, their pdp plots are always lines connecting two effect
 #' points for 0 and 1. Most informative pdp plots can be produced for metric covariates.
 #'
@@ -61,7 +60,7 @@
 #'#Calculating point-estimates and discussing basic generic functions
 #'
 #'model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
-#'                        smp_data = eusilcA_smp, pop_data = eusilcA_pop)
+#'                        smp_data = eusilcA_smp, pop_data = eusilcA_pop, num.trees = 50)
 #'
 #'plot(model1)
 #'}

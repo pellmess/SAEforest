@@ -8,13 +8,12 @@
 }
 \arguments{
 \item{x}{an object of type "SAEforest", representing point and MSE
-estimates obtained by functions: \code{\link{SAEforest_mean}}), \code{\link{SAEforest_nonLin}}),
-or \code{\link{SAEforest_meanAGG}}.}
+estimates obtained by functions: \code{\link{SAEforest_mean}}) or \code{\link{SAEforest_nonLin}}).}
 
 \item{...}{Optional additional inputs that are ignored for this method.}
 }
 \description{
-Basic information of an SAEforest object is printed.
+Basic information of an "SAEforest" object is printed.
 }
 \seealso{
 \code{\link{SAEforestObject}}

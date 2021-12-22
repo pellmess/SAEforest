@@ -6,24 +6,25 @@
 \value{
 Four components are always included in an SAEforest object. \code{MSE_estimates} and \code{AdjustedSD} are
 \code{NULL} except MSE results are requested. An element of \code{NrCovar} only exists for SAEforest objects
-produced by \code{\link{SAEforest_meanAGG}}:
+produced by \code{\link{SAEforest_mean}} with option \code{aggData = TRUE}.
 
 \item{\code{MERFmodel}}{The included \code{MERFmodel} object comprises information on the model fit, details
 on the performed MERF algorithm as well as details on variance components. See below for an exact description
 of components}
-\item{\code{Indicators}}{a dataframe where the first column is the area-level identifier and additional columns
-are the indicators of interest. Note that objects from \code{\link{SAEforest_meanAGG}} and \code{\link{SAEforest_mean}}
+\item{\code{Indicators}}{A data frame where the first column is the area-level identifier and additional columns
+are the indicators of interest. Note that objects from \code{\link{SAEforest_mean}}
 only report the "Mean".}
-\item{\code{MSE_estimates}}{only if mse results requested. A dataframe where the first column is the area-level identifier and additional columns
-are the MSE estimates for indicators of interest. Note that objects from \code{\link{SAEforest_meanAGG}} and \code{\link{SAEforest_mean}}
-only report MSE values for the "Mean".}
-\item{\code{NrCovar}}{only for objects of method \code{\link{SAEforest_meanAGG}}. A list comprising variable
-names of covariates used for the calculation of needed calibration weights for point estimates. see vignette for
-explanation}
+\item{\code{MSE_estimates}}{Only if mse results requested. A data frame where the first column is the area-level
+identifier and additional columns are the MSE estimates for indicators of interest. Note that objects from
+\code{\link{SAEforest_mean}} only report MSE values for the "Mean".}
+\item{\code{NrCovar}}{Only if means under aggregated covariate information are estimated, i.e.
+\code{\link{SAEforest_mean}} with option \code{aggData = TRUE}. A list containing variable names of
+covariates used for the calculation of needed calibration weights for point estimates. see (REF) for
+methodological details an explanations.}
 
 Details on object of \code{MERFmodel}:
 
-\item{\code{Forest}}{a random forest of type 'ranger' modelling fixed effects
+\item{\code{Forest}}{A random forest of type 'ranger' modelling fixed effects
 of the model.}
 \item{\code{EffectModel}}{a model of random effects of type 'lmer' capturing
 tructural component of MERFs and modeling random components.}
@@ -42,13 +43,13 @@ MERF algorithm.}
 \item{\code{call}}{the summarized function call producing the object.}
 \item{\code{data_specs}}{data characteristics such as domain specific sample sizes or number of
 out-of-sample areas.}
-\item{\code{data}}{the used survey sample data.}
+\item{\code{data}}{the original survey sample data.}
 }
 \description{
 An object of class SAEforest always includes point estimates of regionally disaggregated economic
 and inequality indicators and a \code{MERFmodel} object including information on the model fit for fixed
 effects as well as random effects. Optionally an SAEforest object includes corresponding MSE estimates.
-If the method used for estimation is \code{\link{SAEforest_meanAGG}}, the SAEforest object additionally
+In the case of domain-level means using aggregated covariate information, the SAEforest object additionally
 includes an element, capturing the number of variables used in the weighting process from aggregated
 covariate information. For an object of class SAEforest, the following generic functions are applicable:
 \code{\link{print}}, \code{\link{plot}}, \code{\link{summary}} and \code{\link{summarize_indicators}}.
@@ -58,7 +59,7 @@ Additional generic functions are applicable to the \code{MERFmodel} object. See 
 Among other elements, the included \code{MERFmodel} object contains a random forest of class 'ranger'
 modelling fixed effects and a random effects model of class 'lmerMod'.  Thus, all generic functions
 applicable to objects of classes 'ranger' and 'lmerMod' can be used on these elements. For details on
-generic functions see \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
+generic functions see \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as examples below.
 }
 \examples{
 \dontrun{
