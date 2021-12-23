@@ -1,14 +1,14 @@
-#' Summarizes an SAEforest Object
+#' Summarizes an SAEforest object
 #'
 #' Shows additional information about the data, the SAE model its components.
 #' Information is extracted from a "SAEforest" object. The returned object
 #' is suitable for printing with the \code{print}.
 
-#' @param object an object of type "SAEforest" representing point
+#' @param object An object of type "SAEforest" representing point
 #' and MSE estimates. Objects differ depending on the estimation method
 #' @param ... Optional additional inputs that are ignored for this method.
 #'
-#' @return an object of type "summary.SAEforest" including information about the sample
+#' @return An object of type "summary.SAEforest" including information about the sample
 #' and population data, the model fit and random forest specific metrics.
 #' @seealso \code{\link{SAEforestObject}}
 #'

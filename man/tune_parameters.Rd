@@ -19,17 +19,17 @@ tune_parameters(
 )
 }
 \arguments{
-\item{Y}{metric input value of target variable.}
+\item{Y}{Metric input value of target variable.}
 
-\item{X}{matrix or data.frame of predictive covariates.}
+\item{X}{Matrix or data.frame of predictive covariates.}
 
 \item{data}{data.frame of survey sample data including the specified elements of \code{Y} and
 \code{X}.}
 
-\item{dName}{character specifying the name of domain identifier, for which random intercepts
+\item{dName}{Character specifying the name of domain identifier, for which random intercepts
 are modeled.}
 
-\item{trControl}{control parameters passed to \link[caret]{train}. Most important
+\item{trControl}{Control parameters passed to \link[caret]{train}. Most important
 parameters are \code{method} ("repeatedcv" for x-fold cross-validation) and the number of
 repetitions (\code{folds}) or folds (\code{number}). For further details see \link[caret]{trainControl}
 and the example below.}
@@ -38,14 +38,14 @@ and the example below.}
 tuning parameters. For this tuning function the grid must comprise entries for the following parameters:
 \code{num.trees, mtry, min.node.size, splitrule}.}
 
-\item{seed}{enabling reproduceability of for cross-validation and tuning. Defaults to \code{11235}.}
+\item{seed}{Enabling reproduceability of for cross-validation and tuning. Defaults to \code{11235}.}
 
 \item{gg_theme}{Specify a predefined theme from \pkg{ggplot2}. Default is set to \code{theme_minimal}.}
 
-\item{plot_res}{optional logical. If \code{TRUE}, the plot with results of cross-validation and tuning
+\item{plot_res}{Optional logical. If \code{TRUE}, the plot with results of cross-validation and tuning
 is shown. Defaults to TRUE.}
 
-\item{return_plot}{if set to \code{TRUE}, a list of the comparative plot produced by \pkg{ggplot2}
+\item{return_plot}{If set to \code{TRUE}, a list of the comparative plot produced by \pkg{ggplot2}
 is returned for further individual customization and processing.}
 
 \item{...}{Additional parameters are directly passed to the random forest \link[ranger]{ranger} and/or
@@ -64,7 +64,8 @@ for a forest), \code{mtry} (number of variables as split candidates at in each n
 \link[ranger]{ranger}.
 }
 \examples{
-\dontrun{#Loading data
+\dontrun{
+#Loading data
 data("eusilcA_pop")
 data("eusilcA_smp")
 

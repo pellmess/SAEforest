@@ -18,9 +18,9 @@ MERFranger(
 )
 }
 \arguments{
-\item{Y}{Metric input value of target variable}
+\item{Y}{Metric input value of target variable.}
 
-\item{X}{Matrix of predictive covariates}
+\item{X}{Matrix of predictive covariates.}
 
 \item{random}{Specification of random effects terms following the syntax of \link[lme4]{lmer}.
 Random-effect terms are specified by vertical bars (|) separating expressions for design matrices
@@ -36,7 +36,7 @@ random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corre
 \item{initialRandomEffects}{Numeric value or vector of initial estimate of random effects.
 Defaults to 0.}
 
-\item{ErrorTolerance}{Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04}
+\item{ErrorTolerance}{Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.}
 
 \item{MaxIterations}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm. Defaults to 25.}

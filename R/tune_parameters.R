@@ -9,24 +9,24 @@
 #' (minimal individual node size) and \code{splitrule} (general splitting rule). For details see
 #' \link[ranger]{ranger}.
 #'
-#' @param Y metric input value of target variable.
-#' @param X matrix or data.frame of predictive covariates.
+#' @param Y Metric input value of target variable.
+#' @param X Matrix or data.frame of predictive covariates.
 #' @param data data.frame of survey sample data including the specified elements of \code{Y} and
 #' \code{X}.
-#' @param dName character specifying the name of domain identifier, for which random intercepts
+#' @param dName Character specifying the name of domain identifier, for which random intercepts
 #' are modeled.
-#' @param trControl control parameters passed to \link[caret]{train}. Most important
+#' @param trControl Control parameters passed to \link[caret]{train}. Most important
 #' parameters are \code{method} ("repeatedcv" for x-fold cross-validation) and the number of
 #' repetitions (\code{folds}) or folds (\code{number}). For further details see \link[caret]{trainControl}
 #' and the example below.
 #' @param tuneGrid A data.frame with possible tuning values. The columns must have the same names as the
 #' tuning parameters. For this tuning function the grid must comprise entries for the following parameters:
 #' \code{num.trees, mtry, min.node.size, splitrule}.
-#' @param seed enabling reproduceability of for cross-validation and tuning. Defaults to \code{11235}.
+#' @param seed Enabling reproduceability of for cross-validation and tuning. Defaults to \code{11235}.
 #' @param gg_theme Specify a predefined theme from \pkg{ggplot2}. Default is set to \code{theme_minimal}.
-#' @param plot_res optional logical. If \code{TRUE}, the plot with results of cross-validation and tuning
+#' @param plot_res Optional logical. If \code{TRUE}, the plot with results of cross-validation and tuning
 #' is shown. Defaults to TRUE.
-#' @param return_plot if set to \code{TRUE}, a list of the comparative plot produced by \pkg{ggplot2}
+#' @param return_plot If set to \code{TRUE}, a list of the comparative plot produced by \pkg{ggplot2}
 #' is returned for further individual customization and processing.
 #' @param ... Additional parameters are directly passed to the random forest \link[ranger]{ranger} and/or
 #' the training function \link[caret]{train}. For further details on possible parameters and examples
@@ -36,7 +36,8 @@
 #' \code{\link[ggplot2]{ggplot}}
 #'
 #' @examples
-#' \dontrun{#Loading data
+#' \dontrun{
+#' #Loading data
 #' data("eusilcA_pop")
 #' data("eusilcA_smp")
 #'

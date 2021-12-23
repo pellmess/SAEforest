@@ -7,20 +7,20 @@
 summarize_indicators(object, indicator = "all", MSE = FALSE, CV = FALSE)
 }
 \arguments{
-\item{object}{an object for which point and/or MSE estimates and/or
+\item{object}{Object for which point and/or MSE estimates and/or
 calculated CV's are desired. The object must be of class \code{SAEforest}.}
 
-\item{indicator}{optional character vector specifying indicators to be mapped: (i)
+\item{indicator}{Optional character vector specifying indicators to be mapped: (i)
 all calculated indicators ("all"); (ii) each default indicators name: "Mean",
 "Quant10", "Quant25", "Median", "Quant75", "Quant90", "Gini", "Hcr", "Pgap", "Qsr"
 or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
 If the \code{object} is estimated by \code{\link{SAEforest_mean}} indicator arguments
 are ignored and only the "Mean" is returned.}
 
-\item{MSE}{optional logical. If \code{TRUE}, MSE estimates for selected indicators
+\item{MSE}{Optional logical. If \code{TRUE}, MSE estimates for selected indicators
 per domain are added to the data frame of point estimates. Defaults to \code{FALSE}.}
 
-\item{CV}{optional logical. If \code{TRUE}, coefficients of variation for selected
+\item{CV}{Optional logical. If \code{TRUE}, coefficients of variation for selected
 indicators per domain are added to the data frame of point estimates. Defaults to \code{FALSE}.}
 }
 \value{
@@ -43,7 +43,8 @@ see \code{\link[base]{as.data.frame}}), \code{subset} (for default
 documentation, see \code{\link[base]{subset}}).
 }
 \examples{
-\dontrun{#Loading data
+\dontrun{
+#Loading data
 data("eusilcA_pop")
 data("eusilcA_smp")
 

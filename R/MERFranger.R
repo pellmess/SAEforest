@@ -11,8 +11,8 @@
 #' an object of class MERFmodel, which can be used to produce unit-level predictions. In contrast to
 #' the wrapping functions, this function does not directly provide SAE estimates on domain-specific indicators.
 #'
-#' @param Y Metric input value of target variable
-#' @param X Matrix of predictive covariates
+#' @param Y Metric input value of target variable.
+#' @param X Matrix of predictive covariates.
 #' @param random Specification of random effects terms following the syntax of \link[lme4]{lmer}.
 #' Random-effect terms are specified by vertical bars (|) separating expressions for design matrices
 #' from grouping factors. For further details see \link[lme4]{lmer} and the example below.
@@ -20,7 +20,7 @@
 #' \code{X}.
 #' @param initialRandomEffects Numeric value or vector of initial estimate of random effects.
 #' Defaults to 0.
-#' @param ErrorTolerance Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04
+#' @param ErrorTolerance Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.
 #' @param MaxIterations Numeric value specifying the maximal amount of iterations for the
 #' MERF algorithm. Defaults to 25.
 #' @param importance Variable importance mode processed by the

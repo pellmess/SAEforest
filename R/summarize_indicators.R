@@ -4,17 +4,17 @@
 #' mean squared error (MSE) estimates as well as calculated coefficients of variation
 #' (CV) from a fitted \code{SAEforest} object.
 #'
-#' @param object an object for which point and/or MSE estimates and/or
+#' @param object Object for which point and/or MSE estimates and/or
 #' calculated CV's are desired. The object must be of class \code{SAEforest}.
-#' @param indicator optional character vector specifying indicators to be mapped: (i)
+#' @param indicator Optional character vector specifying indicators to be mapped: (i)
 #' all calculated indicators ("all"); (ii) each default indicators name: "Mean",
 #' "Quant10", "Quant25", "Median", "Quant75", "Quant90", "Gini", "Hcr", "Pgap", "Qsr"
 #' or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
 #' If the \code{object} is estimated by \code{\link{SAEforest_mean}} indicator arguments
 #' are ignored and only the "Mean" is returned.
-#' @param MSE optional logical. If \code{TRUE}, MSE estimates for selected indicators
+#' @param MSE Optional logical. If \code{TRUE}, MSE estimates for selected indicators
 #' per domain are added to the data frame of point estimates. Defaults to \code{FALSE}.
-#' @param CV optional logical. If \code{TRUE}, coefficients of variation for selected
+#' @param CV Optional logical. If \code{TRUE}, coefficients of variation for selected
 #' indicators per domain are added to the data frame of point estimates. Defaults to \code{FALSE}.
 #'
 #' @return The return of \code{summarize_indicators} is an object of type "summarize_indicators.SAEforest"
@@ -33,7 +33,8 @@
 #' \code{\link{SAEforest_meanAGG}}
 #'
 #' @examples
-#' \dontrun{#Loading data
+#' \dontrun{
+#' #Loading data
 #' data("eusilcA_pop")
 #' data("eusilcA_smp")
 #'

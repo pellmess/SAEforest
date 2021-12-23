@@ -10,7 +10,7 @@ produced by \code{\link{SAEforest_mean}} with option \code{aggData = TRUE}.
 
 \item{\code{MERFmodel}}{The included \code{MERFmodel} object comprises information on the model fit, details
 on the performed MERF algorithm as well as details on variance components. See below for an exact description
-of components}
+of components.}
 \item{\code{Indicators}}{A data frame where the first column is the area-level identifier and additional columns
 are the indicators of interest. Note that objects from \code{\link{SAEforest_mean}}
 only report the "Mean".}
@@ -26,24 +26,24 @@ Details on object of \code{MERFmodel}:
 
 \item{\code{Forest}}{A random forest of type 'ranger' modelling fixed effects
 of the model.}
-\item{\code{EffectModel}}{a model of random effects of type 'lmer' capturing
+\item{\code{EffectModel}}{A model of random effects of type 'lmer' capturing
 tructural component of MERFs and modeling random components.}
-\item{\code{RandomEffects}}{list element containing the values of random intercepts from \code{EffectModel}.}
-\item{\code{RanEffSD}}{numeric value of the standard deviation of random intercepts.}
-\item{\code{ErrorSD}}{numeric value of standard devition of unit-level errors.}
+\item{\code{RandomEffects}}{List element containing the values of random intercepts from \code{EffectModel}.}
+\item{\code{RanEffSD}}{Numeric value of the standard deviation of random intercepts.}
+\item{\code{ErrorSD}}{Numeric value of standard devition of unit-level errors.}
 \item{\code{VarianceCovariance}}{VarCor matrix from \code{EffectModel}.}
-\item{\code{LogLik}}{vector with numerical entries showing the loglikelihood of the MERF algorithm.}
-\item{\code{IterationsUsed}}{numeric number of interatirons used until covergence of the MERF algorithm.}
-\item{\code{OOBresiduals}}{vector of OOB-residuals.}
-\item{\code{Random}}{character specifying the random intercept in the random effects model.}
-\item{\code{ErrorTolerance}}{numerical value to monitor the MERF algorithm's convergence.}
-\item{\code{initialRandomEffects}}{numeric value or vector of intial specification of random effects.}
-\item{\code{MaxIterations}}{numeric value specifying the maximal amount of iterations for the
+\item{\code{LogLik}}{Vector with numerical entries showing the loglikelihood of the MERF algorithm.}
+\item{\code{IterationsUsed}}{Numeric number of interatirons used until covergence of the MERF algorithm.}
+\item{\code{OOBresiduals}}{Vector of OOB-residuals.}
+\item{\code{Random}}{Character specifying the random intercept in the random effects model.}
+\item{\code{ErrorTolerance}}{Numerical value to monitor the MERF algorithm's convergence.}
+\item{\code{initialRandomEffects}}{Numeric value or vector of intial specification of random effects.}
+\item{\code{MaxIterations}}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm.}
-\item{\code{call}}{the summarized function call producing the object.}
-\item{\code{data_specs}}{data characteristics such as domain specific sample sizes or number of
+\item{\code{call}}{Summarized function call producing the object.}
+\item{\code{data_specs}}{Data characteristics such as domain specific sample sizes or number of
 out-of-sample areas.}
-\item{\code{data}}{the original survey sample data.}
+\item{\code{data}}{Original survey sample data.}
 }
 \description{
 An object of class SAEforest always includes point estimates of regionally disaggregated economic

@@ -2,12 +2,12 @@
 % Please edit documentation in R/print_SAEforest.R
 \name{print.SAEforest}
 \alias{print.SAEforest}
-\title{Prints an SAEforest Object}
+\title{Prints an SAEforest object}
 \usage{
 \method{print}{SAEforest}(x, ...)
 }
 \arguments{
-\item{x}{an object of type "SAEforest", representing point and MSE
+\item{x}{Object of type "SAEforest", representing point and MSE
 estimates obtained by functions: \code{\link{SAEforest_mean}}) or \code{\link{SAEforest_nonLin}}).}
 
 \item{...}{Optional additional inputs that are ignored for this method.}

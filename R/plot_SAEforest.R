@@ -49,7 +49,8 @@
 #' @seealso \code{\link{SAEforestObject}}
 #'
 #' @examples
-#' \dontrun{#Loading data
+#' \dontrun{
+#'#Loading data
 #'data("eusilcA_pop")
 #'data("eusilcA_smp")
 #'

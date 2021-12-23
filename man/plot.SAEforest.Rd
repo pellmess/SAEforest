@@ -86,7 +86,8 @@ plots. Dummy-variables can be used, however, their pdp plots are always lines co
 points for 0 and 1. Most informative pdp plots can be produced for metric covariates.
 }
 \examples{
-\dontrun{#Loading data
+\dontrun{
+#Loading data
 data("eusilcA_pop")
 data("eusilcA_smp")
 

@@ -42,7 +42,8 @@
 #' \code{\link[sp]{SpatialPolygonsDataFrame}}, \code{\link[ggplot2]{ggplot}}.
 #'
 #' @examples
-#' \dontrun{#Loading data
+#' \dontrun{
+#'#Loading data
 #'data("eusilcA_pop")
 #'data("eusilcA_smp")
 #'

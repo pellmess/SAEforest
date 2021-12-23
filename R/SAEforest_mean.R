@@ -8,9 +8,9 @@
 #' and if requested for assessing the uncertainty of the estimates. Methodological details are
 #' provided by Krennmair & Schmid (202X) and following examples showcase potential applications.
 #'
-#' @param Y metric input value of target variable.
-#' @param X matrix or data.frame of predictive covariates.
-#' @param dName character specifying the name of domain identifier, for which random intercepts
+#' @param Y Metric input value of target variable.
+#' @param X Matrix or data.frame of predictive covariates.
+#' @param dName Character specifying the name of domain identifier, for which random intercepts
 #' are modeled.
 #' @param smp_data data.frame of survey sample data including the specified elements of \code{Y} and
 #' \code{X}.
@@ -18,26 +18,26 @@
 #' covariates \code{X}. Please note that the column names of predictive covariates and the domain-level
 #' identifier must match the column names of \code{smp_data}. Also note, that if aggregated covariate data
 #' is used, the function parameter \code{aggData} must be set to \code{TRUE}.
-#' @param mse character input specifying the type of uncertainty estimates. Currently available options are:
+#' @param mse Character input specifying the type of uncertainty estimates. Currently available options are:
 #' (i) "none" if only point estimates are requested or (ii) "nonparametric" following the mse boostrap procedure
 #' proposed by Krennmair & Schmid (202X) and by Krennmair et al (202X) if \code{aggData = TRUE}.
-#' @param importance variable importance mode processed by the
+#' @param importance Variable importance mode processed by the
 #' random forest from the \pkg{ranger}. Must be one of the following option: (i)'impurity', (ii) 'impurity_corrected'
 #' or (iii) 'permutation'. Defaults to 'impurity'. In general, a concept of variable importance is needed
 #' for the production of informative plots with the generic function \code{\link{plot}}. In the case of
 #' aggregated covariate data, variable importance is needed to rank covariate information in the
 #' process of finding suitable calibration weights (see details). For further information regarding
 #' the measures of importance see \link[ranger]{ranger}.
-#' @param initialRandomEffects numeric value or vector of initial estimate of random effects.
+#' @param initialRandomEffects Numeric value or vector of initial estimate of random effects.
 #' Defaults to 0.
-#' @param ErrorTolerance numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.
-#' @param MaxIterations numeric value specifying the maximal amount of iterations for the
+#' @param ErrorTolerance Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.
+#' @param MaxIterations Numeric value specifying the maximal amount of iterations for the
 #' MERF algorithm. Defaults to 25.
-#' @param B numeric number of bootstrap replications for mse estimation procedure proposed by
+#' @param B Numeric number of bootstrap replications for mse estimation procedure proposed by
 #' Krennmair et al. (202X). Defaults to 100.
-#' @param B_adj numeric number of bootstrap replications for the adjustment of residual variance. Defaults to 100.
-#' @param na.rm logical. Whether missing values should be removed. Defaults to TRUE.
-#' @param ... additional parameters are directly passed to the random forest \link[ranger]{ranger}.
+#' @param B_adj Numeric number of bootstrap replications for the adjustment of residual variance. Defaults to 100.
+#' @param na.rm Logical. Whether missing values should be removed. Defaults to TRUE.
+#' @param ... Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
 #' Most important parameters are for instance mtry (number of variables to possibly split at
 #' in each node), or num.tree (number of trees). For further details on possible parameters
 #' see \link[ranger]{ranger} and the example below.
@@ -89,7 +89,8 @@
 #'
 #' @seealso \code{\link{SAEforestObject}}, \code{\link[ranger]{ranger}}, \code{\link[lme4]{lmer}}
 #' @examples
-#' \dontrun{#Loading data
+#' \dontrun{
+#' #Loading data
 #' data("eusilcA_popAgg")
 #' data("eusilcA_pop")
 #' data("eusilcA_smp")

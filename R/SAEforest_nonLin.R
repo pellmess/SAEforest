@@ -11,47 +11,47 @@
 #' estimates. Methodological details are provided by Krennmair & Schmid (202X) and following
 #' examples showcase potential applications.
 #'
-#' @param Y metric input value of target variable.
-#' @param X matrix or data.frame of predictive covariates.
-#' @param dName character specifying the name of domain identifier, for which random intercepts
+#' @param Y Metric input value of target variable.
+#' @param X Matrix or data.frame of predictive covariates.
+#' @param dName Character specifying the name of domain identifier, for which random intercepts
 #' are modeled.
 #' @param smp_data data.frame of survey sample data including the specified elements of \code{Y} and
 #' \code{X}.
 #' @param pop_data data.frame of unit-level population or census level covariate data for
 #' covariates \code{X}. Please note that the column names of predictive covariates must match
 #' column names of \code{smp_data}. This holds especially for the name of the domain identifier.
-#' @param mse character input specifying the type of uncertainty estimates. Available options are:
+#' @param mse Character input specifying the type of uncertainty estimates. Available options are:
 #' (i) "nonparametric" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X)
 #' (ii) "wild" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X) or
 #' (iii) "none" if only point estimates are requested. Defaults to "none".
-#' @param importance variable importance mode processed by the
+#' @param importance Variable importance mode processed by the
 #' random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
 #' 'permutation'. Defaults to "none". If you wish to produce informative plot with the generic function
 #' \code{\link{plot}}, set \code{importance} not to 'none'. For further details see \link[ranger]{ranger}.
-#' @param initialRandomEffects numeric value or vector of initial estimate of random effects.
+#' @param initialRandomEffects Numeric value or vector of initial estimate of random effects.
 #' Defaults to 0.
-#' @param ErrorTolerance numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.
-#' @param MaxIterations numeric value specifying the maximal amount of iterations for the
+#' @param ErrorTolerance Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.
+#' @param MaxIterations Numeric value specifying the maximal amount of iterations for the
 #' MERF algorithm. Defaults to 25.
-#' @param B numeric number of bootstrap replications for mse estimation procedure proposed by
+#' @param B Numeric number of bootstrap replications for mse estimation procedure proposed by
 #' Krennmair et al. (202X). Defaults to 100.
-#' @param B_adj numeric number of bootstrap replications for the adjustment of residual variance proposed
+#' @param B_adj Numeric number of bootstrap replications for the adjustment of residual variance proposed
 #' by Mendez and Lohr (2001). Defaults to 100.
-#' @param na.rm logical. Whether missing values should be removed. Defaults to TRUE.
-#' @param ... additional parameters are directly passed to the random forest \link[ranger]{ranger}.
+#' @param na.rm Logical. Whether missing values should be removed. Defaults to TRUE.
+#' @param ... Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
 #' Most important parameters are for instance mtry (number of variables to possibly split at
 #' in each node), or num.tree (number of trees). For further details on possible parameters
 #' see \link[ranger]{ranger} and the example below.
 #' @param threshold Set a custom threshold for indicators, such as the head count ratio. The threshold
 #' can be a known numeric value or function of \code{Y}. If the threshold is \code{NULL}, 60 \% of the
 #' median of \code{Y} are taken as threshold. Defaults to NULL.
-#' @param custom_indicator a list of additional functions containing the indicators to be
+#' @param custom_indicator A list of additional functions containing the indicators to be
 #' calculated. These functions must only depend on the target variable \code{Y} and optionally the
 #' \code{threshold}. Defaults to \code{NULL}
 #' @param smearing Logical input indicating whether a smearing based approach or a MC-based version for
 #' point-estimates should be obtained. MC should be used if computational constraints do not allow for a
 #' smearing based approach. For theoretical details see (WP). Defaults to \code{TRUE}.
-#' @param B_MC numeric number of bootstrap populations to be generated for the MC version for estimating
+#' @param B_MC Numeric number of bootstrap populations to be generated for the MC version for estimating
 #' point estimates. Defaults to 100.
 #'
 #' @return An object of class "SAEforest" always includes point estimates for disaggregated indicators
@@ -95,7 +95,8 @@
 #' @seealso \code{\link{SAEforestObject}}, \code{\link[ranger]{ranger}}, \code{\link[lme4]{lmer}}
 #'
 #' @examples
-#' \dontrun{#Loading data
+#' \dontrun{
+#' #Loading data
 #' data("eusilcA_pop")
 #' data("eusilcA_smp")
 #'

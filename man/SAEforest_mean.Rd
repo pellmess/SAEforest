@@ -27,11 +27,11 @@ SAEforest_mean(
 )
 }
 \arguments{
-\item{Y}{metric input value of target variable.}
+\item{Y}{Metric input value of target variable.}
 
-\item{X}{matrix or data.frame of predictive covariates.}
+\item{X}{Matrix or data.frame of predictive covariates.}
 
-\item{dName}{character specifying the name of domain identifier, for which random intercepts
+\item{dName}{Character specifying the name of domain identifier, for which random intercepts
 are modeled.}
 
 \item{smp_data}{data.frame of survey sample data including the specified elements of \code{Y} and
@@ -42,7 +42,7 @@ covariates \code{X}. Please note that the column names of predictive covariates 
 identifier must match the column names of \code{smp_data}. Also note, that if aggregated covariate data
 is used, the function parameter \code{aggData} must be set to \code{TRUE}.}
 
-\item{mse}{character input specifying the type of uncertainty estimates. Currently available options are:
+\item{mse}{Character input specifying the type of uncertainty estimates. Currently available options are:
 (i) "none" if only point estimates are requested or (ii) "nonparametric" following the mse boostrap procedure
 proposed by Krennmair & Schmid (202X) and by Krennmair et al (202X) if \code{aggData = TRUE}.}
 
@@ -62,7 +62,7 @@ calculation of calibration weights fails. Only needed if \code{aggData = TRUE} w
 \item{w_min}{Minimal number of covariates from which informative weights are calculated.
 Only needed if \code{aggData = TRUE} and a MSE is requested with defaults to 3.}
 
-\item{importance}{variable importance mode processed by the
+\item{importance}{Variable importance mode processed by the
 random forest from the \pkg{ranger}. Must be one of the following option: (i)'impurity', (ii) 'impurity_corrected'
 or (iii) 'permutation'. Defaults to 'impurity'. In general, a concept of variable importance is needed
 for the production of informative plots with the generic function \code{\link{plot}}. In the case of
@@ -70,22 +70,22 @@ aggregated covariate data, variable importance is needed to rank covariate infor
 process of finding suitable calibration weights (see details). For further information regarding
 the measures of importance see \link[ranger]{ranger}.}
 
-\item{initialRandomEffects}{numeric value or vector of initial estimate of random effects.
+\item{initialRandomEffects}{Numeric value or vector of initial estimate of random effects.
 Defaults to 0.}
 
-\item{ErrorTolerance}{numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.}
+\item{ErrorTolerance}{Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.}
 
-\item{MaxIterations}{numeric value specifying the maximal amount of iterations for the
+\item{MaxIterations}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm. Defaults to 25.}
 
-\item{B}{numeric number of bootstrap replications for mse estimation procedure proposed by
+\item{B}{Numeric number of bootstrap replications for mse estimation procedure proposed by
 Krennmair et al. (202X). Defaults to 100.}
 
-\item{B_adj}{numeric number of bootstrap replications for the adjustment of residual variance. Defaults to 100.}
+\item{B_adj}{Numeric number of bootstrap replications for the adjustment of residual variance. Defaults to 100.}
 
-\item{na.rm}{logical. Whether missing values should be removed. Defaults to TRUE.}
+\item{na.rm}{Logical. Whether missing values should be removed. Defaults to TRUE.}
 
-\item{...}{additional parameters are directly passed to the random forest \link[ranger]{ranger}.
+\item{...}{Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
 Most important parameters are for instance mtry (number of variables to possibly split at
 in each node), or num.tree (number of trees). For further details on possible parameters
 see \link[ranger]{ranger} and the example below.}
@@ -130,7 +130,8 @@ and a random effects model of class 'lmerMod'.  Thus, all generic functions appl
 \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
 }
 \examples{
-\dontrun{#Loading data
+\dontrun{
+#Loading data
 data("eusilcA_popAgg")
 data("eusilcA_pop")
 data("eusilcA_smp")

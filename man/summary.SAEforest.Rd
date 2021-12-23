@@ -2,18 +2,18 @@
 % Please edit documentation in R/summary_SAEforest.R
 \name{summary.SAEforest}
 \alias{summary.SAEforest}
-\title{Summarizes an SAEforest Object}
+\title{Summarizes an SAEforest object}
 \usage{
 \method{summary}{SAEforest}(object, ...)
 }
 \arguments{
-\item{object}{an object of type "SAEforest" representing point
+\item{object}{An object of type "SAEforest" representing point
 and MSE estimates. Objects differ depending on the estimation method}
 
 \item{...}{Optional additional inputs that are ignored for this method.}
 }
 \value{
-an object of type "summary.SAEforest" including information about the sample
+An object of type "summary.SAEforest" including information about the sample
 and population data, the model fit and random forest specific metrics.
 }
 \description{

@@ -26,11 +26,11 @@ SAEforest_nonLin(
 )
 }
 \arguments{
-\item{Y}{metric input value of target variable.}
+\item{Y}{Metric input value of target variable.}
 
-\item{X}{matrix or data.frame of predictive covariates.}
+\item{X}{Matrix or data.frame of predictive covariates.}
 
-\item{dName}{character specifying the name of domain identifier, for which random intercepts
+\item{dName}{Character specifying the name of domain identifier, for which random intercepts
 are modeled.}
 
 \item{smp_data}{data.frame of survey sample data including the specified elements of \code{Y} and
@@ -44,44 +44,44 @@ column names of \code{smp_data}. This holds especially for the name of the domai
 point-estimates should be obtained. MC should be used if computational constraints do not allow for a
 smearing based approach. For theoretical details see (WP). Defaults to \code{TRUE}.}
 
-\item{mse}{character input specifying the type of uncertainty estimates. Available options are:
+\item{mse}{Character input specifying the type of uncertainty estimates. Available options are:
 (i) "nonparametric" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X)
 (ii) "wild" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X) or
 (iii) "none" if only point estimates are requested. Defaults to "none".}
 
-\item{importance}{variable importance mode processed by the
+\item{importance}{Variable importance mode processed by the
 random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
 'permutation'. Defaults to "none". If you wish to produce informative plot with the generic function
 \code{\link{plot}}, set \code{importance} not to 'none'. For further details see \link[ranger]{ranger}.}
 
-\item{initialRandomEffects}{numeric value or vector of initial estimate of random effects.
+\item{initialRandomEffects}{Numeric value or vector of initial estimate of random effects.
 Defaults to 0.}
 
-\item{ErrorTolerance}{numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.}
+\item{ErrorTolerance}{Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.}
 
-\item{MaxIterations}{numeric value specifying the maximal amount of iterations for the
+\item{MaxIterations}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm. Defaults to 25.}
 
-\item{B}{numeric number of bootstrap replications for mse estimation procedure proposed by
+\item{B}{Numeric number of bootstrap replications for mse estimation procedure proposed by
 Krennmair et al. (202X). Defaults to 100.}
 
-\item{B_adj}{numeric number of bootstrap replications for the adjustment of residual variance proposed
+\item{B_adj}{Numeric number of bootstrap replications for the adjustment of residual variance proposed
 by Mendez and Lohr (2001). Defaults to 100.}
 
-\item{B_MC}{numeric number of bootstrap populations to be generated for the MC version for estimating
+\item{B_MC}{Numeric number of bootstrap populations to be generated for the MC version for estimating
 point estimates. Defaults to 100.}
 
 \item{threshold}{Set a custom threshold for indicators, such as the head count ratio. The threshold
 can be a known numeric value or function of \code{Y}. If the threshold is \code{NULL}, 60 \% of the
 median of \code{Y} are taken as threshold. Defaults to NULL.}
 
-\item{custom_indicator}{a list of additional functions containing the indicators to be
+\item{custom_indicator}{A list of additional functions containing the indicators to be
 calculated. These functions must only depend on the target variable \code{Y} and optionally the
 \code{threshold}. Defaults to \code{NULL}}
 
-\item{na.rm}{logical. Whether missing values should be removed. Defaults to TRUE.}
+\item{na.rm}{Logical. Whether missing values should be removed. Defaults to TRUE.}
 
-\item{...}{additional parameters are directly passed to the random forest \link[ranger]{ranger}.
+\item{...}{Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
 Most important parameters are for instance mtry (number of variables to possibly split at
 in each node), or num.tree (number of trees). For further details on possible parameters
 see \link[ranger]{ranger} and the example below.}
@@ -131,7 +131,8 @@ and a random effects model of class 'lmerMod'.  Thus, all generic functions appl
 \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
 }
 \examples{
-\dontrun{#Loading data
+\dontrun{
+#Loading data
 data("eusilcA_pop")
 data("eusilcA_smp")
 
