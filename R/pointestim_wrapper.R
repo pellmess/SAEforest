@@ -169,8 +169,6 @@ point_meanAGG <- function(Y, X, dName, smp_data, Xpop_agg, initialRandomEffects,
   }
 
   # find weights and adjust for failure
-  # USED CVXR as solver due to the observation that results are equivalent to the Lagrange Multiplier!
-  # Question on how to use the LiLiu optimizer function written by Nora ?
 
   smp_weightsIncluded <- vector(mode="list", length = length(groupNamesCens))
   smp_weightsNames <- vector(mode="list", length = length(groupNamesCens))
