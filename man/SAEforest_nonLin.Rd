@@ -99,7 +99,7 @@ This function facilitates the use of Mixed Effects Random Forests (MERFs)
 for applications of Small Area Estimation (SAE). Unit-level survey-sample and unit-level
 covariate data on predictive covariates is required to produce reliable estimates of various
 disaggregated economic and inequality indicators. The set of predefined indicators includes
-the mean, median,  quantiles (10%, 25%, 75% and 90%), the head count ratio, the poverty gap,
+the mean, median, quantiles (10\%, 25\%, 75\% and 90\%), the head count ratio, the poverty gap,
 the Gini coefficient and the quintile share ratio. The MERF algorithm is an algorithmic procedure
 reminiscent of an EM-algorithm (see Details). Overall, the function serves as a coherent framework
 for the estimation of point-estimates and if requested for assessing the uncertainty of the
@@ -160,13 +160,15 @@ summary(model2)
 
 #Example 3:
 #Calculating point + MSE estimates and passing arguments to the forest.
-#Additionally, two additional indicators and function as threshold are added
+#Additionally, two additional indicators and function as threshold are added.
+#Note that B is unrealistically low to improve example speed.
 
 model3 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
-                          pop_data = eusilcA_pop, mse = "nonparametric", B = 25, mtry=5, num.trees = 100,
+                          pop_data = eusilcA_pop, mse = "nonparametric", B = 5, mtry=5, num.trees = 100,
                           threshold = function(Y){0.5 * median(Y)},
                           custom_indicator = list(my_max = function(Y, threshold){max(Y)},
-                          my_quant = function(Y, threshold){quantile(Y, probs=c(0.05,0.95))}))
+                          my_quant = function(Y, threshold){quantile(Y, probs=c(0.05,0.95))}),
+                          smearing = FALSE)
 
 #example of SAEforest generic:
 summary(model3)

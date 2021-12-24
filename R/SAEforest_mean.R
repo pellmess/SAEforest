@@ -1,7 +1,7 @@
 #' Main function for means using MERFs with unit-level and aggregated data
 #'
 #' This function facilitates the use of Mixed Effects Random Forests (MERFs) for applications
-#' of Small Area Estimation (SAE). Unit-level sample data and additonal unit-level or aggregated
+#' of Small Area Estimation (SAE). Unit-level sample data and additional unit-level or aggregated
 #' data on predictive covariates is required to produce reliable estimates of domain-specific means.
 #' The MERF algorithm is an algorithmic procedure reminiscent of an EM-algorithm (see Details).
 #' Overall, the function serves as a coherent framework for the estimation of point-estimates
@@ -27,7 +27,7 @@
 #' for the production of informative plots with the generic function \code{\link{plot}}. In the case of
 #' aggregated covariate data, variable importance is needed to rank covariate information in the
 #' process of finding suitable calibration weights (see details). For further information regarding
-#' the measures of importance see \link[ranger]{ranger}.
+#' measures of importance see \link[ranger]{ranger}.
 #' @param initialRandomEffects Numeric value or vector of initial estimate of random effects.
 #' Defaults to 0.
 #' @param ErrorTolerance Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.
@@ -111,10 +111,11 @@
 #'
 #'#Example 2:
 #'#Calculating point + MSE estimates and passing arguments to the forest
+#'#Note that B is unrealistically low to improve example speed
 #'
 #' model2 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
 #'                          smp_data = eusilcA_smp, pop_data = eusilcA_pop,
-#'                          mse = "nonparametric", B = 25, mtry=5,
+#'                          mse = "nonparametric", B = 5, mtry=5,
 #'                          num.trees = 100)
 #'
 #'#SAEforest generics:
@@ -123,11 +124,12 @@
 #'
 #'#Example 3:
 #'#Calculating point + MSE estimates and passing arguments to the forest
+#'#Note that B is unrealistically low to improve example speed
 #'
 #' model3 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
 #'                             smp_data = eusilcA_smp, pop_data = eusilcA_popAgg,
 #'                             mse = "nonparametric", popnsize = popNsize,
-#'                             B = 25, mtry=5, num.trees = 100, aggData = TRUE)
+#'                             B = 5, mtry=5, num.trees = 100, aggData = TRUE)
 #'
 #'#SAEforest generics:
 #'summary(model3)
@@ -201,22 +203,6 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none", aggDat
     print(paste("Error SD Bootstrap started:"))
     adj_SD <- adjust_ErrorSD(Y=Y, X=X, smp_data = smp_data, mod = mean_preds[[2]], B = B_adj, ...)
     print(paste("Bootstrap with", B,"rounds started"))
-  }
-
-  if(mse == "analytic"){
-    mse_estims <- MSE_MERFanalytical(mod=mean_preds[[2]], smp_data = smp_data, X = X,
-                                     dName = dName, err_sd = adj_SD , B=B,
-                                     initialRandomEffects = initialRandomEffects,
-                                     ErrorTolerance = ErrorTolerance, MaxIterations = MaxIterations, ...)
-
-    result <- list(
-      MERFmodel = c(mean_preds[[2]], call = out_call, data_specs = list(data_specs), data=list(smp_data)),
-      Indicators = mean_preds[[1]],
-      MSE_Estimates = mse_estims,
-      AdjustedSD = adj_SD)
-
-    class(result) <- c("SAEforest_mean", "SAEforest")
-    return(result)
   }
 
   if(mse == "nonparametric"){

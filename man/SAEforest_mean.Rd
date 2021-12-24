@@ -68,7 +68,7 @@ or (iii) 'permutation'. Defaults to 'impurity'. In general, a concept of variabl
 for the production of informative plots with the generic function \code{\link{plot}}. In the case of
 aggregated covariate data, variable importance is needed to rank covariate information in the
 process of finding suitable calibration weights (see details). For further information regarding
-the measures of importance see \link[ranger]{ranger}.}
+measures of importance see \link[ranger]{ranger}.}
 
 \item{initialRandomEffects}{Numeric value or vector of initial estimate of random effects.
 Defaults to 0.}
@@ -100,7 +100,7 @@ see \code{\link{SAEforestObject}}.
 }
 \description{
 This function facilitates the use of Mixed Effects Random Forests (MERFs) for applications
-of Small Area Estimation (SAE). Unit-level sample data and additonal unit-level or aggregated
+of Small Area Estimation (SAE). Unit-level sample data and additional unit-level or aggregated
 data on predictive covariates is required to produce reliable estimates of domain-specific means.
 The MERF algorithm is an algorithmic procedure reminiscent of an EM-algorithm (see Details).
 Overall, the function serves as a coherent framework for the estimation of point-estimates
@@ -152,10 +152,11 @@ summary(model1)
 
 #Example 2:
 #Calculating point + MSE estimates and passing arguments to the forest
+#Note that B is unrealistically low to improve example speed
 
 model2 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
                          smp_data = eusilcA_smp, pop_data = eusilcA_pop,
-                         mse = "nonparametric", B = 25, mtry=5,
+                         mse = "nonparametric", B = 5, mtry=5,
                          num.trees = 100)
 
 #SAEforest generics:
@@ -164,11 +165,12 @@ summarize_indicators(model2, MSE = TRUE, CV =TRUE)
 
 #Example 3:
 #Calculating point + MSE estimates and passing arguments to the forest
+#Note that B is unrealistically low to improve example speed
 
 model3 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
                             smp_data = eusilcA_smp, pop_data = eusilcA_popAgg,
                             mse = "nonparametric", popnsize = popNsize,
-                            B = 25, mtry=5, num.trees = 100, aggData = TRUE)
+                            B = 5, mtry=5, num.trees = 100, aggData = TRUE)
 
 #SAEforest generics:
 summary(model3)

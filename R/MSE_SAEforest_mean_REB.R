@@ -22,7 +22,7 @@ MSE_SAEforest_mean_REB <- function(Y, X, dName, smp_data, mod, ADJsd, pop_data, 
 
   # Errors
   block_sample <- function(x){
-    in_samp <- t(unique(pop_data[dName]))  %in% domains
+    in_samp <- domains %in% t(unique(smp_data[dName]))
     block_err <- vector(mode="list",length = length(domains))
 
     for (idd in which(in_samp)){

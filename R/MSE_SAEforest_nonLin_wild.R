@@ -91,8 +91,9 @@ MSE_SAEforest_nonLin_wild <- function(Y, X, dName, threshold, smp_data, mod, ADJ
   Mean_square_B <- mapply(mean_square, tau_b,tau_star, SIMPLIFY = FALSE)
 
   MSE_estimates <- Reduce('+',Mean_square_B)/length(Mean_square_B)
-  MSE_estimates <- data.frame(unique(pop_data[dName]), MSE_estimates)
-  rownames(MSE_estimates) <- NULL
+  MSE_estimates_out <- data.frame(unique(pop_data[dName]), MSE_estimates)
+  colnames(MSE_estimates_out) <- c(dName, colnames(MSE_estimates))
+  rownames(MSE_estimates_out) <- NULL
 
   #___________________________
 
