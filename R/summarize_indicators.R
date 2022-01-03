@@ -29,8 +29,7 @@
 #' see \code{\link[base]{as.data.frame}}), \code{subset} (for default
 #' documentation, see \code{\link[base]{subset}}).
 #'
-#' @seealso \code{\link{SAEforestObject}}, \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}},
-#' \code{\link{SAEforest_meanAGG}}
+#' @seealso \code{\link{SAEforestObject}}, \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}}
 #'
 #' @examples
 #' \dontrun{
@@ -52,6 +51,7 @@
 #'
 #'#Extract indicator and try generics:
 #'Hcr1 <- summarize_indicators(model1, MSE = TRUE, CV =TRUE, indicator = "Hcr")
+#'
 #'head(Hcr1)
 #'tail(Hcr1)
 #'as.data.frame(Hcr1)

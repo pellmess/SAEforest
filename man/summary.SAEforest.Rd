@@ -21,6 +21,25 @@ Shows additional information about the data, the SAE model its components.
 Information is extracted from a "SAEforest" object. The returned object
 is suitable for printing with the \code{print}.
 }
+\examples{
+\dontrun{
+#Loading data
+data("eusilcA_pop")
+data("eusilcA_smp")
+
+income <- eusilcA_smp$eqIncome
+X_covar <- eusilcA_smp[,-c(1,16,17,18)]
+
+#Example 1:
+#Calculating point-estimates and discussing basic generic functions
+
+model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
+                       smp_data = eusilcA_smp, pop_data = eusilcA_pop)
+
+#SAEforest generics:
+summary(model1)
+}
+}
 \seealso{
 \code{\link{SAEforestObject}}
 }

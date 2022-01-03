@@ -32,7 +32,7 @@
 #' in each node), or num.trees (number of trees). For further details on possible parameters
 #' see \link[ranger]{ranger} and the example below.
 #'
-#' @return object of class MERFmodel includes the following elements:
+#' @return Object of class MERFmodel includes the following elements:
 #'
 #' \item{\code{Forest}}{A random forest of type 'ranger' modelling fixed effects
 #' of the model.}
@@ -76,11 +76,10 @@
 #' Hajjem et al. 2014. MERF paper
 #'
 #' @seealso \code{\link{SAEforest}},\code{\link[ranger]{ranger}},\code{\link[lme4]{lmer}},
-#' \code{\link{SAEforest_mean}}, \code{\link{SAEforest_meanAGG}}, \code{\link{SAEforest_nonLin}}
+#' \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}}
 #'
 #' @export
 #' @examples \dontrun{
-#'
 #'#Load Data
 #'data("eusilcA_pop")
 #'data("eusilcA_smp")

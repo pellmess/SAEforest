@@ -51,7 +51,7 @@
 #' @param ADDsamp_obs Number of Out-of-sample observations taken from the closest area if first iteration for the
 #' calculation of calibration weights fails. Only needed if \code{aggData = TRUE} with default set to 0.
 #' @param w_min Minimal number of covariates from which informative weights are calculated.
-#' Only needed if \code{aggData = TRUE} and a MSE is requested with defaults to 3.
+#' Only needed if \code{aggData = TRUE}. Defaults to 3.
 #'
 #' @return An object of class "SAEforest" always includes point estimates for disaggregated mean estimates
 #' as well as information on the MERF-model. Optionally corresponding MSE estimates are returned.

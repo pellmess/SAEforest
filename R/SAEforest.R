@@ -19,7 +19,7 @@
 #' importance is accessible through generic functions such as a summary \code{\link{summary.SAEforest}}
 #' or a class specific plot function \code{\link{plot.SAEforest}}. For a full documentation of
 #' objects of class "SAEforest" see \code{\link{SAEforestObject}}. An overview of all currently
-#' provided functions within this package can be be seen with \code{library(help=SAEforest)}.
+#' provided functions within this package can be be seen with \code{help(package="SAEforest")}.
 #'
 #' @references
 #' Krennmair, P. and Schmid, T. (202X). WP 1

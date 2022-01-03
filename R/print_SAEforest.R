@@ -2,7 +2,7 @@
 #'
 #' Basic information of an "SAEforest" object is printed.
 #' @param x Object of type "SAEforest", representing point and MSE
-#' estimates obtained by functions: \code{\link{SAEforest_mean}}) or \code{\link{SAEforest_nonLin}}).
+#' estimates obtained by functions: \code{\link{SAEforest_mean}} or \code{\link{SAEforest_nonLin}}.
 #' @seealso \code{\link{SAEforestObject}}
 #' @param ... Optional additional inputs that are ignored for this method.
 #'
@@ -36,8 +36,7 @@ print.SAEforest <- function(x, ...) {
   cat("An SAEforest Object contains results for point- and uncertainty estiamtes as well as seperate\n")
   cat("model components of the random forest part as well as the mixed effects part\n")
   cat("\n")
-  cat("Mehtods of lme4 are applicable to the random effects components stored in\n")
-  cat("'object$MERFmodel$EffectModel'.\n")
+  cat("Mehtods of lme4 are applicable to the random effects components stored in 'object$MERFmodel$EffectModel'.\n")
   cat("Mehtods for random forests from ranger are applicable to the fixed effects components stored in\n")
   cat("'object$MERFmodel$Forest'.\n")
 }

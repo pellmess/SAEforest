@@ -62,6 +62,7 @@ model1 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data
 
 #Extract indicator and try generics:
 Hcr1 <- summarize_indicators(model1, MSE = TRUE, CV =TRUE, indicator = "Hcr")
+
 head(Hcr1)
 tail(Hcr1)
 as.data.frame(Hcr1)
@@ -70,6 +71,5 @@ subset(Hcr1, district == "Wien")
 }
 }
 \seealso{
-\code{\link{SAEforestObject}}, \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}},
-\code{\link{SAEforest_meanAGG}}
+\code{\link{SAEforestObject}}, \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}}
 }

@@ -44,15 +44,15 @@
 #' income <- eusilcA_smp$eqIncome
 #' X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 #'
-#'#Specifc characteristics of Cross-validation
+#'#Specific characteristics of Cross-validation
 #' fitControl <- trainControl(method = "repeatedcv",
 #'                           number = 5,
 #'                           repeats = 1)
 #'
 #'# Define a tuning-grid
-#' merfGrid <- expand.grid(num.trees = c(50),
-#'                        mtry = c(3,7,9), min.node.size = c(5), splitrule =
-#'                          c("variance"))
+#' merfGrid <- expand.grid(num.trees = 50,
+#'                        mtry = c(3,7,9), min.node.size = 10, splitrule =
+#'                        "variance")
 #'
 #' tune_parameters(Y = income, X = X_covar, data = eusilcA_smp, dName ="district",
 #'                 trControl = fitControl, tuneGrid = merfGrid)

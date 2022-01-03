@@ -60,7 +60,7 @@ areas. Only needed if \code{aggData = TRUE} with default set to 25.}
 calculation of calibration weights fails. Only needed if \code{aggData = TRUE} with default set to 0.}
 
 \item{w_min}{Minimal number of covariates from which informative weights are calculated.
-Only needed if \code{aggData = TRUE} and a MSE is requested with defaults to 3.}
+Only needed if \code{aggData = TRUE}. Defaults to 3.}
 
 \item{importance}{Variable importance mode processed by the
 random forest from the \pkg{ranger}. Must be one of the following option: (i)'impurity', (ii) 'impurity_corrected'

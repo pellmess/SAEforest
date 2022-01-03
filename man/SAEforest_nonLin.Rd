@@ -51,7 +51,7 @@ smearing based approach. For theoretical details see (WP). Defaults to \code{TRU
 
 \item{importance}{Variable importance mode processed by the
 random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
-'permutation'. Defaults to "none". If you wish to produce informative plot with the generic function
+'permutation'. Defaults to "none". If you wish to produce informative plots with the generic function
 \code{\link{plot}}, set \code{importance} not to 'none'. For further details see \link[ranger]{ranger}.}
 
 \item{initialRandomEffects}{Numeric value or vector of initial estimate of random effects.

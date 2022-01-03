@@ -21,13 +21,13 @@ map_indicators(
 )
 }
 \arguments{
-\item{object}{An object of class \code{SAEforest}, containing estimates to be visualized}
+\item{object}{An object of class \code{SAEforest}, containing estimates to be visualized.}
 
 \item{indicator}{Optional character vector specifying indicators to be mapped: (i)
 all calculated indicators ("all"); (ii) each default indicators name: "Mean",
 "Quant10", "Quant25", "Median", "Quant75", "Quant90", "Gini", "Hcr", "Pgap", "Qsr"
 or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
-If the \code{object} is estimated by \code{\link{SAEforest_mean}}
+If the \code{object} is estimated by \code{\link{SAEforest_mean}},
 indicator arguments are ignored and only "Mean" is visualized.}
 
 \item{MSE}{Optional logical. If \code{TRUE}, the MSE is also visualized.

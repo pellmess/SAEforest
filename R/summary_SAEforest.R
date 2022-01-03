@@ -11,7 +11,24 @@
 #' @return An object of type "summary.SAEforest" including information about the sample
 #' and population data, the model fit and random forest specific metrics.
 #' @seealso \code{\link{SAEforestObject}}
+#' @examples
+#' \dontrun{
+#'#Loading data
+#'data("eusilcA_pop")
+#'data("eusilcA_smp")
 #'
+#'income <- eusilcA_smp$eqIncome
+#'X_covar <- eusilcA_smp[,-c(1,16,17,18)]
+#'
+#'#Example 1:
+#'#Calculating point-estimates and discussing basic generic functions
+#'
+#'model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
+#'                        smp_data = eusilcA_smp, pop_data = eusilcA_pop)
+#'
+#'#SAEforest generics:
+#'summary(model1)
+#'}
 #' @export
 
 summary.SAEforest <- function(object, ...) {
