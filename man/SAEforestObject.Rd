@@ -89,6 +89,6 @@ Krennmair, P. Wuerz, N. and Schmid, T. (202X). WP 2
 Krennmair, P., Schmid, T. and Tzavidis N. (202X). WP 3
 }
 \seealso{
-\code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}}, \code{\link{SAEforest_meanAGG}},
+\code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}},
 \code{ \link[ranger]{ranger}}, \code{ \link[lme4]{lmer}}
 }
