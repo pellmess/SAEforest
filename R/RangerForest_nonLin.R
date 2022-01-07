@@ -53,7 +53,7 @@ RangerForest_nonLin <- function(Y, X, dName, smp_data, pop_data,
      smear_i <- matrix(rep(OOBresiduals,popSize[i]), nrow=popSize[i],ncol=length(OOBresiduals), byrow=TRUE)
      smear_i <- smear_i + unit_preds[pop_data[[dName]] == domains[i]]
 
-     smear_list[[i]] <-  calc_indicat(c(smear_i), threshold = thresh, custom = custom_indicator)
+     smear_list[[i]] <-  calc_indicatR(c(smear_i), threshold = thresh, custom = custom_indicator)
     }
   }
 
@@ -62,7 +62,7 @@ RangerForest_nonLin <- function(Y, X, dName, smp_data, pop_data,
       smear_i <- matrix(rep(sample(OOBresiduals,1900),popSize[i]), nrow=popSize[i], ncol=1900,byrow=TRUE)
       smear_i <- smear_i + unit_preds[pop_data[[dName]] == domains[i]]
 
-      smear_list[[i]] <-  calc_indicat(c(smear_i), threshold = thresh, custom = custom_indicator)
+      smear_list[[i]] <-  calc_indicatR(c(smear_i), threshold = thresh, custom = custom_indicator)
     }
   }
 
