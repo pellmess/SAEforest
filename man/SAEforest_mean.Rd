@@ -49,7 +49,7 @@ proposed by Krennmair & Schmid (202X) and by Krennmair et al (202X) if \code{agg
 \item{aggData}{Logical input indicating whether aggregated covariate information or unit-level covariate information
 is used. Defaults to \code{FALSE} assuming unit-level covariate data.}
 
-\item{popnsize}{data.frame, omprising information of population size of domains.
+\item{popnsize}{data.frame, comprising information of population size of domains.
 only needed if \code{aggData = TRUE} and a MSE is requested. Please note that the name
 of the domain identifier must match the column name of \code{smp_data}.}
 
@@ -83,7 +83,7 @@ Krennmair et al. (202X). Defaults to 100.}
 
 \item{B_adj}{Numeric number of bootstrap replications for the adjustment of residual variance. Defaults to 100.}
 
-\item{na.rm}{Logical. Whether missing values should be removed. Defaults to TRUE.}
+\item{na.rm}{Logical. Whether missing values should be removed. Defaults to \code{TRUE}.}
 
 \item{...}{Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
 Most important parameters are for instance mtry (number of variables to possibly split at
@@ -125,8 +125,8 @@ For the estimation of the MSE, residuals are scaled by a bias-corrected residual
 proposed Krennmair and Schmid (202X). The bootstrap bias correction follows Mendez and Lohr (2011).
 
 Note that the \code{MERFmodel} object is a composition of elements from a random forest of class 'ranger'
-and a random effects model of class 'lmerMod'.  Thus, all generic functions applicable to objects of classes
-'ranger' and 'lmerMod' can be used on these elements. For furhter details on generic functions see
+and a random effects model of class 'merMod'.  Thus, all generic functions applicable to objects of classes
+'ranger' and 'merMod' can be used on these elements. For further details on generic functions see
 \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
 }
 \examples{

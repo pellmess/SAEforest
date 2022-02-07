@@ -45,9 +45,9 @@ point-estimates should be obtained. MC should be used if computational constrain
 smearing based approach. For theoretical details see (WP). Defaults to \code{TRUE}.}
 
 \item{mse}{Character input specifying the type of uncertainty estimates. Available options are:
-(i) "nonparametric" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X)
-(ii) "wild" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X) or
-(iii) "none" if only point estimates are requested. Defaults to "none".}
+(i) "none" if only point estimates are requested,
+(ii) "nonparametric" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X) or
+(iii) "wild" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X). Defaults to "none".}
 
 \item{importance}{Variable importance mode processed by the
 random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
@@ -79,11 +79,11 @@ median of \code{Y} are taken as threshold. Defaults to NULL.}
 calculated. These functions must only depend on the target variable \code{Y} and optionally the
 \code{threshold}. Defaults to \code{NULL}}
 
-\item{na.rm}{Logical. Whether missing values should be removed. Defaults to TRUE.}
+\item{na.rm}{Logical. Whether missing values should be removed. Defaults to \code{TRUE}.}
 
 \item{...}{Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
-Most important parameters are for instance mtry (number of variables to possibly split at
-in each node), or num.tree (number of trees). For further details on possible parameters
+Most important parameters are for instance \code{mtry} (number of variables to possibly split at
+in each node), or \code{num.trees} (number of trees). For further details on possible parameters
 see \link[ranger]{ranger} and the example below.}
 }
 \value{
@@ -126,8 +126,8 @@ For the estimation of the MSE, the bootstrap population is built based on a bias
 variance as proposed Krennmair and Schmid (202X). The bootstrap bias correction follows Mendez and Lohr (2011).
 
 Note that the \code{MERFmodel} object is a composition of elements from a random forest of class 'ranger'
-and a random effects model of class 'lmerMod'.  Thus, all generic functions applicable to objects of classes
-'ranger' and 'lmerMod' can be used on these elements. For furhter details on generic functions see
+and a random effects model of class 'merMod'.  Thus, all generic functions applicable to objects of classes
+'ranger' and 'merMod' can be used on these elements. For furhter details on generic functions see
 \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
 }
 \examples{
