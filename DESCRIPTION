@@ -4,8 +4,7 @@ Title: Mixed Effect Random Forests for Small Area Estimation
 Version: 0.1.0
 Author: Patrick Krennmair
 Maintainer: Patrick Krennmair <patrick.krennmair@fu-berlin.de>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: The package promotes the use of Mixed Effects Random Forests (MERFs) for applications of Small Area Estimation (SAE). The package combines functions for the estimation of regionally disaggregated linear and non-linear economic and inequality indicators using survey sample data. SAEforest provides procedures to facilitate the estimation of domain-level point and uncertainty estimates and visualizes results.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -29,7 +28,6 @@ Imports:
     simFrame
 RoxygenNote: 7.1.2
 Depends: 
-    R (>= 4.0),
-    tidyverse
+    R (>= 4.0)
 LinkingTo: 
     Rcpp

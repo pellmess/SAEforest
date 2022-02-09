@@ -4,20 +4,20 @@
 #' this function can be understood as a modified wrapper for \link[caret]{train} from the package \pkg{caret}, treating
 #' MERFs as a custom method.
 #'
-#' @details Tuning can be performed on the following four parameters: \code{num.trees}(the number of trees
+#' @details Tuning can be performed on the following four parameters: \code{num.trees} (the number of trees
 #' for a forest), \code{mtry} (number of variables as split candidates at in each node), \code{min.node.size}
 #' (minimal individual node size) and \code{splitrule} (general splitting rule). For details see
 #' \link[ranger]{ranger}.
 #'
-#' @param Y Metric input value of target variable.
+#' @param Y Continuous input value of target variable.
 #' @param X Matrix or data.frame of predictive covariates.
 #' @param data data.frame of survey sample data including the specified elements of \code{Y} and
 #' \code{X}.
 #' @param dName Character specifying the name of domain identifier, for which random intercepts
 #' are modeled.
 #' @param trControl Control parameters passed to \link[caret]{train}. Most important
-#' parameters are \code{method} ("repeatedcv" for x-fold cross-validation) and the number of
-#' repetitions (\code{folds}) or folds (\code{number}). For further details see \link[caret]{trainControl}
+#' parameters are \code{method} ("repeatedcv" for x-fold cross-validation), \code{number} (the number of folds) and
+#' \code{repeats} (the number of repetitions). For further details see \link[caret]{trainControl}
 #' and the example below.
 #' @param tuneGrid A data.frame with possible tuning values. The columns must have the same names as the
 #' tuning parameters. For this tuning function the grid must comprise entries for the following parameters:

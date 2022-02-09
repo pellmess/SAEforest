@@ -1,7 +1,7 @@
 #' Plot function for an SAEforest object
 #'
 #' Plots model-specific characteristics of the fixed effects random forest component of
-#' the MERF from object "SAEforest". A variable importance plot is produced to visualize
+#' the MERF from a \code{\link{SAEforestObject}}. A variable importance plot is produced to visualize
 #' the importance of individual covariates for the predictive performance of the model.
 #' For the variable importance plot, arguments are passed internally to the function
 #' \code{\link[vip]{vip}}. If requested, the plot function additionally provides a partial
@@ -9,7 +9,7 @@
 #' on the target variable. The pdp plot is produced using \code{\link[pdp]{partial}} from
 #' the package \pkg{pdp}. The plot-engine for both plots is \pkg{ggplot2}.
 #'
-#' @param x An object of type "SAEforest" including a random forest model of class "ranger".
+#' @param x An object of class \code{SAEforest} including a random forest model of class \code{\link[ranger]{ranger}}.
 #' @param num_features Number of features for which a partial dependence plot is required.
 #' @param col Parameter specifying the color of selected plots. The argument must be specified
 #' such that it can be process by \code{\link[ggplot2]{aes}}. Default is to a character name of the
@@ -19,21 +19,22 @@
 #' color "darkgreen".
 #' @param alpha Parameter specifying the transparency of \code{fill} for vip plots.
 #' The argument must be a number in \code{[0,1]}.
-#' @param include_type If set to \code{TRUE}, the type of importance specified in the fitting process
+#' @param include_type Logical. If set to \code{TRUE}, the type of importance specified in the fitting process
 #' of the model is included in the vip plot. Defaults to \code{TRUE}.
-#' @param horizontal if set to \code{TRUE}, the importance scores are plot on the x-axis. If parameter is
+#' @param horizontal Logical. If set to \code{TRUE}, the importance scores are plot on the x-axis. If parameter is
 #' set to \code{FALSE}, the importance scores are plot on the y-axis. Defaults to \code{TRUE}.
-#' @param gg_theme Specify a predefined theme from \pkg{ggplot2}. Default is set to \code{theme_minimal}.
+#' @param gg_theme Specify a predefined theme from \pkg{ggplot2}. Defaults to \code{theme_minimal}.
 #' @param lsize Parameter specifying the line size of pdp plots. The argument must be specified
 #' such that it can be process by \code{\link[ggplot2]{aes}}. Defaults to 1.5.
 #' @param lty Parameter specifying the line size of pdp plots. The argument must be specified
 #' such that it can be process by \code{\link[ggplot2]{aes}}. Defaults to "solid".
 #' @param grid_row Parameter specifying the amount of rows for the joint pdp plot. Default is set to 2
-#' @param out_list If set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
+#' @param out_list Logical. If set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
 #' is returned for further individual customization and processing. Defaults to \code{FALSE}.
-#' @param pdp_plot If set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
+#' @param pdp_plot Logical. If set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
 #' from the package \pkg{pdp} are included. Defaults to \code{TRUE}.
 #' @param ... Optional additional inputs that are ignored for this method.
+#'
 #' @return Plots of variable importance and/or partial dependence of covariates ranked by corresponding
 #' importance. Additionally, a list of individual plots can be returned facilitating individual
 #' customization and exporting. See the following examples for details.
@@ -44,7 +45,7 @@
 #'
 #' For pdp plots, note that covariates of type factor or character cannot be used for partial dependence
 #' plots. Dummy-variables can be used, however, their pdp plots are always lines connecting two effect
-#' points for 0 and 1. Most informative pdp plots can be produced for metric covariates.
+#' points for 0 and 1. Most informative pdp plots can be produced for continuous covariates.
 #'
 #' @seealso \code{\link{SAEforestObject}}
 #'
@@ -58,7 +59,7 @@
 #'X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 #'
 #'#Example 1:
-#'#Calculating point-estimates and discussing basic generic functions
+#'#Calculating point estimates and discussing basic generic functions
 #'
 #'model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
 #'                        smp_data = eusilcA_smp, pop_data = eusilcA_pop, num.trees = 50)

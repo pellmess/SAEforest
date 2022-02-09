@@ -1,14 +1,14 @@
 #' Summarizes an SAEforest object
 #'
-#' Shows additional information about the data, the SAE model its components.
-#' Information is extracted from a "SAEforest" object. The returned object
+#' Shows additional information about the data, the SAE model and its components.
+#' Information is extracted from a \code{SAEforest} object. The returned object
 #' is suitable for printing with the \code{print}.
 
-#' @param object An object of type "SAEforest" representing point
+#' @param object An object of class \code{SAEforest} representing point
 #' and MSE estimates. Objects differ depending on the estimation method
 #' @param ... Optional additional inputs that are ignored for this method.
 #'
-#' @return An object of type "summary.SAEforest" including information about the sample
+#' @return An object of class \code{summary.SAEforest} including information about the sample
 #' and population data, the model fit and random forest specific metrics.
 #' @seealso \code{\link{SAEforestObject}}
 #' @examples
@@ -21,7 +21,7 @@
 #'X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 #'
 #'#Example 1:
-#'#Calculating point-estimates and discussing basic generic functions
+#'#Calculating point estimates and discussing basic generic functions
 #'
 #'model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
 #'                        smp_data = eusilcA_smp, pop_data = eusilcA_pop)

@@ -24,10 +24,10 @@ methodological details an explanations.}
 
 Details on object of \code{MERFmodel}:
 
-\item{\code{Forest}}{A random forest of type 'ranger' modelling fixed effects
+\item{\code{Forest}}{A random forest of class \link[ranger]{ranger} modelling fixed effects
 of the model.}
-\item{\code{EffectModel}}{A model of random effects of type 'lmer' capturing
-tructural component of MERFs and modeling random components.}
+\item{\code{EffectModel}}{A model of random effects of class \code{\link[lme4]{merMod}} capturing
+structural components of MERFs and modeling random components.}
 \item{\code{RandomEffects}}{List element containing the values of random intercepts from \code{EffectModel}.}
 \item{\code{RanEffSD}}{Numeric value of the standard deviation of random intercepts.}
 \item{\code{ErrorSD}}{Numeric value of standard devition of unit-level errors.}
@@ -40,26 +40,26 @@ tructural component of MERFs and modeling random components.}
 \item{\code{initialRandomEffects}}{Numeric value or vector of intial specification of random effects.}
 \item{\code{MaxIterations}}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm.}
-\item{\code{call}}{Summarized function call producing the object.}
+\item{\code{call}}{The summarized function call producing the object.}
 \item{\code{data_specs}}{Data characteristics such as domain specific sample sizes or number of
 out-of-sample areas.}
-\item{\code{data}}{Original survey sample data.}
+\item{\code{data}}{The used survey sample data.}
 }
 \description{
-An object of class SAEforest always includes point estimates of regionally disaggregated economic
+An object of class \code{SAEforest} always includes point estimates of regionally disaggregated economic
 and inequality indicators and a \code{MERFmodel} object including information on the model fit for fixed
-effects as well as random effects. Optionally an SAEforest object includes corresponding MSE estimates.
-In the case of domain-level means using aggregated covariate information, the SAEforest object additionally
+effects as well as random effects. Optionally an \code{SAEforestObject} includes corresponding MSE estimates.
+In the case of domain-level means using aggregated covariate information, the \code{SAEforestObject} object additionally
 includes an element, capturing the number of variables used in the weighting process from aggregated
-covariate information. For an object of class SAEforest, the following generic functions are applicable:
+covariate information. For an object of class \code{SAEforestObject}, the following generic functions are applicable:
 \code{\link{print}}, \code{\link{plot}}, \code{\link{summary}} and \code{\link{summarize_indicators}}.
 Additional generic functions are applicable to the \code{MERFmodel} object. See Details for more information.
 }
 \details{
-Among other elements, the included \code{MERFmodel} object contains a random forest of class 'ranger'
-modelling fixed effects and a random effects model of class 'lmerMod'.  Thus, all generic functions
-applicable to objects of classes 'ranger' and 'lmerMod' can be used on these elements. For details on
-generic functions see \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as examples below.
+Note that the \code{MERFmodel} object is a composition of elements from a random forest of class
+\code{ranger} and a random effects model of class \code{\link[lme4]{merMod}}. Thus, all generic functions are
+applicable to corresponding objects. For further details on generic functions see \code{\link[ranger]{ranger}}
+and \code{\link[lme4]{lmer}} as well as the examples below.
 }
 \examples{
 \dontrun{
@@ -71,7 +71,7 @@ income <- eusilcA_smp$eqIncome
 X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 
 #Example 1:
-#Calculating point-estimates and discussing basic generic functions
+#Calculating point estimates and discussing basic generic functions
 
 model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
                        smp_data = eusilcA_smp, pop_data = eusilcA_pop)

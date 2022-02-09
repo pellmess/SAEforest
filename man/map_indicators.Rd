@@ -30,10 +30,10 @@ or the function name/s of "custom_indicator/s"; (iii) a vector of names of indic
 If the \code{object} is estimated by \code{\link{SAEforest_mean}},
 indicator arguments are ignored and only "Mean" is visualized.}
 
-\item{MSE}{Optional logical. If \code{TRUE}, the MSE is also visualized.
+\item{MSE}{Logical. If \code{TRUE}, the MSE is also visualized.
 Defaults to \code{FALSE}.}
 
-\item{CV}{Optional logical. If \code{TRUE}, the CV is also visualized.
+\item{CV}{Logical. If \code{TRUE}, the CV is also visualized.
 Defaults to \code{FALSE}.}
 
 \item{map_obj}{An \code{SpatialPolygonsDataFrame} object as defined by the
@@ -83,7 +83,7 @@ income <- eusilcA_smp$eqIncome
 X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 
 #Example 1:
-#Calculating point-estimates and discussing basic generic functions
+#Calculating point estimates and discussing basic generic functions
 
 model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
                        smp_data = eusilcA_smp, pop_data = eusilcA_pop, num.trees=50)
@@ -117,5 +117,5 @@ map_obj <- map_indicators(object = model1, MSE = FALSE, CV = FALSE,
 }
 \seealso{
 \code{\link{SAEforest}}, \code{\link[maptools]{readShapePoly}},
-\code{\link[sp]{SpatialPolygonsDataFrame}}, \code{\link[ggplot2]{ggplot}}.
+\code{\link[sp]{SpatialPolygonsDataFrame}}, \code{\link[ggplot2]{ggplot}}, \code{\link[emdi]{map_plot}}.
 }

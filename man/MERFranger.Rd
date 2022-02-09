@@ -18,7 +18,7 @@ MERFranger(
 )
 }
 \arguments{
-\item{Y}{Metric input value of target variable.}
+\item{Y}{Continuous input value of target variable.}
 
 \item{X}{Matrix of predictive covariates.}
 
@@ -41,20 +41,20 @@ Defaults to 0.}
 \item{MaxIterations}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm. Defaults to 25.}
 
-\item{na.rm}{Logical. Whether missing values should be removed. Defaults to TRUE.}
+\item{na.rm}{Logical. Whether missing values should be removed. Defaults to \code{TRUE}.}
 
 \item{...}{Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
-Most important parameters are for instance mtry (number of variables to possibly split at
-in each node), or num.trees (number of trees). For further details on possible parameters
+Most important parameters are for instance \code{mtry} (number of variables to possibly split at
+in each node), or \code{num.trees} (number of trees). For further details on possible parameters
 see \link[ranger]{ranger} and the example below.}
 }
 \value{
 Object of class MERFmodel includes the following elements:
 
-\item{\code{Forest}}{A random forest of type 'ranger' modelling fixed effects
+\item{\code{Forest}}{A random forest of class \link[ranger]{ranger} modelling fixed effects
 of the model.}
-\item{\code{EffectModel}}{A model of random effects of type 'lmer' capturing
-tructural component of MERFs and modeling random components.}
+\item{\code{EffectModel}}{A model of random effects of class \code{\link[lme4]{merMod}} capturing
+structural components of MERFs and modeling random components.}
 \item{\code{RandomEffects}}{List element containing the values of random intercepts from \code{EffectModel}.}
 \item{\code{RanEffSD}}{Numeric value of the standard deviation of random intercepts.}
 \item{\code{ErrorSD}}{Numeric value of standard devition of unit-level errors.}
@@ -81,7 +81,7 @@ combining a random forest from \pkg{ranger} with a model capturing random effect
 and should not be directly used by the reguluar user. Recommended exceptions are applications exceeding
 the scope of existing wrapper functions or further research. The function \code{MERFranger}
 allows to model complex patterns of structural relations (see Examples). The function returns
-an object of class MERFmodel, which can be used to produce unit-level predictions. In contrast to
+an object of class \code{MERFmodel}, which can be used to produce unit-level predictions. In contrast to
 the wrapping functions, this function does not directly provide SAE estimates on domain-specific indicators.
 }
 \details{
@@ -94,10 +94,9 @@ of the algorithm is monitored by log-likelihood of a joint model of both compone
 further details see Krennmair and Schmid or Hajem et. al. (2014).
 
 Note that the \code{MERFmodel} object is a composition of elements from a random forest of class
-'ranger' and a random effects model of class 'lmerMod'.  Thus, all generic functions applicable
-to objects of classes 'ranger' and 'lmerMod' can be used on these elements. For further details
-on generic functions see \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as
-the examples below.
+\code{ranger} and a random effects model of class \code{\link[lme4]{merMod}}. Thus, all generic functions are
+applicable to corresponding objects. For further details on generic functions see \code{\link[ranger]{ranger}}
+and \code{\link[lme4]{lmer}} as well as the examples below.
 }
 \examples{
 \dontrun{
@@ -106,6 +105,7 @@ data("eusilcA_pop")
 data("eusilcA_smp")
 
 income <- eusilcA_smp$eqIncome
+X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 
 #Example 1:
 #Calculating general model used in wrapper functions
@@ -128,6 +128,6 @@ Krennmair, P. and Schmid, T. (202X). WP 1
 Hajjem et al. 2014. MERF paper
 }
 \seealso{
-\code{\link{SAEforest}},\code{\link[ranger]{ranger}},\code{\link[lme4]{lmer}},
+\code{\link{SAEforest}}, \code{\link[ranger]{ranger}}, \code{\link[lme4]{lmer}},
 \code{\link{SAEforest_mean}}, \code{\link{SAEforest_nonLin}}
 }

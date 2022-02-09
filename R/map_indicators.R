@@ -11,9 +11,9 @@
 #' or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
 #' If the \code{object} is estimated by \code{\link{SAEforest_mean}},
 #' indicator arguments are ignored and only "Mean" is visualized.
-#' @param MSE Optional logical. If \code{TRUE}, the MSE is also visualized.
+#' @param MSE Logical. If \code{TRUE}, the MSE is also visualized.
 #' Defaults to \code{FALSE}.
-#' @param CV Optional logical. If \code{TRUE}, the CV is also visualized.
+#' @param CV Logical. If \code{TRUE}, the CV is also visualized.
 #' Defaults to \code{FALSE}.
 #' @param map_obj An \code{SpatialPolygonsDataFrame} object as defined by the
 #' \pkg{sp} package on which the data should be visualized.
@@ -39,7 +39,7 @@
 #' @return Creates required plots and if selected, a fortified data.frame and a list of plots.
 #'
 #' @seealso \code{\link{SAEforest}}, \code{\link[maptools]{readShapePoly}},
-#' \code{\link[sp]{SpatialPolygonsDataFrame}}, \code{\link[ggplot2]{ggplot}}.
+#' \code{\link[sp]{SpatialPolygonsDataFrame}}, \code{\link[ggplot2]{ggplot}}, \code{\link[emdi]{map_plot}}.
 #'
 #' @examples
 #' \dontrun{
@@ -51,7 +51,7 @@
 #'X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 #'
 #'#Example 1:
-#'#Calculating point-estimates and discussing basic generic functions
+#'#Calculating point estimates and discussing basic generic functions
 #'
 #'model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
 #'                        smp_data = eusilcA_smp, pop_data = eusilcA_pop, num.trees=50)

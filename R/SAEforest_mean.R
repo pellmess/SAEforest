@@ -1,14 +1,14 @@
-#' Main function for means using MERFs with unit-level and aggregated data
+#' Main function for the estimation of domain-level means with MERFs under unit-level and aggregated data
 #'
-#' This function facilitates the use of Mixed Effects Random Forests (MERFs) for applications
+#' This function enables the use of Mixed Effects Random Forests (MERFs) for applications
 #' of Small Area Estimation (SAE). Unit-level sample data and additional unit-level or aggregated
 #' data on predictive covariates is required to produce reliable estimates of domain-specific means.
 #' The MERF algorithm is an algorithmic procedure reminiscent of an EM-algorithm (see Details).
-#' Overall, the function serves as a coherent framework for the estimation of point-estimates
+#' Overall, the function serves as a coherent framework for the estimation of point estimates
 #' and if requested for assessing the uncertainty of the estimates. Methodological details are
 #' provided by Krennmair & Schmid (202X) and following examples showcase potential applications.
 #'
-#' @param Y Metric input value of target variable.
+#' @param Y Continuous input value of target variable.
 #' @param X Matrix or data.frame of predictive covariates.
 #' @param dName Character specifying the name of domain identifier, for which random intercepts
 #' are modeled.
@@ -22,27 +22,27 @@
 #' (i) "none" if only point estimates are requested or (ii) "nonparametric" following the mse boostrap procedure
 #' proposed by Krennmair & Schmid (202X) and by Krennmair et al (202X) if \code{aggData = TRUE}.
 #' @param importance Variable importance mode processed by the
-#' random forest from the \pkg{ranger}. Must be one of the following option: (i)'impurity', (ii) 'impurity_corrected'
+#' random forest from \pkg{ranger}. Must be one of the following options: (i)'impurity', (ii) 'impurity_corrected'
 #' or (iii) 'permutation'. Defaults to 'impurity'. In general, a concept of variable importance is needed
 #' for the production of informative plots with the generic function \code{\link{plot}}. In the case of
 #' aggregated covariate data, variable importance is needed to rank covariate information in the
-#' process of finding suitable calibration weights (see details). For further information regarding
+#' process of finding suitable calibration weights (see Details). For further information regarding
 #' measures of importance see \link[ranger]{ranger}.
 #' @param initialRandomEffects Numeric value or vector of initial estimate of random effects.
 #' Defaults to 0.
 #' @param ErrorTolerance Numeric value to monitor the MERF algorithm's convergence. Defaults to 1e-04.
 #' @param MaxIterations Numeric value specifying the maximal amount of iterations for the
 #' MERF algorithm. Defaults to 25.
-#' @param B Numeric number of bootstrap replications for mse estimation procedure proposed by
+#' @param B Number of bootstrap replications for mse estimation procedure proposed by
 #' Krennmair et al. (202X). Defaults to 100.
-#' @param B_adj Numeric number of bootstrap replications for the adjustment of residual variance. Defaults to 100.
+#' @param B_adj Number of bootstrap replications for the adjustment of residual variance. Defaults to 100.
 #' @param na.rm Logical. Whether missing values should be removed. Defaults to \code{TRUE}.
 #' @param ... Additional parameters are directly passed to the random forest \link[ranger]{ranger}.
-#' Most important parameters are for instance mtry (number of variables to possibly split at
-#' in each node), or num.tree (number of trees). For further details on possible parameters
+#' Most important parameters are for instance \code{mtry} (number of variables to possibly split at
+#' in each node), or \code{num.trees} (number of trees). For further details on possible parameters
 #' see \link[ranger]{ranger} and the example below.
 #' @param aggData Logical input indicating whether aggregated covariate information or unit-level covariate information
-#' is used. Defaults to \code{FALSE} assuming unit-level covariate data.
+#' is used. Defaults to \code{FALSE}, assuming unit-level covariate data.
 #' @param popnsize data.frame, comprising information of population size of domains.
 #' only needed if \code{aggData = TRUE} and a MSE is requested. Please note that the name
 #' of the domain identifier must match the column name of \code{smp_data}.
@@ -53,11 +53,11 @@
 #' @param w_min Minimal number of covariates from which informative weights are calculated.
 #' Only needed if \code{aggData = TRUE}. Defaults to 3.
 #'
-#' @return An object of class "SAEforest" always includes point estimates for disaggregated mean estimates
+#' @return An object of class \code{SAEforest} always includes point estimates for disaggregated mean estimates
 #' as well as information on the MERF-model. Optionally corresponding MSE estimates are returned.
-#' Several generic functions have methods for the returned object of class "SAEforest". Additionally,
-#' the included \code{MERFmodel} object allows the use of generic functions for classes "ranger" and
-#' "merMod". For a full list and explanation of components and possibilities for objects of class "SAEforest",
+#' Several generic functions have methods for the returned object of class \code{SAEforest}. Additionally,
+#' the included \code{MERFmodel} object allows the use of generic functions for classes \code{ranger} and
+#' \code{\link[lme4]{merMod}}. For a full list and explanation of components and possibilities for objects of class \code{SAEforest},
 #' see \code{\link{SAEforestObject}}.
 #'
 #' @details
@@ -77,10 +77,10 @@
 #' For the estimation of the MSE, residuals are scaled by a bias-corrected residual variance as
 #' proposed Krennmair and Schmid (202X). The bootstrap bias correction follows Mendez and Lohr (2011).
 #'
-#' Note that the \code{MERFmodel} object is a composition of elements from a random forest of class 'ranger'
-#' and a random effects model of class 'merMod'.  Thus, all generic functions applicable to objects of classes
-#' 'ranger' and 'merMod' can be used on these elements. For further details on generic functions see
-#' \code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
+#' Note that the \code{MERFmodel} object is a composition of elements from a random forest of class
+#' \code{ranger} and a random effects model of class \code{\link[lme4]{merMod}}. Thus, all generic functions are
+#' applicable to corresponding objects. For further details on generic functions see \code{\link[ranger]{ranger}}
+#' and \code{\link[lme4]{lmer}} as well as the examples below.
 #'
 #' @references
 #' Krennmair, P. and Schmid, T. (202X). WP 1
@@ -100,7 +100,7 @@
 #' X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 #'
 #'#Example 1:
-#'#Calculating point-estimates and discussing basic generic functions
+#'#Calculating point estimates and discussing basic generic functions
 #'
 #' model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
 #'                          smp_data = eusilcA_smp, pop_data = eusilcA_pop)
@@ -168,7 +168,7 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none", aggDat
   smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(smp_data[[dName]]))
   pop_data[[dName]] <- factor(pop_data[[dName]], levels=unique(pop_data[[dName]]))
 
-  # Order Data according to factors to ease MSE-estimation
+  # Order Data according to factors to ease MSE estimation
   order_in <- order(smp_data[[dName]])
   smp_data <- smp_data[order_in,]
   X <- X[order_in,]
@@ -250,7 +250,7 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none", aggDat
       popnsize[[dName]] <- factor(popnsize[[dName]], levels = unique(pop_data[[dName]]))
     }
 
-    # Order Data according to factors to ease MSE-estimation
+    # Order Data according to factors to ease MSE estimation
     order_in <- order(smp_data[[dName]])
     smp_data <- smp_data[order_in,]
     X <- X[order_in,]

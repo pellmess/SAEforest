@@ -2,7 +2,7 @@
 % Please edit documentation in R/SAEforest_nonLin.R
 \name{SAEforest_nonLin}
 \alias{SAEforest_nonLin}
-\title{Main function for nonlinear indicators using MERFs with unit-level data}
+\title{Main function for the estimation of domain-level nonlinear indicators with MERFs under unit-level data}
 \usage{
 SAEforest_nonLin(
   Y,
@@ -26,7 +26,7 @@ SAEforest_nonLin(
 )
 }
 \arguments{
-\item{Y}{Metric input value of target variable.}
+\item{Y}{Continuous input value of target variable.}
 
 \item{X}{Matrix or data.frame of predictive covariates.}
 
@@ -41,7 +41,7 @@ covariates \code{X}. Please note that the column names of predictive covariates 
 column names of \code{smp_data}. This holds especially for the name of the domain identifier.}
 
 \item{smearing}{Logical input indicating whether a smearing based approach or a MC-based version for
-point-estimates should be obtained. MC should be used if computational constraints do not allow for a
+point estimates should be obtained. MC should be used if computational constraints do not allow for a
 smearing based approach. For theoretical details see (WP). Defaults to \code{TRUE}.}
 
 \item{mse}{Character input specifying the type of uncertainty estimates. Available options are:
@@ -50,7 +50,7 @@ smearing based approach. For theoretical details see (WP). Defaults to \code{TRU
 (iii) "wild" following the mse bootstrap procedure proposed by Krennmair & Schmid (202X). Defaults to "none".}
 
 \item{importance}{Variable importance mode processed by the
-random forest from the \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
+random forest from \pkg{ranger}. Must be 'none', 'impurity', 'impurity_corrected',
 'permutation'. Defaults to "none". If you wish to produce informative plots with the generic function
 \code{\link{plot}}, set \code{importance} not to 'none'. For further details see \link[ranger]{ranger}.}
 
@@ -62,13 +62,13 @@ Defaults to 0.}
 \item{MaxIterations}{Numeric value specifying the maximal amount of iterations for the
 MERF algorithm. Defaults to 25.}
 
-\item{B}{Numeric number of bootstrap replications for mse estimation procedure proposed by
+\item{B}{Number of bootstrap replications for mse estimation procedure proposed by
 Krennmair et al. (202X). Defaults to 100.}
 
-\item{B_adj}{Numeric number of bootstrap replications for the adjustment of residual variance proposed
+\item{B_adj}{Number of bootstrap replications for the adjustment of residual variance proposed
 by Mendez and Lohr (2001). Defaults to 100.}
 
-\item{B_MC}{Numeric number of bootstrap populations to be generated for the MC version for estimating
+\item{B_MC}{Number of bootstrap populations to be generated for the MC version for estimating
 point estimates. Defaults to 100.}
 
 \item{threshold}{Set a custom threshold for indicators, such as the head count ratio. The threshold
@@ -87,22 +87,22 @@ in each node), or \code{num.trees} (number of trees). For further details on pos
 see \link[ranger]{ranger} and the example below.}
 }
 \value{
-An object of class "SAEforest" always includes point estimates for disaggregated indicators
+An object of class \code{SAEforest} includes point estimates for disaggregated indicators
 as well as information on the MERF-model. Optionally corresponding MSE estimates are returned.
-Several generic functions have methods for the returned object of class "SAEforest". Additionally,
-the included \code{MERFmodel} object allows the use of generic functions for classes "ranger" and
-"merMod". For a full list and explanation of components and possibilities for objects of class "SAEforest",
+Several generic functions have methods for the returned object of class \code{SAEforest}. Additionally,
+the included \code{MERFmodel} object allows the use of generic functions for classes \code{ranger} and
+\code{\link[lme4]{merMod}}. For a full list and explanation of components and possibilities for objects of class \code{SAEforest},
 see \code{\link{SAEforestObject}}.
 }
 \description{
-This function facilitates the use of Mixed Effects Random Forests (MERFs)
+This function enables the use of Mixed Effects Random Forests (MERFs)
 for applications of Small Area Estimation (SAE). Unit-level survey-sample and unit-level
 covariate data on predictive covariates is required to produce reliable estimates of various
 disaggregated economic and inequality indicators. The set of predefined indicators includes
 the mean, median, quantiles (10\%, 25\%, 75\% and 90\%), the head count ratio, the poverty gap,
 the Gini coefficient and the quintile share ratio. The MERF algorithm is an algorithmic procedure
 reminiscent of an EM-algorithm (see Details). Overall, the function serves as a coherent framework
-for the estimation of point-estimates and if requested for assessing the uncertainty of the
+for the estimation of point estimates and if requested for assessing the uncertainty of the
 estimates. Methodological details are provided by Krennmair & Schmid (202X) and following
 examples showcase potential applications.
 }
@@ -116,19 +116,19 @@ from the forest to be correct. Overall convergence of the algorithm is monitored
 joint model of both components. For further details see Krennmair and Schmid or Hajem et. al. (2014).
 
 For the estimation of (nonlinear) poverty estimators and/or quantiles, we need information on the
-area-specific CDF of Y. We follow a smearing approach originating from Duan (1983) and analyzed within
+area-specific CDF of \code{Y}. We follow a smearing approach originating from Duan (1983) and analyzed within
 a general unit-level framework for the estimation of SAE means and quantiles by Tzavidis et al. (2010).
 For further details please see Krennmair et al. (202X). Alternatively to the smearing approach, it is
-possible to simulate population values of Y using Monte-Carlo methods. This option is discussed as well
+possible to simulate population values of \code{Y} using Monte-Carlo methods. This option is discussed as well
 and should be used for cases where smearing is not possible due to computational constraints.
 
 For the estimation of the MSE, the bootstrap population is built based on a bias-corrected residual
 variance as proposed Krennmair and Schmid (202X). The bootstrap bias correction follows Mendez and Lohr (2011).
 
-Note that the \code{MERFmodel} object is a composition of elements from a random forest of class 'ranger'
-and a random effects model of class 'merMod'.  Thus, all generic functions applicable to objects of classes
-'ranger' and 'merMod' can be used on these elements. For furhter details on generic functions see
-\code{\link[ranger]{ranger}} and \code{\link[lme4]{lmer}} as well as the examples below.
+Note that the \code{MERFmodel} object is a composition of elements from a random forest of class
+\code{ranger} and a random effects model of class \code{\link[lme4]{merMod}}. Thus, all generic functions are
+applicable to corresponding objects. For further details on generic functions see \code{\link[ranger]{ranger}}
+and \code{\link[lme4]{lmer}} as well as the examples below.
 }
 \examples{
 \dontrun{
@@ -140,7 +140,7 @@ income <- eusilcA_smp$eqIncome
 X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 
 #Example 1:
-#Calculating point-estimates and discussing basic generic functions
+#Calculating point estimates and discussing basic generic functions
 
 model1 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
                            pop_data = eusilcA_pop)
@@ -149,7 +149,7 @@ model1 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data
 summary(model1)
 
 #Example 2:
-#Calculating point-estimates and discussing basic generic functions
+#Calculating point estimates and discussing basic generic functions
 
 model2 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,
                            pop_data = eusilcA_pop, smearing = FALSE)
@@ -160,7 +160,7 @@ summary(model2)
 
 #Example 3:
 #Calculating point + MSE estimates and passing arguments to the forest.
-#Additionally, two additional indicators and function as threshold are added.
+#Two additional indicators and function as threshold are added.
 #Note that B is unrealistically low to improve example speed.
 
 model3 <- SAEforest_nonLin(Y = income, X = X_covar, dName = "district", smp_data = eusilcA_smp,

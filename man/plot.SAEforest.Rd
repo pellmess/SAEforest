@@ -22,7 +22,7 @@
 )
 }
 \arguments{
-\item{x}{An object of type "SAEforest" including a random forest model of class "ranger".}
+\item{x}{An object of class \code{SAEforest} including a random forest model of class \code{\link[ranger]{ranger}}.}
 
 \item{num_features}{Number of features for which a partial dependence plot is required.}
 
@@ -37,13 +37,13 @@ color "darkgreen".}
 \item{alpha}{Parameter specifying the transparency of \code{fill} for vip plots.
 The argument must be a number in \code{[0,1]}.}
 
-\item{include_type}{If set to \code{TRUE}, the type of importance specified in the fitting process
+\item{include_type}{Logical. If set to \code{TRUE}, the type of importance specified in the fitting process
 of the model is included in the vip plot. Defaults to \code{TRUE}.}
 
-\item{horizontal}{if set to \code{TRUE}, the importance scores are plot on the x-axis. If parameter is
+\item{horizontal}{Logical. If set to \code{TRUE}, the importance scores are plot on the x-axis. If parameter is
 set to \code{FALSE}, the importance scores are plot on the y-axis. Defaults to \code{TRUE}.}
 
-\item{gg_theme}{Specify a predefined theme from \pkg{ggplot2}. Default is set to \code{theme_minimal}.}
+\item{gg_theme}{Specify a predefined theme from \pkg{ggplot2}. Defaults to \code{theme_minimal}.}
 
 \item{lsize}{Parameter specifying the line size of pdp plots. The argument must be specified
 such that it can be process by \code{\link[ggplot2]{aes}}. Defaults to 1.5.}
@@ -53,10 +53,10 @@ such that it can be process by \code{\link[ggplot2]{aes}}. Defaults to "solid".}
 
 \item{grid_row}{Parameter specifying the amount of rows for the joint pdp plot. Default is set to 2}
 
-\item{out_list}{If set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
+\item{out_list}{Logical. If set to \code{TRUE}, a list of individual plots produced by \pkg{ggplot2}
 is returned for further individual customization and processing. Defaults to \code{FALSE}.}
 
-\item{pdp_plot}{If set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
+\item{pdp_plot}{Logical. If set to \code{TRUE}, partial dependence plots produced by \code{\link[pdp]{partial}}
 from the package \pkg{pdp} are included. Defaults to \code{TRUE}.}
 
 \item{...}{Optional additional inputs that are ignored for this method.}
@@ -68,7 +68,7 @@ customization and exporting. See the following examples for details.
 }
 \description{
 Plots model-specific characteristics of the fixed effects random forest component of
-the MERF from object "SAEforest". A variable importance plot is produced to visualize
+the MERF from a \code{\link{SAEforestObject}}. A variable importance plot is produced to visualize
 the importance of individual covariates for the predictive performance of the model.
 For the variable importance plot, arguments are passed internally to the function
 \code{\link[vip]{vip}}. If requested, the plot function additionally provides a partial
@@ -83,7 +83,7 @@ or \code{\link{SAEforest_nonLin}}.
 
 For pdp plots, note that covariates of type factor or character cannot be used for partial dependence
 plots. Dummy-variables can be used, however, their pdp plots are always lines connecting two effect
-points for 0 and 1. Most informative pdp plots can be produced for metric covariates.
+points for 0 and 1. Most informative pdp plots can be produced for continuous covariates.
 }
 \examples{
 \dontrun{
@@ -95,7 +95,7 @@ income <- eusilcA_smp$eqIncome
 X_covar <- eusilcA_smp[,-c(1,16,17,18)]
 
 #Example 1:
-#Calculating point-estimates and discussing basic generic functions
+#Calculating point estimates and discussing basic generic functions
 
 model1 <- SAEforest_mean(Y = income, X = X_covar, dName = "district",
                        smp_data = eusilcA_smp, pop_data = eusilcA_pop, num.trees = 50)

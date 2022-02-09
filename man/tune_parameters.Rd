@@ -19,7 +19,7 @@ tune_parameters(
 )
 }
 \arguments{
-\item{Y}{Metric input value of target variable.}
+\item{Y}{Continuous input value of target variable.}
 
 \item{X}{Matrix or data.frame of predictive covariates.}
 
@@ -30,8 +30,8 @@ tune_parameters(
 are modeled.}
 
 \item{trControl}{Control parameters passed to \link[caret]{train}. Most important
-parameters are \code{method} ("repeatedcv" for x-fold cross-validation) and the number of
-repetitions (\code{folds}) or folds (\code{number}). For further details see \link[caret]{trainControl}
+parameters are \code{method} ("repeatedcv" for x-fold cross-validation), \code{number} (the number of folds) and
+\code{repeats} (the number of repetitions). For further details see \link[caret]{trainControl}
 and the example below.}
 
 \item{tuneGrid}{A data.frame with possible tuning values. The columns must have the same names as the
@@ -58,7 +58,7 @@ this function can be understood as a modified wrapper for \link[caret]{train} fr
 MERFs as a custom method.
 }
 \details{
-Tuning can be performed on the following four parameters: \code{num.trees}(the number of trees
+Tuning can be performed on the following four parameters: \code{num.trees} (the number of trees
 for a forest), \code{mtry} (number of variables as split candidates at in each node), \code{min.node.size}
 (minimal individual node size) and \code{splitrule} (general splitting rule). For details see
 \link[ranger]{ranger}.

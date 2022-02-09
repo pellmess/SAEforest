@@ -13,12 +13,12 @@
 #'
 #' @details
 #' This package includes a main function \code{\link{MERFranger}} that is wrapped into two functions
-#' \code{\link{SAEforest_mean}} and \code{\link{SAEforest_nonLin}} for an improved SAE worklflow.
+#' \code{\link{SAEforest_mean}} and \code{\link{SAEforest_nonLin}} for an improved SAE workflow.
 #' Each function produces an object inheriting requested results of regionally disaggregated point
 #' and uncertainty estimates. Additionally, statistical information on model fit and variable
-#' importance is accessible through generic functions such as a summary \code{\link{summary.SAEforest}}
-#' or a class specific plot function \code{\link{plot.SAEforest}}. For a full documentation of
-#' objects of class "SAEforest" see \code{\link{SAEforestObject}}. An overview of all currently
+#' importance is accessible through generic functions such as a summary (\code{\link{summary.SAEforest}})
+#' or a class specific plot function (\code{\link{plot.SAEforest}}). For a full documentation of
+#' objects of class \code{SAEforest} see \code{\link{SAEforestObject}}. An overview of all currently
 #' provided functions within this package can be be seen with \code{help(package="SAEforest")}.
 #'
 #' @references

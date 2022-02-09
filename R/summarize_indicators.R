@@ -1,6 +1,6 @@
 #' Presents point, MSE and CV estimates
 #'
-#' Function \code{summarize_indicators} is a function used to summarize point and
+#' Function \code{summarize_indicators} reports point and
 #' mean squared error (MSE) estimates as well as calculated coefficients of variation
 #' (CV) from a fitted \code{SAEforest} object.
 #'
@@ -12,17 +12,16 @@
 #' or the function name/s of "custom_indicator/s"; (iii) a vector of names of indicators.
 #' If the \code{object} is estimated by \code{\link{SAEforest_mean}} indicator arguments
 #' are ignored and only the "Mean" is returned.
-#' @param MSE Optional logical. If \code{TRUE}, MSE estimates for selected indicators
+#' @param MSE Logical. If \code{TRUE}, MSE estimates for selected indicators
 #' per domain are added to the data frame of point estimates. Defaults to \code{FALSE}.
-#' @param CV Optional logical. If \code{TRUE}, coefficients of variation for selected
+#' @param CV Logical. If \code{TRUE}, coefficients of variation for selected
 #' indicators per domain are added to the data frame of point estimates. Defaults to \code{FALSE}.
 #'
-#' @return The return of \code{summarize_indicators} is an object of type "summarize_indicators.SAEforest"
+#' @return The return of \code{summarize_indicators} is an object of class \code{summarize_indicators.SAEforest}
 #' including domain-specific point and/or MSE estimates and/or calculated CV's from a \code{SAEforest} object
-#' The returned object contains a data frame \code{ind} and a character including the names
-#' the requested indicator(s).
+#' The returned object contains the data.frame \code{ind} and a character including the names of requested indicator(s).
 #'
-#' @details Objects of class "summarize_indicators.SAEforest" have methods for following generic
+#' @details Objects of class \code{summarize_indicators.SAEforest} have methods for following generic
 #' functions: \code{head} and \code{tail} (for default documentation, see
 #' \code{\link[utils]{head}}),  \code{as.matrix} (for default documentation, see
 #' \code{\link[base]{matrix}}), \code{as.data.frame} (for default documentation,

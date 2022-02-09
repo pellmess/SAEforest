@@ -7,13 +7,13 @@
 \method{print}{SAEforest}(x, ...)
 }
 \arguments{
-\item{x}{Object of type "SAEforest", representing point and MSE
+\item{x}{Object of class \code{SAEforest}, representing point and MSE
 estimates obtained by functions: \code{\link{SAEforest_mean}} or \code{\link{SAEforest_nonLin}}.}
 
 \item{...}{Optional additional inputs that are ignored for this method.}
 }
 \description{
-Basic information of an "SAEforest" object is printed.
+Basic information of an \code{\link{SAEforestObject}} is printed.
 }
 \seealso{
 \code{\link{SAEforestObject}}
