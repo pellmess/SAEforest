@@ -164,7 +164,7 @@ SAEforest_mean <- function(Y, X, dName, smp_data, pop_data, mse = "none", aggDat
 
   out_call <- match.call()
 
-  # Make domain variable to character and sort data-sets
+  # Make domain variable to factor and sort data-sets
   smp_data[[dName]] <- factor(smp_data[[dName]], levels=unique(smp_data[[dName]]))
   pop_data[[dName]] <- factor(pop_data[[dName]], levels=unique(pop_data[[dName]]))
 
